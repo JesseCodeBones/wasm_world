@@ -15,7 +15,7 @@ void ModuleReader::prepareSections() {
   assert(version == 1);
   std::cout << "OK!" << std::endl;
   uint8_t sectionId;
-  sectionId = readUInt8();
+  sectionId = readUInt8(data, pos);
   while (true) {
     switch (sectionId) {
     case 0x5: // memory
@@ -32,10 +32,10 @@ void ModuleReader::prepareSections() {
     default:
       break;
     }
-    if (pos + 1U == data.size()) {
+    if (pos >= data.size()) {
       break;
     } else {
-      sectionId = readUInt8();
+      sectionId = readUInt8(data, pos);
     }
   }
 }
@@ -47,10 +47,10 @@ uint32_t ModuleReader::readUInt32() {
   return value;
 }
 
-uint8_t ModuleReader::readUInt8() {
-  void *ptr = data.data() + pos;
-  uint8_t value = *((uint8_t *)ptr);
-  pos += 1;
+uint8_t ModuleReader::readUInt8(std::vector<uint8_t> &binary, uint32_t &ptr) {
+  void *p = binary.data() + ptr;
+  uint8_t value = *((uint8_t *)p);
+  ptr += 1;
   return value;
 }
 
@@ -89,6 +89,21 @@ int64_t ModuleReader::readSignedLEB128() {
 
 void ModuleReader::handleMemorySection() {
 
-  
+  // 1. read section content
 
+  uint32_t sectionReaderPos = 0;
+  uint32_t count = readUnsignedLEB128(memorySection.content, sectionReaderPos);
+  while (count > 0) {
+    LimitType limit;
+    uint8_t tag = readUInt8(memorySection.content, sectionReaderPos);
+    uint8_t min = readUInt8(memorySection.content, sectionReaderPos);
+    limit.tag = tag;
+    limit.min = min;
+    if (tag == 1) {
+      uint8_t max = readUInt8(memorySection.content, sectionReaderPos);
+      limit.max = max;
+    } 
+    module.memSec.emplace_back(std::move(limit));
+    count --;
+  }
 }

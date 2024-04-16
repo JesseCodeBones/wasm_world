@@ -6,10 +6,9 @@ class LimitType
 private:
     /* data */
 public:
-
-    uint8_t tag;
-    uint32_t min;
-    uint32_t max;
+    uint8_t tag = 0;
+    uint32_t min = 0;
+    uint32_t max = 0;
 };
 
 #endif
