@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <iterator>
+#include "./src/Module.hpp"
 
 int main(int, char**){
 
@@ -11,7 +12,8 @@ int main(int, char**){
     std::ifstream inputStream(filePath, std::ios::binary);
     std::vector<uint8_t> fileContents((std::istreambuf_iterator<char>(inputStream)),
                                     std::istreambuf_iterator<char>());
-    ModuleReader moduleReader(std::move(fileContents));
+    Module module;
+    ModuleReader moduleReader(std::move(fileContents), module);
     moduleReader.prepareSections();
     
     std::cout << "Hello, from wasm-interpreter!\n";

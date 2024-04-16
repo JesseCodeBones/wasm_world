@@ -21,6 +21,7 @@ void ModuleReader::prepareSections() {
     case 0x5: // memory
     {
       readSection(memorySection.size, memorySection.content);
+      handleMemorySection(); // handle memory initialize in the begining
       break;
     }
     case 0xb: // data
@@ -84,4 +85,8 @@ uint64_t ModuleReader::readUnsignedLEB128() {
 int64_t ModuleReader::readSignedLEB128() {
   // TODO fix it
   return 0;
+}
+
+void ModuleReader::handleMemorySection() {
+
 }
