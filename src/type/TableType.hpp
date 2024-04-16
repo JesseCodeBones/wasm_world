@@ -7,18 +7,8 @@ class TableType
 private:
     /* data */
 public:
-    TableType(/* args */);
-    ~TableType();
     uint8_t elementType;
     LimitType limit;
 };
-
-TableType::TableType(/* args */)
-{
-}
-
-TableType::~TableType()
-{
-}
 
 #endif

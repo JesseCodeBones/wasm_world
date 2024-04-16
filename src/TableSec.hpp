@@ -5,16 +5,7 @@ class TableSec
 private:
     /* data */
 public:
-    TableSec(/* args */);
-    ~TableSec();
 };
 
-TableSec::TableSec(/* args */)
-{
-}
-
-TableSec::~TableSec()
-{
-}
 
 #endif

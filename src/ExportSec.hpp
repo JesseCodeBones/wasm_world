@@ -5,16 +5,8 @@ class ExportSec
 private:
     /* data */
 public:
-    ExportSec(/* args */);
-    ~ExportSec();
 };
 
-ExportSec::ExportSec(/* args */)
-{
-}
 
-ExportSec::~ExportSec()
-{
-}
 
 #endif

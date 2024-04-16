@@ -12,18 +12,8 @@ class GlobalType
 private:
     /* data */
 public:
-    GlobalType(/* args */);
-    ~GlobalType();
     ValType type;
     uint8_t mut;
 };
-
-GlobalType::GlobalType(/* args */)
-{
-}
-
-GlobalType::~GlobalType()
-{
-}
 
 #endif

@@ -5,16 +5,6 @@ class ImportSec
 private:
     /* data */
 public:
-    ImportSec(/* args */);
-    ~ImportSec();
 };
-
-ImportSec::ImportSec(/* args */)
-{
-}
-
-ImportSec::~ImportSec()
-{
-}
 
 #endif

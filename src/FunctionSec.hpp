@@ -5,16 +5,7 @@ class FunctionSec
 private:
     /* data */
 public:
-    FunctionSec(/* args */);
-    ~FunctionSec();
 };
 
-FunctionSec::FunctionSec(/* args */)
-{
-}
-
-FunctionSec::~FunctionSec()
-{
-}
 
 #endif

@@ -56,19 +56,18 @@ uint8_t ModuleReader::readUInt8() {
 
 void ModuleReader::readSection(uint32_t &secSize,
                                std::vector<uint8_t> &secData) {
-  secSize = static_cast<uint32_t>(readUnsignedLEB128());
+  secSize = static_cast<uint32_t>(readUnsignedLEB128(data, pos));
   std::copy(data.begin() + pos, data.begin() + pos + secSize,
             std::back_inserter(secData));
   pos+=secSize;
 }
 
-uint64_t ModuleReader::readUnsignedLEB128() {
-  const uint8_t *p = data.data() + pos;
-  const uint8_t *orig_p = data.data() + pos;
+uint64_t ModuleReader::readUnsignedLEB128(std::vector<uint8_t> &binary, uint32_t &ptr) {
+  const uint8_t *p = binary.data() + ptr;
   uint64_t Value = 0;
   unsigned Shift = 0;
   do {
-    if (pos == data.size()) {
+    if (ptr == binary.size()) {
       throw std::runtime_error(
           "read leb128 failed because it comes to the end of the file");
     }
@@ -79,6 +78,7 @@ uint64_t ModuleReader::readUnsignedLEB128() {
     Value += uint64_t(*p & 0x7f) << Shift;
     Shift += 7;
   } while (*p++ >= 128);
+  ptr = p - binary.data();
   return Value;
 }
 
@@ -88,5 +88,7 @@ int64_t ModuleReader::readSignedLEB128() {
 }
 
 void ModuleReader::handleMemorySection() {
+
+  
 
 }

@@ -7,16 +7,7 @@ class MemSec : public AbstractSec
 private:
  LimitType limit;
 public:
-    MemSec(/* args */);
-    ~MemSec();
 };
 
-MemSec::MemSec(/* args */)
-{
-}
-
-MemSec::~MemSec()
-{
-}
 
 #endif

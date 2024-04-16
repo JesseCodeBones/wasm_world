@@ -6,16 +6,6 @@ class GlobalSec
 private:
     /* data */
 public:
-    GlobalSec(/* args */);
-    ~GlobalSec();
 };
-
-GlobalSec::GlobalSec(/* args */)
-{
-}
-
-GlobalSec::~GlobalSec()
-{
-}
 
 #endif

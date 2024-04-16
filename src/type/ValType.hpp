@@ -6,24 +6,10 @@ class ValType
 private:
     /* data */
 public:
-    ValType(/* args */);
 
     const static uint8_t i32 = 0x7f;
     const static uint8_t i64 = 0x7e;
     const static uint8_t f32 = 0x7d;
     const static uint8_t f64 = 0x7c;
-
-    ~ValType();
-
 };
-
-// Type::Type(/* args */)
-// {
-// }
-
-// Type::~Type()
-// {
-// }
-
-
 #endif

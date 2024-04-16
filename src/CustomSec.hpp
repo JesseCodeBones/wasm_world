@@ -5,16 +5,8 @@ class CustomSec
 private:
     /* data */
 public:
-    CustomSec(/* args */);
-    ~CustomSec();
 };
 
-CustomSec::CustomSec(/* args */)
-{
-}
 
-CustomSec::~CustomSec()
-{
-}
 
 #endif

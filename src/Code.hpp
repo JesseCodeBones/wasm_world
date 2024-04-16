@@ -5,16 +5,7 @@ class Code
 private:
     /* data */
 public:
-    Code(/* args */);
-    ~Code();
 };
 
-Code::Code(/* args */)
-{
-}
-
-Code::~Code()
-{
-}
 
 #endif

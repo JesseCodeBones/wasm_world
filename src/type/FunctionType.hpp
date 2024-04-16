@@ -7,9 +7,6 @@ class FunctionType
 private:
     /* data */
 public:
-    FunctionType(/* args */);
-    ~FunctionType();
-
     std::vector<ValType> paramsType;
     std::vector<ValType> resultsType;
 

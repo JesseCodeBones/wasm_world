@@ -6,17 +6,8 @@ class TypeSec
 private:
     /* data */
 public:
-    TypeSec(/* args */);
-    ~TypeSec();
 };
 
-TypeSec::TypeSec(/* args */)
-{
-}
-
-TypeSec::~TypeSec()
-{
-}
 
 
 #endif

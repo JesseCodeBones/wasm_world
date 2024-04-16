@@ -7,7 +7,7 @@
 #include "../Module.hpp"
 class ModuleReader{
 public:
-ModuleReader(std::vector<uint8_t> &&src, Module& module):data(src), module(module){
+ModuleReader(std::vector<uint8_t> &&src, Module& _module):data(src), module(_module){
 }
 
 void prepareSections();
@@ -22,7 +22,7 @@ private:
     uint32_t readUInt32();
     uint8_t readUInt8();
     void readSection(uint32_t &secSize, std::vector<uint8_t>& secData);
-    uint64_t readUnsignedLEB128();
+    uint64_t readUnsignedLEB128(std::vector<uint8_t> &binary, uint32_t &ptr);
     int64_t readSignedLEB128();
     void handleMemorySection();
 };

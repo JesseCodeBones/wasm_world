@@ -5,16 +5,7 @@ class ElemSec
 private:
     /* data */
 public:
-    ElemSec(/* args */);
-    ~ElemSec();
 };
 
-ElemSec::ElemSec(/* args */)
-{
-}
-
-ElemSec::~ElemSec()
-{
-}
 
 #endif

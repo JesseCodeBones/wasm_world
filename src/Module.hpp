@@ -17,8 +17,6 @@ class Module
 {
 private:
 public:
-    Module(/* args */);
-    ~Module();
     uint32_t magic;
     uint32_t version;
     std::vector<CustomSec> customSec;
@@ -35,13 +33,4 @@ public:
     std::vector<Data> dataSec;
 
 };
-
-Module::Module(/* args */)
-{
-}
-
-Module::~Module()
-{
-}
-
 #endif

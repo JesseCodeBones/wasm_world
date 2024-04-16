@@ -9,5 +9,4 @@ enum class ImportDType : uint8_t
     GLOBAL = 3U
 };
 
-
 #endif
