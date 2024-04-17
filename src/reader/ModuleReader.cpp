@@ -151,7 +151,6 @@ void ModuleReader::handleDataInit(){
               throw std::runtime_error("invalid memory setting for module");
             }
             module.memSec.front().setMemory(valuePos, bytesContent, 0, bytesSize);
-            std::cout << "section\n";
             break;
           }
           default: {
