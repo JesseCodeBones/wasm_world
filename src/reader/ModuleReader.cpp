@@ -147,14 +147,10 @@ void ModuleReader::handleDataInit(){
               bytesContent.emplace_back(readUInt8(dataSection.content, sectionReaderPos));
               loopSize--;
             }
-            // fixme init the memory vector
             if (module.memSec.size() == 0) {
               throw std::runtime_error("invalid memory setting for module");
             }
-            std::vector<uint8_t> &memoryContent = module.memSec.front().memory;
-            memoryContent.insert(memoryContent.begin() + valuePos, 
-            bytesContent.begin(),
-             bytesContent.begin() + bytesSize);
+            module.memSec.front().setMemory(valuePos, bytesContent, 0, bytesSize);
             std::cout << "section\n";
             break;
           }
