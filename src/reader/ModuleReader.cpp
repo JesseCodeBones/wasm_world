@@ -27,6 +27,7 @@ void ModuleReader::prepareSections() {
     case 0xb: // data
     {
       readSection(dataSection.size, dataSection.content);
+      handleDataInit();
       break;
     }
     default:
@@ -105,5 +106,28 @@ void ModuleReader::handleMemorySection() {
     } 
     module.memSec.emplace_back(std::move(limit));
     count --;
+  }
+}
+
+void ModuleReader::handleDataInit(){
+  uint32_t sectionReaderPos = 0U;
+  uint32_t count = readUnsignedLEB128(dataSection.content, sectionReaderPos);
+  while (count > 0) {
+    uint8_t tag = readUInt8(dataSection.content, sectionReaderPos);
+    switch (tag) {
+      case 0: { // expr
+        
+        break;
+      }
+      case 1: { // passive
+        break;
+      }
+      case 2: { // expr with memory index
+        break;
+      }
+      default:
+        throw std::runtime_error("invalid data tag");
+    }
+    count--;
   }
 }
