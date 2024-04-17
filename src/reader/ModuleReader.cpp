@@ -7,6 +7,7 @@
 #include <iterator>
 #include <stdexcept>
 #include <vector>
+#include "../instruction/I32ConstInstruction.hpp"
 void ModuleReader::prepareSections() {
 
   uint32_t magic = readUInt32();
@@ -83,9 +84,24 @@ uint64_t ModuleReader::readUnsignedLEB128(std::vector<uint8_t> &binary, uint32_t
   return Value;
 }
 
-int64_t ModuleReader::readSignedLEB128() {
-  // TODO fix it
-  return 0;
+int64_t ModuleReader::readSignedLEB128(std::vector<uint8_t> &binary, uint32_t &ptr) {
+  const uint8_t *p = binary.data() + ptr;
+  int64_t Value = 0;
+  unsigned Shift = 0;
+  uint8_t Byte;
+  do {
+    if (ptr == binary.size()) {
+      throw std::runtime_error(
+          "read leb128 failed because it comes to the end of the file");
+    }
+    Byte = *p++;
+    Value |= (uint64_t(Byte & 0x7f) << Shift);
+    Shift += 7;
+  } while (Byte >= 128);
+  if (Shift < 64 && (Byte & 0x40))
+    Value |= (-1ULL) << Shift;
+  ptr = p - binary.data();
+  return Value;
 }
 
 void ModuleReader::handleMemorySection() {
@@ -116,7 +132,21 @@ void ModuleReader::handleDataInit(){
     uint8_t tag = readUInt8(dataSection.content, sectionReaderPos);
     switch (tag) {
       case 0: { // expr
-        
+        Instruction instruction = readSingleInstructionFromExpression(dataSection.content, sectionReaderPos);
+        switch (instruction.type) {
+          case InstructionType::I32CONST:{
+            // TODO fix polymophic
+            //uint32_t valuePos = dynamic_cast<I32ConstInstruction*>(&instruction)->getValue();
+            uint32_t bytesSize = 0U;
+            std::vector<uint8_t> bytesContent;
+            readSection(bytesSize, bytesContent);
+            // TODO init memory with position, size, content
+          }
+          default: {
+            throw std::runtime_error("invalid data expression");
+            break;
+          }
+        }
         break;
       }
       case 1: { // passive
@@ -130,4 +160,26 @@ void ModuleReader::handleDataInit(){
     }
     count--;
   }
+}
+
+Instruction ModuleReader::readSingleInstructionFromExpression(std::vector<uint8_t> &binary, uint32_t &ptr){
+  uint8_t opCode = readUInt8(binary, ptr);
+  switch (opCode) {
+    case static_cast<int>(InstructionType::I32CONST): {
+      int32_t value = readSignedLEB128(binary, ptr);
+      I32ConstInstruction i32Const(value);
+      return i32Const;
+      break;
+    }
+    case static_cast<int>(InstructionType::END): {
+      Instruction instruction;
+      return instruction;
+      break;
+    }
+    default: {
+      Instruction instruction;
+      return instruction;
+    }
+  }
+  assert(0x0B == readUInt8(binary, ptr));
 }

@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <vector>
 #include "../Module.hpp"
+#include "../instruction/Instruction.hpp"
 class ModuleReader{
 public:
 ModuleReader(std::vector<uint8_t> &&src, Module& _module):data(src), module(_module){
@@ -20,11 +21,11 @@ private:
     ModuleSection dataSection;
 
     uint32_t readUInt32();
-    uint8_t readUInt8(std::vector<uint8_t> &binary, uint32_t &ptr);
+    uint8_t readUInt8( std::vector<uint8_t> &binary, uint32_t &ptr);
     void readSection(uint32_t &secSize, std::vector<uint8_t>& secData);
     uint64_t readUnsignedLEB128(std::vector<uint8_t> &binary, uint32_t &ptr);
-    
-    int64_t readSignedLEB128();
+    Instruction readSingleInstructionFromExpression( std::vector<uint8_t> &binary, uint32_t &ptr);
+    int64_t readSignedLEB128(std::vector<uint8_t> &binary, uint32_t &ptr);
     void handleMemorySection();
     void handleDataInit();
 };

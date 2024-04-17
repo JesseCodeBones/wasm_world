@@ -9,7 +9,8 @@ enum class InstructionType : uint8_t {
     I32CONST = 0x41,
     I64CONST = 0x42,
     F32CONST = 0x43,
-    F64CONST = 0x44
+    F64CONST = 0x44,
+    END = 0x0B
 };
 
 class Instruction {
