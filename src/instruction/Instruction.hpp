@@ -16,6 +16,15 @@ enum class InstructionType : uint8_t {
 class Instruction {
 public:
     InstructionType type = InstructionType::NOP;
+    template<typename T>
+    T* castRef(){
+        return static_cast<T*>(this);
+    }
+    
+    template<typename T>
+    T&& castRightRef(){
+        return static_cast<T&&>(*this);
+    }
 };
 
 #endif

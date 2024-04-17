@@ -137,9 +137,7 @@ void ModuleReader::handleDataInit(){
         std::unique_ptr<Instruction> instruction = readSingleInstructionFromExpression(dataSection.content, sectionReaderPos);
         switch (instruction->type) {
           case InstructionType::I32CONST:{
-            Instruction *instructionPtr = instruction.get();
-            I32ConstInstruction *i32ConstInstructionPtr = static_cast<I32ConstInstruction*>(instructionPtr);
-            uint32_t valuePos = i32ConstInstructionPtr->getValue();
+            uint32_t valuePos = instruction->castRightRef<I32ConstInstruction>().getValue();
             uint32_t bytesSize = readUnsignedLEB128(dataSection.content, sectionReaderPos);
             uint32_t loopSize = bytesSize;
             std::vector<uint8_t> bytesContent;
