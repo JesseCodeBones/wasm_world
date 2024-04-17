@@ -5,7 +5,9 @@
 #include <cstdint>
 #include <iostream>
 #include <iterator>
+#include <memory>
 #include <stdexcept>
+#include <sys/types.h>
 #include <vector>
 #include "../instruction/I32ConstInstruction.hpp"
 void ModuleReader::prepareSections() {
@@ -132,15 +134,29 @@ void ModuleReader::handleDataInit(){
     uint8_t tag = readUInt8(dataSection.content, sectionReaderPos);
     switch (tag) {
       case 0: { // expr
-        Instruction instruction = readSingleInstructionFromExpression(dataSection.content, sectionReaderPos);
-        switch (instruction.type) {
+        std::unique_ptr<Instruction> instruction = readSingleInstructionFromExpression(dataSection.content, sectionReaderPos);
+        switch (instruction->type) {
           case InstructionType::I32CONST:{
-            // TODO fix polymophic
-            //uint32_t valuePos = dynamic_cast<I32ConstInstruction*>(&instruction)->getValue();
-            uint32_t bytesSize = 0U;
+            Instruction *instructionPtr = instruction.get();
+            I32ConstInstruction *i32ConstInstructionPtr = static_cast<I32ConstInstruction*>(instructionPtr);
+            uint32_t valuePos = i32ConstInstructionPtr->getValue();
+            uint32_t bytesSize = readUnsignedLEB128(dataSection.content, sectionReaderPos);
+            uint32_t loopSize = bytesSize;
             std::vector<uint8_t> bytesContent;
-            readSection(bytesSize, bytesContent);
-            // TODO init memory with position, size, content
+            while (loopSize > 0) {
+              bytesContent.emplace_back(readUInt8(dataSection.content, sectionReaderPos));
+              loopSize--;
+            }
+            // fixme init the memory vector
+            if (module.memSec.size() == 0) {
+              throw std::runtime_error("invalid memory setting for module");
+            }
+            std::vector<uint8_t> &memoryContent = module.memSec.front().memory;
+            memoryContent.insert(memoryContent.begin() + valuePos, 
+            bytesContent.begin(),
+             bytesContent.begin() + bytesSize);
+            std::cout << "section\n";
+            break;
           }
           default: {
             throw std::runtime_error("invalid data expression");
@@ -162,24 +178,22 @@ void ModuleReader::handleDataInit(){
   }
 }
 
-Instruction ModuleReader::readSingleInstructionFromExpression(std::vector<uint8_t> &binary, uint32_t &ptr){
+std::unique_ptr<Instruction> ModuleReader::readSingleInstructionFromExpression(std::vector<uint8_t> &binary, uint32_t &ptr){
   uint8_t opCode = readUInt8(binary, ptr);
   switch (opCode) {
     case static_cast<int>(InstructionType::I32CONST): {
       int32_t value = readSignedLEB128(binary, ptr);
       I32ConstInstruction i32Const(value);
-      return i32Const;
-      break;
+      assert(0x0B == readUInt8(binary, ptr));
+      return std::make_unique<I32ConstInstruction>(i32Const);
     }
     case static_cast<int>(InstructionType::END): {
       Instruction instruction;
-      return instruction;
-      break;
+      return std::make_unique<Instruction>(instruction);
     }
     default: {
       Instruction instruction;
-      return instruction;
+      return std::make_unique<Instruction>(instruction);
     }
   }
-  assert(0x0B == readUInt8(binary, ptr));
 }
