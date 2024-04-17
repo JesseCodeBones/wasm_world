@@ -31,6 +31,6 @@ public:
     std::vector<ElemSec> elemSec;
     std::vector<Code> codeSec;
     std::vector<Data> dataSec;
-
+    void dumpInfo();
 };
 #endif

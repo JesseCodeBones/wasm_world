@@ -177,16 +177,11 @@ std::unique_ptr<Instruction> ModuleReader::readSingleInstructionFromExpression(s
     case static_cast<int>(InstructionType::I32CONST): {
       int32_t value = readSignedLEB128(binary, ptr);
       I32ConstInstruction i32Const(value);
-      assert(0x0B == readUInt8(binary, ptr));
+      assert(0x0B == readUInt8(binary, ptr)); // 0x0b is the end of the expression
       return std::make_unique<I32ConstInstruction>(i32Const);
     }
-    case static_cast<int>(InstructionType::END): {
-      Instruction instruction;
-      return std::make_unique<Instruction>(instruction);
-    }
     default: {
-      Instruction instruction;
-      return std::make_unique<Instruction>(instruction);
+      throw std::runtime_error("unsupported instruction");
     }
   }
 }
