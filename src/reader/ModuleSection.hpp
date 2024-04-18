@@ -4,8 +4,8 @@
 #include <cstdint>
 #include <vector>
 typedef struct {
-    uint32_t size;
-    std::vector<uint8_t> content;
+  uint32_t size;
+  std::vector<uint8_t> content;
 } ModuleSection;
 
 #endif

@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <vector>
 #include "../instruction/I32ConstInstruction.hpp"
+#include "../type/ValType.hpp"
 void ModuleReader::prepareSections() {
 
   uint32_t magic = readUInt32();
@@ -21,10 +22,16 @@ void ModuleReader::prepareSections() {
   sectionId = readUInt8(data, pos);
   while (true) {
     switch (sectionId) {
+      // fix me: 03 wasm contains many unhandled section
+    case 0x1: { // type
+      readSection(typeSec.size, typeSec.content);
+      handleType(); // extract import info at the beginning
+      break;
+    }
     case 0x5: // memory
     {
       readSection(memorySection.size, memorySection.content);
-      handleMemorySection(); // handle memory initialize in the begining
+      handleMemorySection(); // handle memory initialize in the beginning
       break;
     }
     case 0xb: // data
@@ -33,8 +40,7 @@ void ModuleReader::prepareSections() {
       handleDataInit();
       break;
     }
-    default:
-      break;
+    default: break;
     }
     if (pos >= data.size()) {
       break;
@@ -58,12 +64,10 @@ uint8_t ModuleReader::readUInt8(std::vector<uint8_t> &binary, uint32_t &ptr) {
   return value;
 }
 
-void ModuleReader::readSection(uint32_t &secSize,
-                               std::vector<uint8_t> &secData) {
+void ModuleReader::readSection(uint32_t &secSize, std::vector<uint8_t> &secData) {
   secSize = static_cast<uint32_t>(readUnsignedLEB128(data, pos));
-  std::copy(data.begin() + pos, data.begin() + pos + secSize,
-            std::back_inserter(secData));
-  pos+=secSize;
+  std::copy(data.begin() + pos, data.begin() + pos + secSize, std::back_inserter(secData));
+  pos += secSize;
 }
 
 uint64_t ModuleReader::readUnsignedLEB128(std::vector<uint8_t> &binary, uint32_t &ptr) {
@@ -72,8 +76,7 @@ uint64_t ModuleReader::readUnsignedLEB128(std::vector<uint8_t> &binary, uint32_t
   unsigned Shift = 0;
   do {
     if (ptr == binary.size()) {
-      throw std::runtime_error(
-          "read leb128 failed because it comes to the end of the file");
+      throw std::runtime_error("read leb128 failed because it comes to the end of the file");
     }
     uint64_t Slice = *p & 0x7f;
     if (Shift >= 64 || Slice << Shift >> Shift != Slice) {
@@ -93,8 +96,7 @@ int64_t ModuleReader::readSignedLEB128(std::vector<uint8_t> &binary, uint32_t &p
   uint8_t Byte;
   do {
     if (ptr == binary.size()) {
-      throw std::runtime_error(
-          "read leb128 failed because it comes to the end of the file");
+      throw std::runtime_error("read leb128 failed because it comes to the end of the file");
     }
     Byte = *p++;
     Value |= (uint64_t(Byte & 0x7f) << Shift);
@@ -121,67 +123,98 @@ void ModuleReader::handleMemorySection() {
     if (tag == 1) {
       uint8_t max = readUInt8(memorySection.content, sectionReaderPos);
       limit.max = max;
-    } 
+    }
     module.memSec.emplace_back(std::move(limit));
-    count --;
+    count--;
   }
 }
 
-void ModuleReader::handleDataInit(){
+void ModuleReader::handleDataInit() {
   uint32_t sectionReaderPos = 0U;
   uint32_t count = readUnsignedLEB128(dataSection.content, sectionReaderPos);
   while (count > 0) {
     uint8_t tag = readUInt8(dataSection.content, sectionReaderPos);
     switch (tag) {
-      case 0: { // expr
-        std::unique_ptr<Instruction> instruction = readSingleInstructionFromExpression(dataSection.content, sectionReaderPos);
-        switch (instruction->type) {
-          case InstructionType::I32CONST:{
-            uint32_t valuePos = instruction->castRightRef<I32ConstInstruction>().getValue();
-            uint32_t bytesSize = readUnsignedLEB128(dataSection.content, sectionReaderPos);
-            uint32_t loopSize = bytesSize;
-            std::vector<uint8_t> bytesContent;
-            while (loopSize > 0) {
-              bytesContent.emplace_back(readUInt8(dataSection.content, sectionReaderPos));
-              loopSize--;
-            }
-            if (module.memSec.size() == 0) {
-              throw std::runtime_error("invalid memory setting for module");
-            }
-            module.memSec.front().setMemory(valuePos, bytesContent, 0, bytesSize);
-            break;
-          }
-          default: {
-            throw std::runtime_error("invalid data expression");
-            break;
-          }
+    case 0: { // expr
+      std::unique_ptr<Instruction> instruction =
+          readSingleInstructionFromExpression(dataSection.content, sectionReaderPos);
+      switch (instruction->type) {
+      case InstructionType::I32CONST: {
+        uint32_t valuePos = instruction->castRightRef<I32ConstInstruction>().getValue();
+        uint32_t bytesSize = readUnsignedLEB128(dataSection.content, sectionReaderPos);
+        uint32_t loopSize = bytesSize;
+        std::vector<uint8_t> bytesContent;
+        while (loopSize > 0) {
+          bytesContent.emplace_back(readUInt8(dataSection.content, sectionReaderPos));
+          loopSize--;
         }
+        if (module.memSec.size() == 0) {
+          throw std::runtime_error("invalid memory setting for module");
+        }
+        module.memSec.front().setMemory(valuePos, bytesContent, 0, bytesSize);
         break;
       }
-      case 1: { // passive
+      default: {
+        throw std::runtime_error("invalid data expression");
         break;
       }
-      case 2: { // expr with memory index
-        break;
       }
-      default:
-        throw std::runtime_error("invalid data tag");
+      break;
+    }
+    case 1: { // passive
+      break;
+    }
+    case 2: { // expr with memory index
+      break;
+    }
+    default: throw std::runtime_error("invalid data tag");
     }
     count--;
   }
 }
 
-std::unique_ptr<Instruction> ModuleReader::readSingleInstructionFromExpression(std::vector<uint8_t> &binary, uint32_t &ptr){
+std::unique_ptr<Instruction>
+ModuleReader::readSingleInstructionFromExpression(std::vector<uint8_t> &binary, uint32_t &ptr) {
   uint8_t opCode = readUInt8(binary, ptr);
   switch (opCode) {
-    case static_cast<int>(InstructionType::I32CONST): {
-      int32_t value = readSignedLEB128(binary, ptr);
-      I32ConstInstruction i32Const(value);
-      assert(0x0B == readUInt8(binary, ptr)); // 0x0b is the end of the expression
-      return std::make_unique<I32ConstInstruction>(i32Const);
+  case static_cast<int>(InstructionType::I32CONST): {
+    int32_t value = readSignedLEB128(binary, ptr);
+    I32ConstInstruction i32Const(value);
+    assert(0x0B == readUInt8(binary, ptr)); // 0x0b is the end of the expression
+    return std::make_unique<I32ConstInstruction>(i32Const);
+  }
+  default: {
+    throw std::runtime_error("unsupported instruction");
+  }
+  }
+}
+
+void ModuleReader::handleImport() {
+}
+void ModuleReader::handleType() {
+  uint32_t typeReadPos = 0;
+  uint32_t typeCount = readUnsignedLEB128(typeSec.content, typeReadPos);
+  while (typeCount > 0) {
+    assert(readUInt8(typeSec.content, typeReadPos) == 0x60);
+    // read parameter vector
+    uint32_t parameterCount = readUnsignedLEB128(typeSec.content, typeReadPos);
+    std::vector<ValType> parameters;
+    while (parameterCount > 0) {
+      ValType valueType = static_cast<ValType>(readUInt8(typeSec.content, typeReadPos));
+      parameters.push_back(valueType);
+      parameterCount--;
     }
-    default: {
-      throw std::runtime_error("unsupported instruction");
+
+    // read result vector
+    uint32_t resultCount = readUnsignedLEB128(typeSec.content, typeReadPos);
+    assert(resultCount == 0 || resultCount == 1); // only support single return
+    std::vector<ValType> results;
+    while (resultCount > 0) {
+      ValType valueType = static_cast<ValType>(readUInt8(typeSec.content, typeReadPos));
+      results.push_back(valueType);
+      resultCount--;
     }
+    module.typeSec.push_back({std::move(parameters), std::move(results)});
+    typeCount--;
   }
 }
