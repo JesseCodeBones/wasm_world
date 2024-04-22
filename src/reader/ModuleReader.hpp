@@ -22,6 +22,14 @@ private:
   ModuleSection dataSection;
   ModuleSection importSection;
   ModuleSection typeSec;
+  ModuleSection importSec;
+  ModuleSection functionSec;
+  ModuleSection tableSec;
+  ModuleSection globalSec;
+  ModuleSection exportSec;
+  ModuleSection startSec;
+  ModuleSection elementSec;
+  ModuleSection codeSec;
 
   uint32_t readUInt32();
   uint8_t readUInt8(std::vector<uint8_t> &binary, uint32_t &ptr);
