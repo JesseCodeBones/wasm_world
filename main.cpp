@@ -5,14 +5,18 @@
 #include <iterator>
 #include "./src/Module.hpp"
 #include "src/reader/ModuleReader.hpp"
+#include "src/runtime/SampleRuntime.hpp"
 
 int main(int, char **) {
 
-  std::filesystem::path filePath = "/home/jesse/workspace/wasm_world/scripts/3printString.wasm";
+  std::filesystem::path filePath =
+      "/home/jesse/workspace/wasm_world/scripts/3printString.wasm";
   std::ifstream inputStream(filePath, std::ios::binary);
-  std::vector<uint8_t> fileContents((std::istreambuf_iterator<char>(inputStream)),
-                                    std::istreambuf_iterator<char>());
+  std::vector<uint8_t> fileContents(
+      (std::istreambuf_iterator<char>(inputStream)),
+      std::istreambuf_iterator<char>());
   Module module;
+  SampleRuntime::registerRuntime(module);
   ModuleReader moduleReader(std::move(fileContents), module);
   moduleReader.prepareSections();
 

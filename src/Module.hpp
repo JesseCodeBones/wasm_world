@@ -13,6 +13,7 @@
 #include "MemSec.hpp"
 #include "TableSec.hpp"
 #include "TypeSec.hpp"
+#include "runtime/Runtime.hpp"
 class Module {
 private:
 public:
@@ -30,6 +31,7 @@ public:
   std::vector<ElemSec> elemSec;
   std::vector<Code> codeSec;
   std::vector<Data> dataSec;
+  Runtime runtime;
   void dumpInfo();
   void checkImport();
 };

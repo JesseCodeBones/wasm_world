@@ -288,6 +288,7 @@ void ModuleReader::handleImport() {
 
     importCount--;
   }
+  module.checkImport();
 }
 void ModuleReader::handleType() {
   uint32_t typeReadPos = 0;
