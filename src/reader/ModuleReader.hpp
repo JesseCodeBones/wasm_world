@@ -9,7 +9,8 @@
 #include "ModuleSection.hpp"
 class ModuleReader {
 public:
-  ModuleReader(std::vector<uint8_t> &&src, Module &_module) : data(src), module(_module) {
+  ModuleReader(std::vector<uint8_t> &&src, Module &_module)
+      : data(src), module(_module) {
   }
 
   void prepareSections();
@@ -35,12 +36,18 @@ private:
   uint8_t readUInt8(std::vector<uint8_t> &binary, uint32_t &ptr);
   void readSection(uint32_t &secSize, std::vector<uint8_t> &secData);
   uint64_t readUnsignedLEB128(std::vector<uint8_t> &binary, uint32_t &ptr);
-  std::unique_ptr<Instruction> readSingleInstructionFromExpression(std::vector<uint8_t> &binary,
-                                                                   uint32_t &ptr);
+  std::unique_ptr<Instruction>
+  readSingleInstructionFromExpression(std::vector<uint8_t> &binary,
+                                      uint32_t &ptr);
   int64_t readSignedLEB128(std::vector<uint8_t> &binary, uint32_t &ptr);
+  std::vector<Instruction> readExpression(std::vector<uint8_t> &binary,
+                                          uint32_t &ptr);
+  Instruction &readInstruction(std::vector<uint8_t> &binary, uint32_t &ptr);
   void handleMemorySection();
   void handleDataInit();
   void handleImport();
   void handleType();
+  void handleStart();
+  void handleCode();
 };
 #endif

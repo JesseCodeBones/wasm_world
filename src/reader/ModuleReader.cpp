@@ -60,6 +60,7 @@ void ModuleReader::prepareSections() {
     case 0x8: // start
     {
       readSection(startSec.size, startSec.content);
+      handleStart();
       break;
     }
     case 0x9: // element
@@ -67,9 +68,10 @@ void ModuleReader::prepareSections() {
       readSection(elementSec.size, elementSec.content);
       break;
     }
-    case 0xa: // element
+    case 0xa: // code
     {
       readSection(codeSec.size, codeSec.content);
+      handleCode();
       break;
     }
     case 0xb: // data
@@ -317,5 +319,49 @@ void ModuleReader::handleType() {
     }
     module.typeSec.push_back({std::move(parameters), std::move(results)});
     typeCount--;
+  }
+}
+
+void ModuleReader::handleStart() {
+  uint32_t startPos = 0;
+  module.startIndex = readUnsignedLEB128(startSec.content, startPos);
+}
+
+Instruction &ModuleReader::readInstruction(std::vector<uint8_t> &binary,
+                                           uint32_t &ptr) {
+  const uint8_t opCode = readUInt8(binary, ptr);
+  switch (opCode) {
+  case static_cast<uint32_t>(InstructionType::I32CONST): {
+    const int32_t value = readSignedLEB128(binary, ptr);
+    I32ConstInstruction instru(value);
+    return instru;
+  }
+  default: {
+    throw std::runtime_error("unrecognized instruction");
+  }
+  }
+}
+
+std::vector<Instruction>
+ModuleReader::readExpression(std::vector<uint8_t> &binary, uint32_t &ptr) {
+  std::vector<Instruction> content;
+  Instruction instruction = readInstruction(binary, ptr);
+  while (instruction.type != InstructionType::END) { // end signal
+    content.push_back(instruction);
+    instruction = readInstruction(binary, ptr);
+  }
+  return content;
+}
+
+void ModuleReader::handleCode() {
+
+  uint32_t codePos = 0;
+  uint32_t codeCount = readUnsignedLEB128(codeSec.content, codePos);
+  while (codeCount > 0) {
+    uint32_t size = readUnsignedLEB128(codeSec.content, codePos);
+    uint32_t locals = readUnsignedLEB128(codeSec.content, codePos);
+    // TODO handle locals
+    // TODO donot extract expression, just finish the read
+    codeCount--;
   }
 }
