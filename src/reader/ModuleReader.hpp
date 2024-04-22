@@ -40,14 +40,12 @@ private:
   readSingleInstructionFromExpression(std::vector<uint8_t> &binary,
                                       uint32_t &ptr);
   int64_t readSignedLEB128(std::vector<uint8_t> &binary, uint32_t &ptr);
-  std::vector<Instruction> readExpression(std::vector<uint8_t> &binary,
-                                          uint32_t &ptr);
-  Instruction &readInstruction(std::vector<uint8_t> &binary, uint32_t &ptr);
   void handleMemorySection();
   void handleDataInit();
   void handleImport();
   void handleType();
   void handleStart();
   void handleCode();
+  void handleFunction();
 };
 #endif

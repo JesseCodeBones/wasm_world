@@ -1,11 +1,13 @@
 #ifndef _wasm_function_sec_
 #define _wasm_function_sec_
-class FunctionSec
-{
+#include <cstdint>
+#include <vector>
+#include "TypeSec.hpp"
+class FunctionSec {
 private:
-    /* data */
 public:
+  std::vector<uint8_t> localsAndExpression;
+  TypeSec type;
 };
-
 
 #endif

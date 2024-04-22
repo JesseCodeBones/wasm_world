@@ -35,6 +35,7 @@ void ModuleReader::prepareSections() {
     }
     case 0x3: { // function
       readSection(functionSec.size, functionSec.content);
+      handleFunction();
       break;
     }
     case 0x4: { // table
@@ -327,41 +328,33 @@ void ModuleReader::handleStart() {
   module.startIndex = readUnsignedLEB128(startSec.content, startPos);
 }
 
-Instruction &ModuleReader::readInstruction(std::vector<uint8_t> &binary,
-                                           uint32_t &ptr) {
-  const uint8_t opCode = readUInt8(binary, ptr);
-  switch (opCode) {
-  case static_cast<uint32_t>(InstructionType::I32CONST): {
-    const int32_t value = readSignedLEB128(binary, ptr);
-    I32ConstInstruction instru(value);
-    return instru;
-  }
-  default: {
-    throw std::runtime_error("unrecognized instruction");
-  }
-  }
-}
-
-std::vector<Instruction>
-ModuleReader::readExpression(std::vector<uint8_t> &binary, uint32_t &ptr) {
-  std::vector<Instruction> content;
-  Instruction instruction = readInstruction(binary, ptr);
-  while (instruction.type != InstructionType::END) { // end signal
-    content.push_back(instruction);
-    instruction = readInstruction(binary, ptr);
-  }
-  return content;
-}
-
 void ModuleReader::handleCode() {
 
   uint32_t codePos = 0;
   uint32_t codeCount = readUnsignedLEB128(codeSec.content, codePos);
+  uint32_t index = 0;
   while (codeCount > 0) {
     uint32_t size = readUnsignedLEB128(codeSec.content, codePos);
-    uint32_t locals = readUnsignedLEB128(codeSec.content, codePos);
-    // TODO handle locals
-    // TODO donot extract expression, just finish the read
+    assert(module.functionSec.at(index).localsAndExpression.size() ==
+           0); // no duplicated function
+    std::copy(
+        codeSec.content.cbegin() + codePos,
+        codeSec.content.cbegin() + codePos + size,
+        std::back_inserter(module.functionSec.at(index).localsAndExpression));
+    codePos += size;
+    index++;
     codeCount--;
+  }
+}
+
+void ModuleReader::handleFunction() {
+  uint32_t functionPos = 0;
+  uint32_t functionCount = readUnsignedLEB128(functionSec.content, functionPos);
+  while (functionCount > 0) {
+    uint32_t typeIndex = readUnsignedLEB128(functionSec.content, functionPos);
+    FunctionSec function;
+    function.type = module.typeSec.at(typeIndex);
+    module.functionSec.push_back(std::move(function));
+    functionCount--;
   }
 }
