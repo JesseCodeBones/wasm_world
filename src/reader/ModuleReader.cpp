@@ -11,7 +11,7 @@
 #include <vector>
 #include "../instruction/I32ConstInstruction.hpp"
 #include "../type/ValType.hpp"
-void ModuleReader::prepareSections() {
+void ModuleReader::prepareModule() {
 
   uint32_t magic = readUInt32();
   uint32_t version = readUInt32();

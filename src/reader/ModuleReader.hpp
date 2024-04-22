@@ -13,7 +13,7 @@ public:
       : data(src), module(_module) {
   }
 
-  void prepareSections();
+  void prepareModule();
 
 private:
   std::vector<uint8_t> data;

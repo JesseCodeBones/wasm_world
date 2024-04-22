@@ -1,6 +1,7 @@
 #ifndef _wasm_runtime_
 #define _wasm_runtime_
 
+#include <cstdint>
 #include <string>
 #include <vector>
 #include "../TypeSec.hpp"

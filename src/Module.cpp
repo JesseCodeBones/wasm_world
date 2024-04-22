@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
+#include "FunctionSec.hpp"
 #include "TypeSec.hpp"
 #include "runtime/Runtime.hpp"
 #include "type/ImportDType.hpp"
@@ -33,4 +34,10 @@ void Module::checkImport() {
     }
     }
   }
+}
+
+void Module::execute() {
+  assert(startIndex - importSec.size() >= 0);
+  FunctionSec startFun = functionSec.at(startIndex - importSec.size());
+  // TODO call start function
 }

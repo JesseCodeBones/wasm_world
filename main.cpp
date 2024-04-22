@@ -18,7 +18,7 @@ int main(int, char **) {
   Module module;
   SampleRuntime::registerRuntime(module);
   ModuleReader moduleReader(std::move(fileContents), module);
-  moduleReader.prepareSections();
+  moduleReader.prepareModule();
 
   std::cout << "Hello, from wasm-interpreter!\n";
 }
