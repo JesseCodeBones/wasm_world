@@ -30,6 +30,7 @@ void ModuleReader::prepareSections() {
     }
     case 0x2: { // import
       readSection(importSec.size, importSec.content);
+      handleImport();
       break;
     }
     case 0x3: { // function
@@ -192,6 +193,7 @@ void ModuleReader::handleDataInit() {
         std::copy(dataSection.content.cbegin() + sectionReaderPos,
                   dataSection.content.cbegin() + sectionReaderPos + bytesSize,
                   std::back_inserter(bytesContent));
+        sectionReaderPos += bytesSize;
         if (module.memSec.size() == 0) {
           throw std::runtime_error("invalid memory setting for module");
         }
@@ -205,10 +207,12 @@ void ModuleReader::handleDataInit() {
       }
       break;
     }
-    case 1: { // passive
+    case 1: { // passive TODO
+      throw std::runtime_error("not implemented");
       break;
     }
-    case 2: { // expr with memory index
+    case 2: { // expr with memory index TODO
+      throw std::runtime_error("not implemented");
       break;
     }
     default: throw std::runtime_error("invalid data tag");
@@ -235,6 +239,55 @@ ModuleReader::readSingleInstructionFromExpression(std::vector<uint8_t> &binary,
 }
 
 void ModuleReader::handleImport() {
+  uint32_t importReadPos = 0;
+  uint32_t importCount = readUnsignedLEB128(importSec.content, importReadPos);
+  while (importCount > 0) {
+    // name 1
+    uint32_t name1Count = readUnsignedLEB128(importSec.content, importReadPos);
+    std::string name1;
+    std::copy(importSec.content.cbegin() + importReadPos,
+              importSec.content.cbegin() + importReadPos + name1Count,
+              std::back_inserter(name1));
+    importReadPos += name1Count;
+
+    // name 2
+    uint32_t name2Count = readUnsignedLEB128(importSec.content, importReadPos);
+    std::string name2;
+    std::copy(importSec.content.cbegin() + importReadPos,
+              importSec.content.cbegin() + importReadPos + name2Count,
+              std::back_inserter(name2));
+    importReadPos += name2Count;
+
+    // type
+    uint8_t desc = readUInt8(importSec.content, importReadPos);
+    switch (desc) {
+    case 0x0: { // function
+      uint32_t typeIndex = readUnsignedLEB128(importSec.content, importReadPos);
+      ImportSec importItem(std::move(name1), std::move(name2),
+                           ImportDType::FUNC);
+      importItem.setFunctionIndex(typeIndex);
+      module.importSec.push_back(std::move(importItem));
+      break;
+    }
+    case 0x1: { // table TODO
+      throw std::runtime_error("not implemented");
+      break;
+    }
+    case 0x2: { // mem TODO
+      throw std::runtime_error("not implemented");
+      break;
+    }
+    case 0x3: { // global TODO
+      throw std::runtime_error("not implemented");
+      break;
+    }
+    default: {
+      throw std::runtime_error("in correct import desc");
+    }
+    }
+
+    importCount--;
+  }
 }
 void ModuleReader::handleType() {
   uint32_t typeReadPos = 0;
