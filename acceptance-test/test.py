@@ -13,6 +13,7 @@ for index, wasm_file in enumerate(wasm_files):
         print(f"executing test {str(index)} / {len(wasm_files)} - {wasm_file} ... ")
         result = subprocess.run(['../build/wasm-interpreter', os.path.join(folder_path, wasm_file)], capture_output=True, text=True)
         output = result.stdout
+        print(f"script output: {output}")
 
         # 读取 log 文件的内容
         with open(os.path.join(folder_path, log_file), 'r') as f:
