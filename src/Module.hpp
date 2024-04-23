@@ -1,5 +1,8 @@
 #ifndef _wasm_module_
 #define _wasm_module_
+#include <any>
+#include <cstdint>
+#include <functional>
 #include <stdint.h>
 #include <vector>
 #include "Code.hpp"
@@ -35,5 +38,11 @@ public:
   void dumpInfo();
   void checkImport();
   void execute();
+  std::any runFunction(uint32_t functionIndex);
+  void runExpression(std::vector<uint8_t> &body, uint32_t &position);
+  void runInstruction(std::vector<uint8_t> &body, uint8_t opcode,
+                      uint32_t &position);
+
+  static std::function<void(Module *)> externalFunSignature;
 };
 #endif

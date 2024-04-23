@@ -1,7 +1,9 @@
 #ifndef _wasm_runtime_
 #define _wasm_runtime_
 
+#include <any>
 #include <cstdint>
+#include <stack>
 #include <string>
 #include <vector>
 #include "../TypeSec.hpp"
@@ -21,6 +23,8 @@ class Runtime {
 
 private:
   std::vector<API> APIs;
+  std::vector<uint8_t> memory;
+  std::stack<std::any> stack;
 
 public:
   void registerAPI(std::string &&packageName, std::string &&identifier,
@@ -30,6 +34,15 @@ public:
   }
   std::vector<API> &getAPIs() {
     return APIs;
+  }
+  void linkMemory(std::vector<uint8_t> &&_memory) {
+    memory = _memory;
+  }
+  void *memoryBasePtr() {
+    return memory.data();
+  }
+  std::stack<std::any> &getStack() {
+    return stack;
   }
 };
 

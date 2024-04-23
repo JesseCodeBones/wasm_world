@@ -1,3 +1,6 @@
+#ifndef _wasm_import_sec_
+#define _wasm_import_sec_
+
 #include <cstdint>
 #include <string>
 #include <string_view>
@@ -30,3 +33,4 @@ public:
     return identifier;
   }
 };
+#endif

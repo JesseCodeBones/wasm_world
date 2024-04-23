@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <cassert>
 #include <cstdint>
-#include <iostream>
 #include <iterator>
 #include <memory>
 #include <stdexcept>
@@ -17,7 +16,6 @@ void ModuleReader::prepareModule() {
   uint32_t version = readUInt32();
   assert(magic == 0x6d736100);
   assert(version == 1);
-  std::cout << "OK!" << std::endl;
   uint8_t sectionId;
   sectionId = readUInt8(data, pos);
   while (true) {
@@ -89,6 +87,10 @@ void ModuleReader::prepareModule() {
       sectionId = readUInt8(data, pos);
     }
   }
+
+  // post init sections
+  // 1. link memory to runtime
+  module.runtime.linkMemory(std::move(module.memSec.front().memory));
 }
 
 uint32_t ModuleReader::readUInt32() {

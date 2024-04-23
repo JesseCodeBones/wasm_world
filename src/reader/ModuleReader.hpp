@@ -15,6 +15,14 @@ public:
 
   void prepareModule();
 
+  static uint8_t readUInt8(std::vector<uint8_t> &binary, uint32_t &ptr);
+  static uint64_t readUnsignedLEB128(std::vector<uint8_t> &binary,
+                                     uint32_t &ptr);
+  static std::unique_ptr<Instruction>
+  readSingleInstructionFromExpression(std::vector<uint8_t> &binary,
+                                      uint32_t &ptr);
+  static int64_t readSignedLEB128(std::vector<uint8_t> &binary, uint32_t &ptr);
+
 private:
   std::vector<uint8_t> data;
   Module &module;
@@ -31,15 +39,8 @@ private:
   ModuleSection startSec;
   ModuleSection elementSec;
   ModuleSection codeSec;
-
   uint32_t readUInt32();
-  uint8_t readUInt8(std::vector<uint8_t> &binary, uint32_t &ptr);
   void readSection(uint32_t &secSize, std::vector<uint8_t> &secData);
-  uint64_t readUnsignedLEB128(std::vector<uint8_t> &binary, uint32_t &ptr);
-  std::unique_ptr<Instruction>
-  readSingleInstructionFromExpression(std::vector<uint8_t> &binary,
-                                      uint32_t &ptr);
-  int64_t readSignedLEB128(std::vector<uint8_t> &binary, uint32_t &ptr);
   void handleMemorySection();
   void handleDataInit();
   void handleImport();
