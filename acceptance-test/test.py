@@ -9,6 +9,7 @@ wasm_files = [f for f in os.listdir(folder_path) if f.endswith('.wasm')]
 runnable = os.path.abspath(executable_path)
 if sys.platform.startswith('win'):
     runnable += ".exe"
+print(runnable)    
 for index, wasm_file in enumerate(wasm_files):
     # 获取对应的 .log 文件名
     log_file = wasm_file.replace('.wasm', '.log')
