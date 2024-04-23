@@ -21,5 +21,6 @@ for index, wasm_file in enumerate(wasm_files):
         # 比较标准输出和 log 文件内容
         if output != log_content:
             print(f"Error: Output of {wasm_file} does not match {log_file}")
+            os._exit(1)
         else:
             print(f" √ success test {str(index)} / {len(wasm_files)} - {wasm_file}")
