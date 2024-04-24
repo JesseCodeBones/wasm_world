@@ -2,11 +2,10 @@
 #define _wasm_call_instruction_
 #include <algorithm>
 #include <cstdint>
-#include <tuple>
-#include <utility>
+#include "../Module.hpp"
 #include "Instruction.hpp"
 
-typedef void (*externalFuncType)(Module *a);
+typedef void (*externalFuncType)(void *a);
 
 class CallInstruction : public Instruction {
 public:
@@ -14,10 +13,12 @@ public:
     type = InstructionType::CALL;
   }
 
-  void fire(Module *module) {
+  void fire(void *modulePtr) {
+    Module *module = (Module *)modulePtr;
     if (functionIndex < module->importSec.size()) {
       // call external
       auto &externalFunc = module->importSec.at(functionIndex);
+      // TODO optimize target function search logic
       auto foundFun = std::find_if(
           module->runtime.getAPIs().cbegin(), module->runtime.getAPIs().cend(),
           [&](const API &api) {

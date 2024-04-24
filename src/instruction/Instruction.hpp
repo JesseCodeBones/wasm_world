@@ -2,7 +2,6 @@
 #define _wasm_instruction_
 
 #include <cstdint>
-#include "../Module.hpp"
 enum class InstructionType : uint8_t {
 
   NOP = 0x01,
@@ -29,7 +28,7 @@ public:
   T &&castRightRef() {
     return static_cast<T &&>(*this);
   }
-  virtual void fire(Module *module) = 0;
+  virtual void fire(void *module) = 0;
   virtual ~Instruction(){};
 };
 

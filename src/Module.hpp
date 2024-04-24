@@ -3,6 +3,7 @@
 #include <any>
 #include <cstdint>
 #include <functional>
+#include <memory>
 #include <stdint.h>
 #include <vector>
 #include "Code.hpp"
@@ -16,6 +17,7 @@
 #include "MemSec.hpp"
 #include "TableSec.hpp"
 #include "TypeSec.hpp"
+#include "instruction/Instruction.hpp"
 #include "runtime/Runtime.hpp"
 class Module {
 private:
@@ -38,10 +40,16 @@ public:
   void dumpInfo();
   void checkImport();
   void execute();
+  std::unique_ptr<Instruction> compileInstruction(InstructionType opcode,
+                                                  std::vector<uint8_t> &content,
+                                                  uint32_t &pos);
+  std::unique_ptr<std::vector<std::unique_ptr<Instruction>>>
+  compileExpression(std::vector<uint8_t> &content, uint32_t &pos);
+  void compileFunction(uint32_t functionIndex);
   std::any runFunction(uint32_t functionIndex);
-  void runExpression(std::vector<uint8_t> &body, uint32_t &position);
-  void runInstruction(std::vector<uint8_t> &body, uint8_t opcode,
-                      uint32_t &position);
+  // void runExpression(std::vector<uint8_t> &body, uint32_t &position);
+  // void runInstruction(std::vector<uint8_t> &body, uint8_t opcode,
+  //                     uint32_t &position);
 
   static std::function<void(Module *)> externalFunSignature;
 };

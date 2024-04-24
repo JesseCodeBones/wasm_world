@@ -1,6 +1,7 @@
 #ifndef _wasm_i32_const_instruction_
 #define _wasm_i32_const_instruction_
 #include <cstdint>
+#include "../Module.hpp"
 #include "Instruction.hpp"
 class I32ConstInstruction : public Instruction {
 public:
@@ -11,8 +12,11 @@ public:
     return value;
   }
 
-  void fire(Module *module) {
-    module->runtime.getStack().push(static_cast<int32_t>(value));
+  void fire(void *module) {
+    Module *ptr = (Module *)module;
+    StackItem stackItem = {ValType::i32, {(int32_t)value}};
+
+    ptr->runtime.getStack().push(stackItem);
   }
 
 private:

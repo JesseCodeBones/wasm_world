@@ -19,12 +19,24 @@ typedef struct API {
   }
 } API;
 
+typedef union StackItemValue {
+  int32_t i32;
+  int64_t i64;
+  float f32;
+  double f64;
+} StackItemValue;
+
+typedef struct StackItem {
+  ValType type;
+  StackItemValue value;
+} StackItem;
+
 class Runtime {
 
 private:
   std::vector<API> APIs;
   std::vector<uint8_t> memory;
-  std::stack<std::any> stack;
+  std::stack<StackItem> stack;
 
 public:
   void registerAPI(std::string &&packageName, std::string &&identifier,
@@ -41,7 +53,7 @@ public:
   void *memoryBasePtr() {
     return memory.data();
   }
-  std::stack<std::any> &getStack() {
+  std::stack<StackItem> &getStack() {
     return stack;
   }
 };
