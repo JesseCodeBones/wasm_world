@@ -10,7 +10,7 @@
 int main(int, char **) {
 
   std::filesystem::path filePath =
-      "/home/jesse/workspace/wasm_world/scripts/3printString.wasm";
+      "/home/jesse/workspace/wasm_world/scripts/4printnumber.wasm";
   std::ifstream inputStream(filePath, std::ios::binary);
   std::vector<uint8_t> fileContents(
       (std::istreambuf_iterator<char>(inputStream)),

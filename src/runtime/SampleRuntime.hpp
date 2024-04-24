@@ -52,6 +52,8 @@ public:
     sec.parameters.emplace_back(ValType::i32);
     module.runtime.registerAPI("env", "println", std::move(sec),
                                (void *)&SampleRuntime::println);
+    module.runtime.registerAPI("env", "printNumber", std::move(sec),
+                               (void *)&SampleRuntime::printNumber);
   }
 };
 
