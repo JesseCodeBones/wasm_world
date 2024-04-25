@@ -5,9 +5,15 @@
 enum class InstructionType : uint8_t {
 
   NOP = 0x01,
-
+  // Control Instructions
   CALL = 0x10,
 
+  // Parametric Instructions
+  DROP = 0x1a,
+  SELECT = 0x1b,
+  SELECTTYPE = 0x1c,
+
+  // Numeric Instructions
   I32CONST = 0x41,
   I64CONST = 0x42,
   F32CONST = 0x43,
