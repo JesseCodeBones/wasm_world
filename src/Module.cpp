@@ -6,14 +6,13 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
-#include <type_traits>
 #include <vector>
 #include "FunctionSec.hpp"
 #include "ImportSec.hpp"
 #include "TypeSec.hpp"
 #include "instruction/CallInstruction.hpp"
-#include "instruction/I32ConstInstruction.hpp"
 #include "instruction/Instruction.hpp"
+#include "instruction/NumericInstruction.hpp"
 #include "reader/ModuleReader.hpp"
 #include "runtime/Runtime.hpp"
 #include "type/ImportDType.hpp"
@@ -54,16 +53,41 @@ std::unique_ptr<Instruction>
 Module::compileInstruction(InstructionType opcode,
                            std::vector<uint8_t> &content, uint32_t &pos) {
   switch (opcode) {
-  case (InstructionType::I32CONST): {
-    int32_t value = ModuleReader::readSignedLEB128(content, pos);
-    I32ConstInstruction instruction(value);
-    return std::make_unique<I32ConstInstruction>(instruction);
-  }
+  // 0x10
   case (InstructionType::CALL): {
     uint32_t functionIndex = ModuleReader::readUnsignedLEB128(content, pos);
     CallInstruction instruction(functionIndex);
     return std::make_unique<CallInstruction>(instruction);
   }
+
+  // Numeric Instructions
+  // 0x41
+  case (InstructionType::I32CONST): {
+    int32_t value = ModuleReader::readSignedLEB128(content, pos);
+    I32ConstInstruction instruction(value);
+    return std::make_unique<I32ConstInstruction>(instruction);
+  }
+
+  case (InstructionType::I64CONST): {
+    int64_t value = ModuleReader::readSignedLEB128(content, pos);
+    I64ConstInstruction instruction(value);
+    return std::make_unique<I64ConstInstruction>(instruction);
+  }
+
+  case (InstructionType::F32CONST): {
+    float value = ModuleReader::bit_cast<float>(
+        ModuleReader::read4BytesLittleEndian(content, pos));
+    F32ConstInstruction instruction(value);
+    return std::make_unique<F32ConstInstruction>(instruction);
+  }
+
+  case (InstructionType::F64CONST): {
+    double value = ModuleReader::bit_cast<double>(
+        ModuleReader::read8BytesLittleEndian(content, pos));
+    F64ConstInstruction instruction(value);
+    return std::make_unique<F64ConstInstruction>(instruction);
+  }
+
   default: {
     throw std::runtime_error("not implemented");
   }

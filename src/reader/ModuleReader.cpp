@@ -3,12 +3,13 @@
 #include <algorithm>
 #include <cassert>
 #include <cstdint>
+#include <cstring>
 #include <iterator>
 #include <memory>
 #include <stdexcept>
 #include <sys/types.h>
 #include <vector>
-#include "../instruction/I32ConstInstruction.hpp"
+#include "../instruction/NumericInstruction.hpp"
 #include "../type/ValType.hpp"
 void ModuleReader::prepareModule() {
 
@@ -359,4 +360,20 @@ void ModuleReader::handleFunction() {
     module.functionSec.push_back(std::move(function));
     functionCount--;
   }
+}
+
+uint32_t ModuleReader::read4BytesLittleEndian(std::vector<uint8_t> &binary,
+                                              uint32_t &ptr) {
+  uint8_t b1 = readUInt8(binary, ptr);
+  uint8_t b2 = readUInt8(binary, ptr);
+  uint8_t b3 = readUInt8(binary, ptr);
+  uint8_t b4 = readUInt8(binary, ptr);
+  return b1 | (b2 << 8) | (b3 << (8 * 2)) | (b4 << (8 * 3));
+}
+
+uint64_t ModuleReader::read8BytesLittleEndian(std::vector<uint8_t> &binary,
+                                              uint32_t &ptr) {
+  uint64_t result = uint64_t(read4BytesLittleEndian(binary, ptr));
+  result |= uint64_t(read4BytesLittleEndian(binary, ptr)) << 32;
+  return result;
 }

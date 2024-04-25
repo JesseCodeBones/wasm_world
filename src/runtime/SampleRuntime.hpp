@@ -1,8 +1,8 @@
 #ifndef _wasm_sample_runtime_
 #define _wasm_sample_runtime_
 
-#include <any>
 #include <cstdint>
+#include <iomanip>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -33,11 +33,13 @@ private:
       break;
     }
     case ValType::f32: {
-      std::cout << std::to_string(number.value.f32) << std::endl;
+      std::cout << std::fixed << std::setprecision(5) << number.value.f32
+                << std::endl;
       break;
     }
     case ValType::f64: {
-      std::cout << std::to_string(number.value.f64) << std::endl;
+      std::cout << std::fixed << std::setprecision(5) << number.value.f64
+                << std::endl;
       break;
     }
     default: {
@@ -48,11 +50,23 @@ private:
 
 public:
   static void registerRuntime(Module &module) {
-    TypeSec sec;
-    sec.parameters.emplace_back(ValType::i32);
-    module.runtime.registerAPI("env", "println", std::move(sec),
+    TypeSec vi32;
+    vi32.parameters.emplace_back(ValType::i32);
+    TypeSec vi64;
+    vi64.parameters.emplace_back(ValType::i64);
+    TypeSec vf32;
+    vf32.parameters.emplace_back(ValType::f32);
+    TypeSec vf64;
+    vf64.parameters.emplace_back(ValType::f64);
+    module.runtime.registerAPI("env", "println", std::move(vi32),
                                (void *)&SampleRuntime::println);
-    module.runtime.registerAPI("env", "printNumber", std::move(sec),
+    module.runtime.registerAPI("env", "printNumber", std::move(vi32),
+                               (void *)&SampleRuntime::printNumber);
+    module.runtime.registerAPI("env", "printNumber", std::move(vi64),
+                               (void *)&SampleRuntime::printNumber);
+    module.runtime.registerAPI("env", "printNumber", std::move(vf32),
+                               (void *)&SampleRuntime::printNumber);
+    module.runtime.registerAPI("env", "printNumber", std::move(vf64),
                                (void *)&SampleRuntime::printNumber);
   }
 };
