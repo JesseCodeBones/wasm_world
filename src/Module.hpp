@@ -19,6 +19,12 @@
 #include "TypeSec.hpp"
 #include "instruction/Instruction.hpp"
 #include "runtime/Runtime.hpp"
+
+typedef struct {
+  uint32_t functionIndex;
+  std::stack<StackItem> functionStack;
+  // TODO add locals
+} CallStack;
 class Module {
 private:
 public:
@@ -36,6 +42,7 @@ public:
   std::vector<ElemSec> elemSec;
   std::vector<Code> codeSec;
   std::vector<Data> dataSec;
+  std::vector<CallStack> internCallStack;
   Runtime runtime;
   void dumpInfo();
   void checkImport();
@@ -47,10 +54,7 @@ public:
   compileExpression(std::vector<uint8_t> &content, uint32_t &pos);
   void compileFunction(uint32_t functionIndex);
   std::any runFunction(uint32_t functionIndex);
-  // void runExpression(std::vector<uint8_t> &body, uint32_t &position);
-  // void runInstruction(std::vector<uint8_t> &body, uint8_t opcode,
-  //                     uint32_t &position);
-
   static std::function<void(Module *)> externalFunSignature;
+  void prepareFunctionCall(uint32_t functionIndex);
 };
 #endif

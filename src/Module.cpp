@@ -139,41 +139,20 @@ void Module::compileFunction(uint32_t functionIndex) {
 std::any Module::runFunction(uint32_t functionIndex) {
   // TODO handle parameter
   std::any result = nullptr;
-  if (functionIndex >= importSec.size()) {
-    // run internal function
-    FunctionSec &function = functionSec.at(functionIndex - importSec.size());
+  prepareFunctionCall(functionIndex);
+  assert(functionIndex >= importSec.size());
+  // run internal function
+  FunctionSec &function = functionSec.at(functionIndex - importSec.size());
+  if (function.body->empty()) {
     compileFunction(functionIndex);
-    for (std::unique_ptr<Instruction> &instruction : *function.body) {
-      instruction->fire(this);
-    }
-  } else {
+  }
+  for (std::unique_ptr<Instruction> &instruction : *function.body) {
+    instruction->fire(this);
   }
   return result;
 }
 
-// void Module::runExpression(std::vector<uint8_t> &body, uint32_t &position) {
-//   uint8_t opCode = ModuleReader::readUInt8(body, position);
-//   while (opCode != 0xb) { // end
-//     runInstruction(body, opCode, position);
-//     opCode = ModuleReader::readUInt8(body, position);
-//   }
-// }
-
-// void Module::runInstruction(std::vector<uint8_t> &body, uint8_t opcode,
-//                             uint32_t &position) {
-//   switch (opcode) {
-//   case (static_cast<uint32_t>(InstructionType::I32CONST)): {
-//     int32_t value = ModuleReader::readSignedLEB128(body, position);
-//     I32ConstInstruction instruction(value);
-//     instruction.fire(this);
-//     break;
-//   }
-//   case (static_cast<uint32_t>(InstructionType::CALL)): {
-//     uint32_t functionIndex = ModuleReader::readUnsignedLEB128(body,
-//     position); CallInstruction call(functionIndex); call.fire(this); break;
-//   }
-//   default: {
-//     throw std::runtime_error("not implemented");
-//   }
-//   }
-// }
+void Module::prepareFunctionCall(uint32_t functionIndex) {
+  internCallStack.push_back({functionIndex});
+  runtime.setCallStack(&internCallStack.back().functionStack);
+}

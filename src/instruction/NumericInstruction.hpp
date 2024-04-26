@@ -16,7 +16,7 @@ public:
     Module *ptr = (Module *)module;
     StackItem stackItem = {ValType::i32, {(int32_t)value}};
 
-    ptr->runtime.getStack().push(stackItem);
+    ptr->runtime.getStack()->push(stackItem);
   }
 
 private:
@@ -35,7 +35,7 @@ public:
   void fire(void *module) {
     Module *ptr = (Module *)module;
     StackItem stackItem = {ValType::i64, {.i64 = (int64_t)value}};
-    ptr->runtime.getStack().push(stackItem);
+    ptr->runtime.getStack()->push(stackItem);
   }
 
 private:
@@ -54,7 +54,7 @@ public:
   void fire(void *module) {
     Module *ptr = (Module *)module;
     StackItem stackItem = {ValType::f32, {.f32 = value}};
-    ptr->runtime.getStack().push(stackItem);
+    ptr->runtime.getStack()->push(stackItem);
   }
 
 private:
@@ -73,7 +73,7 @@ public:
   void fire(void *module) {
     Module *ptr = (Module *)module;
     StackItem stackItem = {ValType::f64, {.f64 = value}};
-    ptr->runtime.getStack().push(stackItem);
+    ptr->runtime.getStack()->push(stackItem);
   }
 
 private:

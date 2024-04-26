@@ -36,7 +36,7 @@ class Runtime {
 private:
   std::vector<API> APIs;
   std::vector<uint8_t> memory;
-  std::stack<StackItem> stack;
+  std::stack<StackItem> *stack;
 
 public:
   void registerAPI(std::string &&packageName, std::string &&identifier,
@@ -53,8 +53,11 @@ public:
   void *memoryBasePtr() {
     return memory.data();
   }
-  std::stack<StackItem> &getStack() {
+  std::stack<StackItem> *getStack() {
     return stack;
+  }
+  void setCallStack(std::stack<StackItem> *_stack) {
+    stack = _stack;
   }
 };
 

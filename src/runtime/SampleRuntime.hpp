@@ -14,15 +14,15 @@ class SampleRuntime {
 private:
   static void println(Module *module) {
     uint8_t *ptr = (uint8_t *)module->runtime.memoryBasePtr();
-    uint32_t offset = module->runtime.getStack().top().value.i32;
-    module->runtime.getStack().pop();
+    uint32_t offset = module->runtime.getStack()->top().value.i32;
+    module->runtime.getStack()->pop();
     ptr += offset;
     std::cout << (char *)ptr << std::endl;
   }
 
   static void printNumber(Module *module) {
-    StackItem number = module->runtime.getStack().top();
-    module->runtime.getStack().pop();
+    StackItem number = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
     switch (number.type) {
     case ValType::i32: {
       std::cout << std::to_string(number.value.i32) << std::endl;
