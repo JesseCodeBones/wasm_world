@@ -34,7 +34,6 @@ public:
       // call internal
       uint32_t internFunctionIndex = functionIndex - module->importSec.size();
       FunctionSec &function = module->functionSec.at(internFunctionIndex);
-      module->prepareFunctionCall(functionIndex);
       module->runFunction(functionIndex);
     }
   }
