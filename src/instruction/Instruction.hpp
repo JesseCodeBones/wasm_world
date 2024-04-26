@@ -13,6 +13,13 @@ enum class InstructionType : uint8_t {
   SELECT = 0x1b,
   SELECTTYPE = 0x1c,
 
+  // Variable Instructions
+  LOCALGET = 0x20,
+  LOCALSET = 0x21,
+  LOCALTEE = 0x22,
+  GLOBALGET = 0x23,
+  GLOBALSET = 0x24,
+
   // Numeric Instructions
   I32CONST = 0x41,
   I64CONST = 0x42,

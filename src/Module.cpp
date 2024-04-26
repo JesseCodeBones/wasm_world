@@ -14,9 +14,11 @@
 #include "instruction/Instruction.hpp"
 #include "instruction/NumericInstruction.hpp"
 #include "instruction/ParametricInstruction.hpp"
+#include "instruction/VariableInstruction.hpp"
 #include "reader/ModuleReader.hpp"
 #include "runtime/Runtime.hpp"
 #include "type/ImportDType.hpp"
+#include "type/ValType.hpp"
 void Module::dumpInfo() {
   std::cout << "------------------Module Info------------------" << std::endl;
 }
@@ -76,6 +78,16 @@ Module::compileInstruction(InstructionType opcode,
     // return std::make_unique<SelectInstruction>(instruction);
   }
 
+  // Variable Instructions
+  case (InstructionType::LOCALGET): {
+    uint32_t localIndex = ModuleReader::readUnsignedLEB128(content, pos);
+    return std::make_unique<LocalGetInstruction>(localIndex);
+  }
+  case (InstructionType::LOCALSET): {
+    uint32_t localIndex = ModuleReader::readUnsignedLEB128(content, pos);
+    return std::make_unique<LocalSetInstruction>(localIndex);
+  }
+
   // Numeric Instructions
   // 0x41
   case (InstructionType::I32CONST): {
@@ -131,6 +143,34 @@ void Module::compileFunction(uint32_t functionIndex) {
   uint32_t functionReadPos = 0;
   uint32_t localCount = ModuleReader::readUnsignedLEB128(
       function.localsAndExpression, functionReadPos);
+  for (auto &type : function.type.parameters) {
+    internCallStack.back().locals.push_back({.type = type});
+  }
+  const uint32_t paramSize = function.type.parameters.size();
+  if (paramSize > 0) {
+    // push parameter value
+    assert(internCallStack.size() > 1);
+    auto &prevStack = internCallStack.at(internCallStack.size() - 2);
+    for (int index = 0; index < paramSize; ++index) {
+      auto paramValue = prevStack.functionStack.top();
+      internCallStack.back().locals.at(paramSize - index - 1).value =
+          paramValue.value;
+      prevStack.functionStack.pop();
+    }
+  }
+
+  while (localCount > 0) {
+    uint32_t typeCount = ModuleReader::readUnsignedLEB128(
+        function.localsAndExpression, functionReadPos);
+    uint8_t localType =
+        ModuleReader::readUInt8(function.localsAndExpression, functionReadPos);
+    while (typeCount > 0) {
+      internCallStack.back().locals.push_back(
+          {.type = static_cast<ValType>(localType)});
+      typeCount--;
+    }
+    uint32_t localIndex = localCount--;
+  }
   // TODO handle locals
   function.body =
       compileExpression(function.localsAndExpression, functionReadPos);
@@ -143,16 +183,25 @@ std::any Module::runFunction(uint32_t functionIndex) {
   assert(functionIndex >= importSec.size());
   // run internal function
   FunctionSec &function = functionSec.at(functionIndex - importSec.size());
-  if (function.body->empty()) {
+  if (function.body == nullptr) {
     compileFunction(functionIndex);
   }
   for (std::unique_ptr<Instruction> &instruction : *function.body) {
     instruction->fire(this);
   }
+  cleanUpFunctionCall(functionIndex);
   return result;
 }
 
 void Module::prepareFunctionCall(uint32_t functionIndex) {
   internCallStack.push_back({functionIndex});
+  runtime.setCallStack(&internCallStack.back().functionStack);
+}
+
+void Module::cleanUpFunctionCall(uint32_t functionIndex) {
+  assert(internCallStack.back().functionIndex == functionIndex);
+  // TODO handle return values
+  assert(internCallStack.size() > 0);
+  internCallStack.pop_back();
   runtime.setCallStack(&internCallStack.back().functionStack);
 }

@@ -1,8 +1,10 @@
 #ifndef _wasm_type_
 #define _wasm_type_
+#include <any>
 #include <cstdint>
 #include <stdint.h>
 // https://webassembly.github.io/spec/core/binary/types.html#binary-vectype
+
 enum class ValType : uint8_t {
 
   // num type
@@ -19,4 +21,9 @@ enum class ValType : uint8_t {
   externRef = 0x6f,
 
 };
+
+typedef struct {
+  ValType type;
+  std::any value;
+} ValItem;
 #endif

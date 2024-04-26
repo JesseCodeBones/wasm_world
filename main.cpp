@@ -10,7 +10,7 @@
 int main(int, char **) {
 
   std::filesystem::path filePath =
-      "/home/jesse/workspace/wasm_world/scripts/5parametricInstruction.wasm";
+      "/home/jesse/workspace/wasm_world/scripts/6paramlocal.wasm";
   std::ifstream inputStream(filePath, std::ios::binary);
   std::vector<uint8_t> fileContents(
       (std::istreambuf_iterator<char>(inputStream)),

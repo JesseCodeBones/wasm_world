@@ -19,11 +19,12 @@
 #include "TypeSec.hpp"
 #include "instruction/Instruction.hpp"
 #include "runtime/Runtime.hpp"
+#include "type/ValType.hpp"
 
 typedef struct {
   uint32_t functionIndex;
   std::stack<StackItem> functionStack;
-  // TODO add locals
+  std::vector<ValItem> locals;
 } CallStack;
 class Module {
 private:
@@ -56,5 +57,6 @@ public:
   std::any runFunction(uint32_t functionIndex);
   static std::function<void(Module *)> externalFunSignature;
   void prepareFunctionCall(uint32_t functionIndex);
+  void cleanUpFunctionCall(uint32_t functionIndex);
 };
 #endif
