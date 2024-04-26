@@ -13,4 +13,57 @@ public:
   }
 };
 
+class SelectInstruction : public Instruction {
+public:
+  SelectInstruction() {
+    type = InstructionType::SELECT;
+  }
+  void fire(void *module) {
+    Module *ptr = (Module *)module;
+    StackItem condition = ptr->runtime.getStack().top();
+    ptr->runtime.getStack().pop();
+    StackItem param1 = ptr->runtime.getStack().top();
+    ptr->runtime.getStack().pop();
+    StackItem param2 = ptr->runtime.getStack().top();
+    ptr->runtime.getStack().pop();
+    switch (condition.type) {
+    case ValType::i32: {
+      if (condition.value.i32 == 0) {
+        ptr->runtime.getStack().push(std::move(param2));
+      } else {
+        ptr->runtime.getStack().push(std::move(param1));
+      }
+      break;
+    }
+    case ValType::i64: {
+      if (condition.value.i64 == 0) {
+        ptr->runtime.getStack().push(std::move(param2));
+      } else {
+        ptr->runtime.getStack().push(std::move(param1));
+      }
+      break;
+    }
+    case ValType::f32: {
+      if (condition.value.f32 == 0) {
+        ptr->runtime.getStack().push(std::move(param2));
+      } else {
+        ptr->runtime.getStack().push(std::move(param1));
+      }
+      break;
+    }
+    case ValType::f64: {
+      if (condition.value.f64 == 0) {
+        ptr->runtime.getStack().push(std::move(param2));
+      } else {
+        ptr->runtime.getStack().push(std::move(param1));
+      }
+      break;
+    }
+    default: {
+      throw std::runtime_error("unsupported stack type");
+    }
+    }
+  }
+};
+
 #endif

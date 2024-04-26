@@ -13,6 +13,7 @@
 #include "instruction/CallInstruction.hpp"
 #include "instruction/Instruction.hpp"
 #include "instruction/NumericInstruction.hpp"
+#include "instruction/ParametricInstruction.hpp"
 #include "reader/ModuleReader.hpp"
 #include "runtime/Runtime.hpp"
 #include "type/ImportDType.hpp"
@@ -58,6 +59,21 @@ Module::compileInstruction(InstructionType opcode,
     uint32_t functionIndex = ModuleReader::readUnsignedLEB128(content, pos);
     CallInstruction instruction(functionIndex);
     return std::make_unique<CallInstruction>(instruction);
+  }
+
+  // Parametric Instructions
+  case (InstructionType::DROP): {
+    DropInstruction instruction;
+    return std::make_unique<DropInstruction>(instruction);
+  }
+  case (InstructionType::SELECT): {
+    SelectInstruction instruction;
+    return std::make_unique<SelectInstruction>(instruction);
+  }
+  case (InstructionType::SELECTTYPE): {
+    throw std::runtime_error("not implemented");
+    // SelectInstruction instruction;
+    // return std::make_unique<SelectInstruction>(instruction);
   }
 
   // Numeric Instructions
