@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <any>
 #include <cassert>
+#include <cstddef>
 #include <cstdint>
 #include <iostream>
 #include <memory>
@@ -81,24 +82,28 @@ Module::compileInstruction(InstructionType opcode,
 
   // Variable Instructions
   case (InstructionType::LOCALGET): {
-    uint32_t localIndex = ModuleReader::readUnsignedLEB128(content, pos);
+    uint32_t localIndex =
+        static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
     return std::make_unique<LocalGetInstruction>(localIndex);
   }
   case (InstructionType::LOCALSET): {
-    uint32_t localIndex = ModuleReader::readUnsignedLEB128(content, pos);
+    uint32_t localIndex =
+        static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
     return std::make_unique<LocalSetInstruction>(localIndex);
   }
 
   // Numeric Instructions
   // 0x41
   case (InstructionType::I32CONST): {
-    int32_t value = ModuleReader::readSignedLEB128(content, pos);
+    int32_t value =
+        static_cast<int32_t>(ModuleReader::readSignedLEB128(content, pos));
     I32ConstInstruction instruction(value);
     return std::make_unique<I32ConstInstruction>(instruction);
   }
 
   case (InstructionType::I64CONST): {
-    int64_t value = ModuleReader::readSignedLEB128(content, pos);
+    int64_t value =
+        static_cast<int32_t>(ModuleReader::readSignedLEB128(content, pos));
     I64ConstInstruction instruction(value);
     return std::make_unique<I64ConstInstruction>(instruction);
   }
@@ -140,19 +145,21 @@ Module::compileExpression(std::vector<uint8_t> &content, uint32_t &pos) {
 void Module::compileFunction(uint32_t functionIndex) {
   // TODO handle parameter
   assert(functionIndex >= importSec.size());
-  FunctionSec &function = functionSec.at(functionIndex - importSec.size());
+  FunctionSec &function =
+      functionSec.at(functionIndex - static_cast<uint32_t>(importSec.size()));
   uint32_t functionReadPos = 0;
   uint32_t localCount = static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(
       function.localsAndExpression, functionReadPos));
   for (auto &type : function.type.parameters) {
     internCallStack.back().locals.push_back({.type = type});
   }
-  const uint32_t paramSize = function.type.parameters.size();
+  const uint32_t paramSize =
+      static_cast<uint32_t>(function.type.parameters.size());
   if (paramSize > 0) {
     // push parameter value
     assert(internCallStack.size() > 1);
     auto &prevStack = internCallStack.at(internCallStack.size() - 2);
-    for (int index = 0; index < paramSize; ++index) {
+    for (size_t index = 0; index < paramSize; ++index) {
       auto paramValue = prevStack.functionStack.top();
       internCallStack.back().locals.at(paramSize - index - 1).value =
           paramValue.value;
@@ -161,8 +168,8 @@ void Module::compileFunction(uint32_t functionIndex) {
   }
 
   while (localCount > 0) {
-    uint32_t typeCount = ModuleReader::readUnsignedLEB128(
-        function.localsAndExpression, functionReadPos);
+    uint32_t typeCount = static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(
+        function.localsAndExpression, functionReadPos));
     uint8_t localType =
         ModuleReader::readUInt8(function.localsAndExpression, functionReadPos);
     while (typeCount > 0) {

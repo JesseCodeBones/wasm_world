@@ -133,7 +133,7 @@ uint64_t ModuleReader::readUnsignedLEB128(std::vector<uint8_t> &binary,
     Value += uint64_t(*p & 0x7f) << Shift;
     Shift += 7;
   } while (*p++ >= 128);
-  ptr = p - binary.data();
+  ptr = static_cast<uint32_t>(p - binary.data());
   return Value;
 }
 
