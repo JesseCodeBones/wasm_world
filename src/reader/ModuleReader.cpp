@@ -163,7 +163,8 @@ void ModuleReader::handleMemorySection() {
   // 1. read section content
 
   uint32_t sectionReaderPos = 0;
-  uint32_t count = readUnsignedLEB128(memorySection.content, sectionReaderPos);
+  uint32_t count = static_cast<uint32_t>(
+      readUnsignedLEB128(memorySection.content, sectionReaderPos));
   while (count > 0) {
     LimitType limit;
     uint8_t tag = readUInt8(memorySection.content, sectionReaderPos);
@@ -181,7 +182,8 @@ void ModuleReader::handleMemorySection() {
 
 void ModuleReader::handleDataInit() {
   uint32_t sectionReaderPos = 0U;
-  uint32_t count = readUnsignedLEB128(dataSection.content, sectionReaderPos);
+  uint32_t count = static_cast<uint32_t>(
+      readUnsignedLEB128(dataSection.content, sectionReaderPos));
   while (count > 0) {
     uint8_t tag = readUInt8(dataSection.content, sectionReaderPos);
     switch (tag) {
@@ -193,8 +195,8 @@ void ModuleReader::handleDataInit() {
       case InstructionType::I32CONST: {
         uint32_t valuePos =
             instruction->castRightRef<I32ConstInstruction>().getValue();
-        uint32_t bytesSize =
-            readUnsignedLEB128(dataSection.content, sectionReaderPos);
+        uint32_t bytesSize = static_cast<uint32_t>(
+            readUnsignedLEB128(dataSection.content, sectionReaderPos));
         std::vector<uint8_t> bytesContent;
         std::copy(dataSection.content.cbegin() + sectionReaderPos,
                   dataSection.content.cbegin() + sectionReaderPos + bytesSize,
@@ -246,10 +248,12 @@ ModuleReader::readSingleInstructionFromExpression(std::vector<uint8_t> &binary,
 
 void ModuleReader::handleImport() {
   uint32_t importReadPos = 0;
-  uint32_t importCount = readUnsignedLEB128(importSec.content, importReadPos);
+  uint32_t importCount = static_cast<uint32_t>(
+      readUnsignedLEB128(importSec.content, importReadPos));
   while (importCount > 0) {
     // name 1
-    uint32_t name1Count = readUnsignedLEB128(importSec.content, importReadPos);
+    uint32_t name1Count = static_cast<uint32_t>(
+        readUnsignedLEB128(importSec.content, importReadPos));
     std::string name1;
     std::copy(importSec.content.cbegin() + importReadPos,
               importSec.content.cbegin() + importReadPos + name1Count,
@@ -257,7 +261,8 @@ void ModuleReader::handleImport() {
     importReadPos += name1Count;
 
     // name 2
-    uint32_t name2Count = readUnsignedLEB128(importSec.content, importReadPos);
+    uint32_t name2Count = static_cast<uint32_t>(
+        readUnsignedLEB128(importSec.content, importReadPos));
     std::string name2;
     std::copy(importSec.content.cbegin() + importReadPos,
               importSec.content.cbegin() + importReadPos + name2Count,
@@ -268,7 +273,8 @@ void ModuleReader::handleImport() {
     uint8_t desc = readUInt8(importSec.content, importReadPos);
     switch (desc) {
     case 0x0: { // function
-      uint32_t typeIndex = readUnsignedLEB128(importSec.content, importReadPos);
+      uint32_t typeIndex = static_cast<uint32_t>(
+          readUnsignedLEB128(importSec.content, importReadPos));
       ImportSec importItem(std::move(name1), std::move(name2),
                            ImportDType::FUNC);
       importItem.setFunctionIndex(typeIndex);
@@ -298,11 +304,13 @@ void ModuleReader::handleImport() {
 }
 void ModuleReader::handleType() {
   uint32_t typeReadPos = 0;
-  uint32_t typeCount = readUnsignedLEB128(typeSec.content, typeReadPos);
+  uint32_t typeCount =
+      static_cast<uint32_t>(readUnsignedLEB128(typeSec.content, typeReadPos));
   while (typeCount > 0) {
     assert(readUInt8(typeSec.content, typeReadPos) == 0x60);
     // read parameter vector
-    uint32_t parameterCount = readUnsignedLEB128(typeSec.content, typeReadPos);
+    uint32_t parameterCount =
+        static_cast<uint32_t>(readUnsignedLEB128(typeSec.content, typeReadPos));
     std::vector<ValType> parameters;
     while (parameterCount > 0) {
       ValType valueType =
@@ -312,7 +320,8 @@ void ModuleReader::handleType() {
     }
 
     // read result vector
-    uint32_t resultCount = readUnsignedLEB128(typeSec.content, typeReadPos);
+    uint32_t resultCount =
+        static_cast<uint32_t>(readUnsignedLEB128(typeSec.content, typeReadPos));
     assert(resultCount == 0 || resultCount == 1); // only support single return
     std::vector<ValType> results;
     while (resultCount > 0) {
@@ -328,16 +337,19 @@ void ModuleReader::handleType() {
 
 void ModuleReader::handleStart() {
   uint32_t startPos = 0;
-  module.startIndex = readUnsignedLEB128(startSec.content, startPos);
+  module.startIndex =
+      static_cast<uint32_t>(readUnsignedLEB128(startSec.content, startPos));
 }
 
 void ModuleReader::handleCode() {
 
   uint32_t codePos = 0;
-  uint32_t codeCount = readUnsignedLEB128(codeSec.content, codePos);
+  uint32_t codeCount =
+      static_cast<uint32_t>(readUnsignedLEB128(codeSec.content, codePos));
   uint32_t index = 0;
   while (codeCount > 0) {
-    uint32_t size = readUnsignedLEB128(codeSec.content, codePos);
+    uint32_t size =
+        static_cast<uint32_t>(readUnsignedLEB128(codeSec.content, codePos));
     assert(module.functionSec.at(index).localsAndExpression.size() ==
            0); // no duplicated function
     std::copy(
@@ -352,9 +364,11 @@ void ModuleReader::handleCode() {
 
 void ModuleReader::handleFunction() {
   uint32_t functionPos = 0;
-  uint32_t functionCount = readUnsignedLEB128(functionSec.content, functionPos);
+  uint32_t functionCount = static_cast<uint32_t>(
+      readUnsignedLEB128(functionSec.content, functionPos));
   while (functionCount > 0) {
-    uint32_t typeIndex = readUnsignedLEB128(functionSec.content, functionPos);
+    uint32_t typeIndex = static_cast<uint32_t>(
+        readUnsignedLEB128(functionSec.content, functionPos));
     FunctionSec function;
     function.type = module.typeSec.at(typeIndex);
     module.functionSec.push_back(std::move(function));

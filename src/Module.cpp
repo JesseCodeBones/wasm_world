@@ -58,7 +58,8 @@ Module::compileInstruction(InstructionType opcode,
   switch (opcode) {
   // 0x10
   case (InstructionType::CALL): {
-    uint32_t functionIndex = ModuleReader::readUnsignedLEB128(content, pos);
+    uint32_t functionIndex =
+        static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
     CallInstruction instruction(functionIndex);
     return std::make_unique<CallInstruction>(instruction);
   }
@@ -141,8 +142,8 @@ void Module::compileFunction(uint32_t functionIndex) {
   assert(functionIndex >= importSec.size());
   FunctionSec &function = functionSec.at(functionIndex - importSec.size());
   uint32_t functionReadPos = 0;
-  uint32_t localCount = ModuleReader::readUnsignedLEB128(
-      function.localsAndExpression, functionReadPos);
+  uint32_t localCount = static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(
+      function.localsAndExpression, functionReadPos));
   for (auto &type : function.type.parameters) {
     internCallStack.back().locals.push_back({.type = type});
   }
