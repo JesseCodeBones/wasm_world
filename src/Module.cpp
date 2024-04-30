@@ -91,6 +91,11 @@ Module::compileInstruction(InstructionType opcode,
         static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
     return std::make_unique<LocalSetInstruction>(localIndex);
   }
+  case (InstructionType::LOCALTEE): {
+    uint32_t localIndex =
+        static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
+    return std::make_unique<LocalTeeInstruction>(localIndex);
+  }
 
   // Numeric Instructions
   // 0x41

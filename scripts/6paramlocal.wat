@@ -16,6 +16,12 @@
         (call $printNumberF32
             (local.get $f)
         )
+        (call $printNumberI32
+            (local.tee $c (i32.const 24))
+        )
+        (call $printNumberI32
+            (local.get $c)
+        )
     )
     (func $_start
         (call $test

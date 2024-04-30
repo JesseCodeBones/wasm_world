@@ -64,4 +64,21 @@ private:
   uint32_t index;
 };
 
+class LocalTeeInstruction : public Instruction {
+public:
+  LocalTeeInstruction(uint32_t _index) : index(_index) {
+    type = InstructionType::LOCALTEE;
+  }
+
+  void fire(void *module) {
+    Module *ptr = (Module *)module;
+    auto stackItem = ptr->runtime.getStack()->top();
+    // TEE use the value but not pop from the top
+    ptr->internCallStack.back().locals.at(index).value = stackItem.value;
+  }
+
+private:
+  uint32_t index;
+};
+
 #endif
