@@ -25,6 +25,7 @@ typedef struct {
   uint32_t functionIndex;
   std::stack<StackItem> functionStack;
   std::vector<ValItem> locals;
+
 } CallStack;
 class Module {
 private:

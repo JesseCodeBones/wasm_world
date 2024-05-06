@@ -25,5 +25,6 @@ enum class ValType : uint8_t {
 typedef struct {
   ValType type;
   std::any value;
+  bool multable = true;
 } ValItem;
 #endif

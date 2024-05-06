@@ -8,6 +8,7 @@
 #include <memory>
 #include <stdexcept>
 #include <sys/types.h>
+#include <utility>
 #include <vector>
 #include "../instruction/NumericInstruction.hpp"
 #include "../type/ValType.hpp"
@@ -50,6 +51,7 @@ void ModuleReader::prepareModule() {
     case 0x6: // global
     {
       readSection(globalSec.size, globalSec.content);
+      handleGlobal();
       break;
     }
     case 0x7: // export
@@ -180,6 +182,57 @@ void ModuleReader::handleMemorySection() {
   }
 }
 
+void ModuleReader::handleGlobal() {
+  uint32_t ptr = 0;
+  uint32_t globalCount = readUnsignedLEB128(globalSec.content, ptr);
+  while (globalCount > 0) {
+    ValType globalType =
+        static_cast<ValType>(readUInt8(globalSec.content, ptr));
+    ValItem global = {.type = globalType};
+    uint8_t mul = readUInt8(globalSec.content, ptr);
+    if (mul == 0x00) {
+      global.multable = false;
+    }
+    std::unique_ptr<Instruction> instruction =
+        readSingleInstructionFromExpression(globalSec.content, ptr);
+    switch (instruction->type) {
+    case InstructionType::I32CONST: {
+      int32_t i32Const =
+          instruction->castRightRef<I32ConstInstruction>().getValue();
+      StackItemValue value = {.i32 = i32Const};
+      global.value = value;
+      break;
+    }
+    case InstructionType::I64CONST: {
+      int64_t i64Const =
+          instruction->castRightRef<I64ConstInstruction>().getValue();
+      StackItemValue value = {.i64 = i64Const};
+      global.value = value;
+      break;
+    }
+    case InstructionType::F32CONST: {
+      float f32Const =
+          instruction->castRightRef<F32ConstInstruction>().getValue();
+      StackItemValue value = {.f32 = f32Const};
+      global.value = value;
+      break;
+    }
+    case InstructionType::F64CONST: {
+      double f64Const =
+          instruction->castRightRef<F64ConstInstruction>().getValue();
+      StackItemValue value = {.f64 = f64Const};
+      global.value = value;
+      break;
+    }
+    default: {
+      throw std::runtime_error("unsupported global set instruction");
+    }
+    }
+    module.runtime.addGlobal(std::move(global));
+    globalCount--;
+  }
+}
+
 void ModuleReader::handleDataInit() {
   uint32_t sectionReaderPos = 0U;
   uint32_t count = static_cast<uint32_t>(
@@ -235,10 +288,30 @@ ModuleReader::readSingleInstructionFromExpression(std::vector<uint8_t> &binary,
   uint8_t opCode = readUInt8(binary, ptr);
   switch (opCode) {
   case static_cast<int>(InstructionType::I32CONST): {
-    int32_t value = readSignedLEB128(binary, ptr);
+    int32_t value = static_cast<int32_t>(readSignedLEB128(binary, ptr));
     I32ConstInstruction i32Const(value);
     assert(0x0B == readUInt8(binary, ptr)); // 0x0b is the end of the expression
     return std::make_unique<I32ConstInstruction>(i32Const);
+  }
+  case static_cast<int>(InstructionType::I64CONST): {
+    int64_t value = readSignedLEB128(binary, ptr);
+    I64ConstInstruction i64Const(value);
+    assert(0x0B == readUInt8(binary, ptr)); // 0x0b is the end of the expression
+    return std::make_unique<I64ConstInstruction>(i64Const);
+  }
+  case static_cast<int>(InstructionType::F32CONST): {
+    float value =
+        ModuleReader::bit_cast<float>(read4BytesLittleEndian(binary, ptr));
+    F32ConstInstruction f32Const(value);
+    assert(0x0B == readUInt8(binary, ptr)); // 0x0b is the end of the expression
+    return std::make_unique<F32ConstInstruction>(f32Const);
+  }
+  case static_cast<int>(InstructionType::F64CONST): {
+    double value =
+        ModuleReader::bit_cast<double>(read8BytesLittleEndian(binary, ptr));
+    F64ConstInstruction f64Const(value);
+    assert(0x0B == readUInt8(binary, ptr)); // 0x0b is the end of the expression
+    return std::make_unique<F64ConstInstruction>(f64Const);
   }
   default: {
     throw std::runtime_error("unsupported instruction");

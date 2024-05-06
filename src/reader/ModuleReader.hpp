@@ -67,5 +67,6 @@ private:
   void handleStart();
   void handleCode();
   void handleFunction();
+  void handleGlobal();
 };
 #endif

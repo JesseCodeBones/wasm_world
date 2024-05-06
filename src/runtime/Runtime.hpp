@@ -37,6 +37,7 @@ private:
   std::vector<API> APIs;
   std::vector<uint8_t> memory;
   std::stack<StackItem> *stack;
+  std::vector<ValItem> globals;
 
 public:
   void registerAPI(std::string &&packageName, std::string &&identifier,
@@ -58,6 +59,14 @@ public:
   }
   void setCallStack(std::stack<StackItem> *_stack) {
     stack = _stack;
+  }
+
+  void addGlobal(ValItem &&item) {
+    globals.push_back(item);
+  }
+
+  std::vector<ValItem> &getGlobals() {
+    return globals;
   }
 };
 

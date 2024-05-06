@@ -96,6 +96,16 @@ Module::compileInstruction(InstructionType opcode,
         static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
     return std::make_unique<LocalTeeInstruction>(localIndex);
   }
+  case (InstructionType::GLOBALGET): {
+    uint32_t globalIndex =
+        static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
+    return std::make_unique<GlobalGetInstruction>(globalIndex);
+  }
+  case (InstructionType::GLOBALSET): {
+    uint32_t globalIndex =
+        static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
+    return std::make_unique<GlobalSetInstruction>(globalIndex);
+  }
 
   // Numeric Instructions
   // 0x41
@@ -148,7 +158,8 @@ Module::compileExpression(std::vector<uint8_t> &content, uint32_t &pos) {
 }
 
 void Module::compileFunction(uint32_t functionIndex) {
-  // TODO handle parameter
+  // TODO seperate parameters and locals from compile function, because function
+  // can be called multi time, but function can only be compiled once
   assert(functionIndex >= importSec.size());
   FunctionSec &function =
       functionSec.at(functionIndex - static_cast<uint32_t>(importSec.size()));
