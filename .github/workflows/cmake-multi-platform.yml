@@ -48,8 +48,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
+    - name: Set up Python 3
+      uses: actions/setup-python@v3
       with:
         python-version: '3.x' 
 
@@ -79,6 +79,6 @@ jobs:
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
-    # - name: acceptance test
-    #   working-directory: ${{ github.workspace }}/acceptance-test
-    #   run: python3 test.py
+    - name: acceptance test
+      working-directory: ${{ github.workspace }}/acceptance-test
+      run: python test.py
