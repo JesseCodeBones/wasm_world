@@ -4,6 +4,8 @@
 #include <any>
 #include <cassert>
 #include <cstdint>
+#include <sstream>
+#include <stdexcept>
 #include "../Module.hpp"
 #include "Instruction.hpp"
 class LocalGetInstruction : public Instruction {
@@ -136,6 +138,11 @@ public:
     Module *ptr = (Module *)module;
     auto &globals = ptr->runtime.getGlobals();
     auto &global = globals.at(index);
+    if (!global.multable) {
+      std::stringstream ss;
+      ss << "global with index: " << index << " is not mutable";
+      throw std::runtime_error(ss.str());
+    }
     auto &globalValue = global.value;
     auto stackValue = ptr->runtime.getStack()->top();
     ptr->runtime.getStack()->pop();

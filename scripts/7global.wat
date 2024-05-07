@@ -13,4 +13,5 @@
             (global.get $g2)
         )
     )
+    (start $_start)
 )

@@ -192,6 +192,8 @@ void ModuleReader::handleGlobal() {
     uint8_t mul = readUInt8(globalSec.content, ptr);
     if (mul == 0x00) {
       global.multable = false;
+    } else {
+      global.multable = true;
     }
     std::unique_ptr<Instruction> instruction =
         readSingleInstructionFromExpression(globalSec.content, ptr);
