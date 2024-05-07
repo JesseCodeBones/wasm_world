@@ -200,10 +200,8 @@ void ModuleReader::handleGlobal() {
     } else {
       global.multable = true;
     }
-    std::cout << "global instruction begin \n";
     std::unique_ptr<Instruction> instruction =
         readSingleInstructionFromExpression(globalSec.content, ptr);
-    std::cout << "global instruction end \n";
     switch (instruction->type) {
     case InstructionType::I32CONST: {
       int32_t i32Const =

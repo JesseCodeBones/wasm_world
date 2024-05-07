@@ -6,7 +6,6 @@ on:
   push:
     branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
@@ -82,10 +81,10 @@ jobs:
     # - name: acceptance test
     #   working-directory: ${{ github.workspace }}/acceptance-test
     #   run: python test.py
-    - name: install wabt
-      run: sudo apt install wabt
-    - name: dump
-      run: wasm-objdump -d ${{ github.workspace }}/scripts/3printString.wasm
-    - name: test global
-      working-directory: ${{ github.workspace }}
-      run: ${{ github.workspace }}/build/wasm-interpreter ${{ github.workspace }}/scripts/3printString.wasm
+    # - name: install wabt
+    #   run: sudo apt install wabt
+    # - name: dump
+    #   run: wasm-objdump -d ${{ github.workspace }}/scripts/3printString.wasm
+    - name: acceptance test
+      working-directory: ${{ github.workspace }}/acceptance-test
+      run: python test.py
