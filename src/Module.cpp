@@ -49,7 +49,9 @@ void Module::checkImport() {
 }
 
 void Module::execute() {
-
+  if (static_cast<uint32_t>(-1) == startIndex) {
+    throw std::runtime_error("Module does not have start function");
+  }
   runFunction(startIndex);
 }
 

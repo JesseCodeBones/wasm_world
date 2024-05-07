@@ -7,10 +7,11 @@
 #include "src/reader/ModuleReader.hpp"
 #include "src/runtime/SampleRuntime.hpp"
 
-int main(int, char **) {
+int main(int argc, char **argv) {
 
-  std::filesystem::path filePath =
-      "/home/jesse/workspace/wasm_world/scripts/7global.wasm";
+  // std::filesystem::path filePath =
+  //     "/home/jesse/workspace/wasm_world/scripts/7global.wasm";
+  std::filesystem::path filePath = argv[1];
   std::ifstream inputStream(filePath, std::ios::binary);
   std::vector<uint8_t> fileContents(
       (std::istreambuf_iterator<char>(inputStream)),
