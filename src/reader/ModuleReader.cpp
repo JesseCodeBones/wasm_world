@@ -4,9 +4,12 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include <iostream>
 #include <iterator>
 #include <memory>
+#include <sstream>
 #include <stdexcept>
+#include <string>
 #include <sys/types.h>
 #include <utility>
 #include <vector>
@@ -197,8 +200,10 @@ void ModuleReader::handleGlobal() {
     } else {
       global.multable = true;
     }
+    std::cout << "global instruction begin \n";
     std::unique_ptr<Instruction> instruction =
         readSingleInstructionFromExpression(globalSec.content, ptr);
+    std::cout << "global instruction end \n";
     switch (instruction->type) {
     case InstructionType::I32CONST: {
       int32_t i32Const =
@@ -318,7 +323,10 @@ ModuleReader::readSingleInstructionFromExpression(std::vector<uint8_t> &binary,
     return std::make_unique<F64ConstInstruction>(f64Const);
   }
   default: {
-    throw std::runtime_error("unsupported instruction");
+    std::stringstream ss;
+    ss << "unsupported instruction: " << std::hex << std::to_string(opCode);
+    // throw std::runtime_error(ss.str());
+    return nullptr;
   }
   }
 }

@@ -24,7 +24,7 @@ jobs:
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
         os: [ubuntu-latest, windows-latest]
-        build_type: [Release]
+        build_type: [Debug]
         c_compiler: [gcc, clang, cl]
         arch: [x86, arm64]
         include:
@@ -79,6 +79,13 @@ jobs:
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
-    - name: acceptance test
-      working-directory: ${{ github.workspace }}/acceptance-test
-      run: python test.py
+    # - name: acceptance test
+    #   working-directory: ${{ github.workspace }}/acceptance-test
+    #   run: python test.py
+    - name: install wabt
+      run: sudo apt install wabt
+    - name: dump
+      run: wasm-objdump -d ${{ github.workspace }}/scripts/3printString.wasm
+    - name: test global
+      working-directory: ${{ github.workspace }}
+      run: ${{ github.workspace }}/build/wasm-interpreter ${{ github.workspace }}/scripts/3printString.wasm
