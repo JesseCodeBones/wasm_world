@@ -40,7 +40,7 @@ public:
   std::vector<MemSec> memSec;
   std::vector<GlobalSec> globalSec;
   std::vector<ExportSec> exportSec;
-  uint32_t startIndex;
+  uint32_t startIndex = static_cast<uint32_t>(-1);
   std::vector<ElemSec> elemSec;
   std::vector<Code> codeSec;
   std::vector<Data> dataSec;

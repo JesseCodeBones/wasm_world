@@ -93,7 +93,9 @@ void ModuleReader::prepareModule() {
 
   // post init sections
   // 1. link memory to runtime
-  module.runtime.linkMemory(std::move(module.memSec.front().memory));
+  if (!module.memSec.empty()) {
+    module.runtime.linkMemory(std::move(module.memSec.front().memory));
+  }
 }
 
 uint32_t ModuleReader::readUInt32() {
