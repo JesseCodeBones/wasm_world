@@ -85,6 +85,6 @@ jobs:
     #   run: sudo apt install wabt
     # - name: dump
     #   run: wasm-objdump -d ${{ github.workspace }}/scripts/3printString.wasm
-    - name: acceptance test
+    - name: Acceptance Test
       working-directory: ${{ github.workspace }}/acceptance-test
       run: python test.py
