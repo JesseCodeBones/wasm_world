@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/wasm-interpreter",
-            "args": ["./scripts/3printString.wasm"],
+            "args": ["./scripts/9numericOperators.wasm"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

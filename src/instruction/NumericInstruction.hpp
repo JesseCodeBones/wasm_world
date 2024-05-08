@@ -1,5 +1,6 @@
 #ifndef _wasm_numeric_instruction_
 #define _wasm_numeric_instruction_
+#include <bits/stdc++.h>
 #include <cassert>
 #include <cstdint>
 #include <stdexcept>
@@ -82,9 +83,9 @@ private:
   double value;
 };
 
-class ComparationInstruction : public Instruction {
+class ComparisonInstruction : public Instruction {
 public:
-  ComparationInstruction(InstructionType opcode) {
+  ComparisonInstruction(InstructionType opcode) {
     this->type = static_cast<InstructionType>(opcode);
   }
 
@@ -646,6 +647,372 @@ public:
 
     default: {
       throw std::runtime_error("unsupported compare instruction");
+    }
+    }
+  }
+};
+
+class NumericOperatorInstruction : public Instruction {
+public:
+  NumericOperatorInstruction(InstructionType _type) {
+    type = _type;
+  }
+
+  void fire(void *module) {
+    Module *ptr = (Module *)module;
+    // first one is RHS
+    // second one is LHS
+    switch (type) {
+    case InstructionType::I32CLZ: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(rhsStackItem.type == ValType::i32);
+      int32_t value = rhsStackItem.value.i32;
+      int32_t result = __builtin_clz(value);
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32, .value = {.i32 = result}});
+      break;
+    }
+    case InstructionType::I64CLZ: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(rhsStackItem.type == ValType::i64);
+      int64_t value = rhsStackItem.value.i64;
+      int32_t result = __builtin_clzll(value);
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(result)}});
+      break;
+    }
+    case InstructionType::I32CTZ: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(rhsStackItem.type == ValType::i32);
+      int32_t value = rhsStackItem.value.i32;
+      int32_t result = __builtin_ctz(value);
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32, .value = {.i32 = result}});
+      break;
+    }
+    case InstructionType::I64CTZ: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(rhsStackItem.type == ValType::i64);
+      int64_t value = rhsStackItem.value.i64;
+      int32_t result = __builtin_ctzll(value);
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(result)}});
+      break;
+    }
+    case InstructionType::I32POPCNT: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(rhsStackItem.type == ValType::i32);
+      int32_t value = rhsStackItem.value.i32;
+      int32_t result = __builtin_popcount(value);
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32, .value = {.i32 = result}});
+      break;
+    }
+    case InstructionType::I64POPCNT: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(rhsStackItem.type == ValType::i64);
+      int64_t value = rhsStackItem.value.i64;
+      int32_t result = __builtin_popcountll(value);
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(result)}});
+      break;
+    }
+
+    case InstructionType::I32ADD:
+    case InstructionType::I64ADD:
+    case InstructionType::F32ADD:
+    case InstructionType::F64ADD: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      switch (type) {
+      case InstructionType::I32ADD: {
+        assert(lhsStackItem.type == ValType::i32);
+        assert(rhsStackItem.type == ValType::i32);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32,
+             .value = {.i32 =
+                           (lhsStackItem.value.i32 + rhsStackItem.value.i32)}});
+        break;
+      }
+      case InstructionType::I64ADD: {
+        assert(lhsStackItem.type == ValType::i64);
+        assert(rhsStackItem.type == ValType::i64);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i64,
+             .value = {.i64 =
+                           (lhsStackItem.value.i64 + rhsStackItem.value.i64)}});
+        break;
+      }
+      case InstructionType::F32ADD: {
+        assert(lhsStackItem.type == ValType::f32);
+        assert(rhsStackItem.type == ValType::f32);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::f32,
+             .value = {.f32 =
+                           (lhsStackItem.value.f32 + rhsStackItem.value.f32)}});
+        break;
+      }
+      case InstructionType::F64ADD: {
+        assert(lhsStackItem.type == ValType::f64);
+        assert(rhsStackItem.type == ValType::f64);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::f64,
+             .value = {.f64 =
+                           (lhsStackItem.value.f64 + rhsStackItem.value.f64)}});
+        break;
+      }
+      default: {
+        assert(false); // directly exit
+      }
+      }
+      break;
+    }
+
+    case InstructionType::I32SUB:
+    case InstructionType::I64SUB:
+    case InstructionType::F32SUB:
+    case InstructionType::F64SUB: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      switch (type) {
+      case InstructionType::I32SUB: {
+        assert(lhsStackItem.type == ValType::i32);
+        assert(rhsStackItem.type == ValType::i32);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32,
+             .value = {.i32 =
+                           (lhsStackItem.value.i32 - rhsStackItem.value.i32)}});
+        break;
+      }
+      case InstructionType::I64SUB: {
+        assert(lhsStackItem.type == ValType::i64);
+        assert(rhsStackItem.type == ValType::i64);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i64,
+             .value = {.i64 =
+                           (lhsStackItem.value.i64 - rhsStackItem.value.i64)}});
+        break;
+      }
+      case InstructionType::F32SUB: {
+        assert(lhsStackItem.type == ValType::f32);
+        assert(rhsStackItem.type == ValType::f32);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::f32,
+             .value = {.f32 =
+                           (lhsStackItem.value.f32 - rhsStackItem.value.f32)}});
+        break;
+      }
+      case InstructionType::F64SUB: {
+        assert(lhsStackItem.type == ValType::f64);
+        assert(rhsStackItem.type == ValType::f64);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::f64,
+             .value = {.f64 =
+                           (lhsStackItem.value.f64 - rhsStackItem.value.f64)}});
+        break;
+      }
+      default: {
+        assert(false); // directly exit
+      }
+      }
+      break;
+    }
+
+    case InstructionType::I32MUL:
+    case InstructionType::I64MUL:
+    case InstructionType::F32MUL:
+    case InstructionType::F64MUL: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      switch (type) {
+      case InstructionType::I32MUL: {
+        assert(lhsStackItem.type == ValType::i32);
+        assert(rhsStackItem.type == ValType::i32);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32,
+             .value = {.i32 =
+                           (lhsStackItem.value.i32 * rhsStackItem.value.i32)}});
+        break;
+      }
+      case InstructionType::I64MUL: {
+        assert(lhsStackItem.type == ValType::i64);
+        assert(rhsStackItem.type == ValType::i64);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i64,
+             .value = {.i64 =
+                           (lhsStackItem.value.i64 * rhsStackItem.value.i64)}});
+        break;
+      }
+      case InstructionType::F32MUL: {
+        assert(lhsStackItem.type == ValType::f32);
+        assert(rhsStackItem.type == ValType::f32);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::f32,
+             .value = {.f32 =
+                           (lhsStackItem.value.f32 * rhsStackItem.value.f32)}});
+        break;
+      }
+      case InstructionType::F64MUL: {
+        assert(lhsStackItem.type == ValType::f64);
+        assert(rhsStackItem.type == ValType::f64);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::f64,
+             .value = {.f64 =
+                           (lhsStackItem.value.f64 * rhsStackItem.value.f64)}});
+        break;
+      }
+      default: {
+        assert(false); // directly exit
+      }
+      }
+      break;
+    }
+
+    case InstructionType::I32DIV_S:
+    case InstructionType::I32DIV_U:
+    case InstructionType::I64DIV_S:
+    case InstructionType::I64DIV_U:
+    case InstructionType::F32DIV:
+    case InstructionType::F64DIV: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      switch (type) {
+      case InstructionType::I32DIV_S: {
+        assert(lhsStackItem.type == ValType::i32);
+        assert(rhsStackItem.type == ValType::i32);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32,
+             .value = {.i32 = (static_cast<int32_t>(lhsStackItem.value.i32 /
+                                                    rhsStackItem.value.i32))}});
+        break;
+      }
+      case InstructionType::I32DIV_U: {
+        assert(lhsStackItem.type == ValType::i32);
+        assert(rhsStackItem.type == ValType::i32);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32,
+             .value = {.i32 = static_cast<int32_t>(
+                           (static_cast<uint32_t>(lhsStackItem.value.i32) /
+                            static_cast<uint32_t>(rhsStackItem.value.i32)))}});
+        break;
+      }
+      case InstructionType::I64DIV_S: {
+        assert(lhsStackItem.type == ValType::i64);
+        assert(rhsStackItem.type == ValType::i64);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i64,
+             .value = {.i64 = static_cast<int64_t>(lhsStackItem.value.i64 /
+                                                   rhsStackItem.value.i64)}});
+        break;
+      }
+      case InstructionType::I64DIV_U: {
+        assert(lhsStackItem.type == ValType::i64);
+        assert(rhsStackItem.type == ValType::i64);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i64,
+             .value = {.i64 = static_cast<int64_t>(
+                           static_cast<uint64_t>(lhsStackItem.value.i64) /
+                           static_cast<uint64_t>(rhsStackItem.value.i64))}});
+        break;
+      }
+      case InstructionType::F32DIV: {
+        assert(lhsStackItem.type == ValType::f32);
+        assert(rhsStackItem.type == ValType::f32);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::f32,
+             .value = {.f32 =
+                           (lhsStackItem.value.f32 / rhsStackItem.value.f32)}});
+        break;
+      }
+      case InstructionType::F64DIV: {
+        assert(lhsStackItem.type == ValType::f64);
+        assert(rhsStackItem.type == ValType::f64);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::f64,
+             .value = {.f64 =
+                           (lhsStackItem.value.f64 / rhsStackItem.value.f64)}});
+        break;
+      }
+      default: {
+        assert(false); // directly exit
+      }
+      }
+      break;
+    }
+
+    case InstructionType::I32REM_S:
+    case InstructionType::I32REM_U:
+    case InstructionType::I64REM_S:
+    case InstructionType::I64REM_U: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      switch (type) {
+      case InstructionType::I32REM_S: {
+        assert(lhsStackItem.type == ValType::i32);
+        assert(rhsStackItem.type == ValType::i32);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32,
+             .value = {.i32 = (static_cast<int32_t>(lhsStackItem.value.i32 %
+                                                    rhsStackItem.value.i32))}});
+        break;
+      }
+      case InstructionType::I32REM_U: {
+        assert(lhsStackItem.type == ValType::i32);
+        assert(rhsStackItem.type == ValType::i32);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32,
+             .value = {.i32 = static_cast<int32_t>(
+                           (static_cast<uint32_t>(lhsStackItem.value.i32) %
+                            static_cast<uint32_t>(rhsStackItem.value.i32)))}});
+        break;
+      }
+      case InstructionType::I64REM_S: {
+        assert(lhsStackItem.type == ValType::i64);
+        assert(rhsStackItem.type == ValType::i64);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i64,
+             .value = {.i64 = static_cast<int64_t>(lhsStackItem.value.i64 %
+                                                   rhsStackItem.value.i64)}});
+        break;
+      }
+      case InstructionType::I64REM_U: {
+        assert(lhsStackItem.type == ValType::i64);
+        assert(rhsStackItem.type == ValType::i64);
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i64,
+             .value = {.i64 = static_cast<int64_t>(
+                           static_cast<uint64_t>(lhsStackItem.value.i64) %
+                           static_cast<uint64_t>(rhsStackItem.value.i64))}});
+        break;
+      }
+      default: {
+        assert(false); // directly exit
+      }
+      }
+      break;
+    }
+
+    default: {
+      throw std::runtime_error("unsupported numeric operator instruction");
     }
     }
   }
