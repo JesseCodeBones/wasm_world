@@ -138,6 +138,42 @@ Module::compileInstruction(InstructionType opcode,
     F64ConstInstruction instruction(value);
     return std::make_unique<F64ConstInstruction>(instruction);
   }
+  case InstructionType::I32EQZ:
+  case InstructionType::I32EQ:
+  case InstructionType::I32NE:
+  case InstructionType::I32LT_S:
+  case InstructionType::I32LT_U:
+  case InstructionType::I32GT_S:
+  case InstructionType::I32GT_U:
+  case InstructionType::I32LE_S:
+  case InstructionType::I32LE_U:
+  case InstructionType::I32GE_S:
+  case InstructionType::I32GE_U:
+  case InstructionType::I64EQZ:
+  case InstructionType::I64EQ:
+  case InstructionType::I64NE:
+  case InstructionType::I64LT_S:
+  case InstructionType::I64LT_U:
+  case InstructionType::I64GT_S:
+  case InstructionType::I64GT_U:
+  case InstructionType::I64LE_S:
+  case InstructionType::I64LE_U:
+  case InstructionType::I64GE_S:
+  case InstructionType::I64GE_U:
+  case InstructionType::F32EQ:
+  case InstructionType::F32NE:
+  case InstructionType::F32LT:
+  case InstructionType::F32GT:
+  case InstructionType::F32LE:
+  case InstructionType::F32GE:
+  case InstructionType::F64EQ:
+  case InstructionType::F64NE:
+  case InstructionType::F64LT:
+  case InstructionType::F64GT:
+  case InstructionType::F64LE:
+  case InstructionType::F64GE: {
+    return std::make_unique<ComparationInstruction>(opcode);
+  }
 
   default: {
     throw std::runtime_error("not implemented");
