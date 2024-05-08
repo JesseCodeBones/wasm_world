@@ -90,6 +90,8 @@ public:
 
   void fire(void *module) {
     Module *ptr = (Module *)module;
+    // first one is RHS
+    // second one is LHS
     switch (type) {
     case InstructionType::I32EQZ: {
       StackItem stackItem = ptr->runtime.getStack()->top();
@@ -119,6 +121,529 @@ public:
       }
       break;
     }
+    case InstructionType::I32EQ: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i32);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i32);
+      if (stackItem1.value.i32 == stackItem2.value.i32) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I64EQ: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i64);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i64);
+      if (stackItem1.value.i64 == stackItem2.value.i64) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::F32EQ: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::f32);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::f32);
+      if (stackItem1.value.f32 == stackItem2.value.f32) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::F64EQ: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::f64);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::f64);
+      if (stackItem1.value.f64 == stackItem2.value.f64) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I32NE: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i32);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i32);
+      if (stackItem1.value.i32 != stackItem2.value.i32) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I64NE: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i64);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i64);
+      if (stackItem1.value.i64 != stackItem2.value.i64) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::F32NE: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::f32);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::f32);
+      if (stackItem1.value.f32 != stackItem2.value.f32) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::F64NE: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::f64);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::f64);
+      if (stackItem1.value.f64 != stackItem2.value.f64) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I32LT_S: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i32);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i32);
+      if (stackItem2.value.i32 < stackItem1.value.i32) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I32LT_U: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i32);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i32);
+      if (static_cast<uint32_t>(stackItem2.value.i32) <
+          static_cast<uint32_t>(stackItem1.value.i32)) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I64LT_S: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i64);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i64);
+      if (stackItem2.value.i64 < stackItem1.value.i64) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I64LT_U: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i64);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i64);
+      if (static_cast<uint64_t>(stackItem2.value.i64) <
+          static_cast<uint64_t>(stackItem1.value.i64)) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::F32LT: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::f32);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::f32);
+      if (stackItem2.value.f32 < stackItem1.value.f32) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::F64LT: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::f64);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::f64);
+      if (stackItem2.value.f64 < stackItem1.value.f64) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I32GT_S: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i32);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i32);
+      if (stackItem2.value.i32 > stackItem1.value.i32) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I32GT_U: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i32);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i32);
+      if (static_cast<uint32_t>(stackItem2.value.i32) >
+          static_cast<uint32_t>(stackItem1.value.i32)) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I64GT_S: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i64);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i64);
+      if (stackItem2.value.i64 > stackItem1.value.i64) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I64GT_U: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i64);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i64);
+      if (static_cast<uint64_t>(stackItem2.value.i64) >
+          static_cast<uint64_t>(stackItem1.value.i64)) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::F32GT: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::f32);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::f32);
+      if (stackItem2.value.f32 > stackItem1.value.f32) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::F64GT: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::f64);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::f64);
+      if (stackItem2.value.f64 > stackItem1.value.f64) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+
+    case InstructionType::I32LE_S: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i32);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i32);
+      if (stackItem2.value.i32 <= stackItem1.value.i32) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I32LE_U: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i32);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i32);
+      if (static_cast<uint32_t>(stackItem2.value.i32) <=
+          static_cast<uint32_t>(stackItem1.value.i32)) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I64LE_S: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i64);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i64);
+      if (stackItem2.value.i64 <= stackItem1.value.i64) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I64LE_U: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i64);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i64);
+      if (static_cast<uint64_t>(stackItem2.value.i64) <=
+          static_cast<uint64_t>(stackItem1.value.i64)) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::F32LE: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::f32);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::f32);
+      if (stackItem2.value.f32 <= stackItem1.value.f32) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::F64LE: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::f64);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::f64);
+      if (stackItem2.value.f64 <= stackItem1.value.f64) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+
+    case InstructionType::I32GE_S: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i32);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i32);
+      if (stackItem2.value.i32 >= stackItem1.value.i32) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I32GE_U: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i32);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i32);
+      if (static_cast<uint32_t>(stackItem2.value.i32) >=
+          static_cast<uint32_t>(stackItem1.value.i32)) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I64GE_S: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i64);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i64);
+      if (stackItem2.value.i64 >= stackItem1.value.i64) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I64GE_U: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::i64);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::i64);
+      if (static_cast<uint64_t>(stackItem2.value.i64) >=
+          static_cast<uint64_t>(stackItem1.value.i64)) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::F32GE: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::f32);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::f32);
+      if (stackItem2.value.f32 >= stackItem1.value.f32) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::F64GE: {
+      StackItem stackItem1 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem1.type == ValType::f64);
+      StackItem stackItem2 = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem2.type == ValType::f64);
+      if (stackItem2.value.f64 >= stackItem1.value.f64) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+
     default: {
       throw std::runtime_error("unsupported compare instruction");
     }
