@@ -159,9 +159,10 @@ int64_t ModuleReader::readSignedLEB128(std::vector<uint8_t> &binary,
     Value |= (uint64_t(Byte & 0x7f) << Shift);
     Shift += 7;
   } while (Byte >= 128);
-  if (Shift < 64 && (Byte & 0x40))
-    Value |= (-1ULL) << Shift;
-  ptr = p - binary.data();
+  if (Shift < 64 && (Byte & 0x40)) {
+    Value |= (UINT64_MAX) << Shift;
+  }
+  ptr = static_cast<uint32_t>(p - binary.data());
   return Value;
 }
 
@@ -189,7 +190,8 @@ void ModuleReader::handleMemorySection() {
 
 void ModuleReader::handleGlobal() {
   uint32_t ptr = 0;
-  uint32_t globalCount = readUnsignedLEB128(globalSec.content, ptr);
+  uint32_t globalCount =
+      static_cast<uint32_t>(readUnsignedLEB128(globalSec.content, ptr));
   while (globalCount > 0) {
     ValType globalType =
         static_cast<ValType>(readUInt8(globalSec.content, ptr));

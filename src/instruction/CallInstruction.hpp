@@ -32,7 +32,8 @@ public:
       actual(module);
     } else {
       // call internal
-      uint32_t internFunctionIndex = functionIndex - module->importSec.size();
+      uint32_t internFunctionIndex =
+          functionIndex - static_cast<uint32_t>(module->importSec.size());
       FunctionSec &function = module->functionSec.at(internFunctionIndex);
       module->runFunction(functionIndex);
     }

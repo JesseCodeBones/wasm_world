@@ -1,6 +1,8 @@
 #ifndef _wasm_numeric_instruction_
 #define _wasm_numeric_instruction_
+#include <cassert>
 #include <cstdint>
+#include <stdexcept>
 #include "../Module.hpp"
 #include "Instruction.hpp"
 class I32ConstInstruction : public Instruction {
@@ -78,6 +80,50 @@ public:
 
 private:
   double value;
+};
+
+class ComparationInstruction : public Instruction {
+public:
+  ComparationInstruction(InstructionType opcode) {
+    this->type = static_cast<InstructionType>(opcode);
+  }
+
+  void fire(void *module) {
+    Module *ptr = (Module *)module;
+    switch (type) {
+    case InstructionType::I32EQZ: {
+      StackItem stackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem.type == ValType::i32);
+      int32_t value = stackItem.value.i32;
+      if (value == 0) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    case InstructionType::I64EQZ: {
+      StackItem stackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      assert(stackItem.type == ValType::i64);
+      int64_t value = stackItem.value.i64;
+      if (value == 0) {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 1}});
+      } else {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::i32, .value = {.i32 = 0}});
+      }
+      break;
+    }
+    default: {
+      throw std::runtime_error("unsupported compare instruction");
+    }
+    }
+  }
 };
 
 #endif
