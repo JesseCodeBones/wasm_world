@@ -1,6 +1,7 @@
 #ifndef _wasm_numeric_instruction_
 #define _wasm_numeric_instruction_
-#include <bits/stdc++.h>
+#include <bit>
+#include <bitset>
 #include <cassert>
 #include <cstdint>
 #include <stdexcept>
@@ -668,7 +669,7 @@ public:
       ptr->runtime.getStack()->pop();
       assert(rhsStackItem.type == ValType::i32);
       int32_t value = rhsStackItem.value.i32;
-      int32_t result = __builtin_clz(value);
+      int32_t result = std::countl_zero(static_cast<uint32_t>(value));
       ptr->runtime.getStack()->push(
           {.type = ValType::i32, .value = {.i32 = result}});
       break;
@@ -678,7 +679,7 @@ public:
       ptr->runtime.getStack()->pop();
       assert(rhsStackItem.type == ValType::i64);
       int64_t value = rhsStackItem.value.i64;
-      int32_t result = __builtin_clzll(value);
+      int32_t result = std::countl_zero(static_cast<uint64_t>(value));
       ptr->runtime.getStack()->push(
           {.type = ValType::i64,
            .value = {.i64 = static_cast<int64_t>(result)}});
@@ -689,7 +690,7 @@ public:
       ptr->runtime.getStack()->pop();
       assert(rhsStackItem.type == ValType::i32);
       int32_t value = rhsStackItem.value.i32;
-      int32_t result = __builtin_ctz(value);
+      int32_t result = std::countr_zero(static_cast<uint32_t>(value));
       ptr->runtime.getStack()->push(
           {.type = ValType::i32, .value = {.i32 = result}});
       break;
@@ -699,7 +700,7 @@ public:
       ptr->runtime.getStack()->pop();
       assert(rhsStackItem.type == ValType::i64);
       int64_t value = rhsStackItem.value.i64;
-      int32_t result = __builtin_ctzll(value);
+      int32_t result = std::countr_zero(static_cast<uint64_t>(value));
       ptr->runtime.getStack()->push(
           {.type = ValType::i64,
            .value = {.i64 = static_cast<int64_t>(result)}});
@@ -710,7 +711,7 @@ public:
       ptr->runtime.getStack()->pop();
       assert(rhsStackItem.type == ValType::i32);
       int32_t value = rhsStackItem.value.i32;
-      int32_t result = __builtin_popcount(value);
+      int32_t result = std::popcount(static_cast<uint32_t>(value));
       ptr->runtime.getStack()->push(
           {.type = ValType::i32, .value = {.i32 = result}});
       break;
@@ -720,7 +721,7 @@ public:
       ptr->runtime.getStack()->pop();
       assert(rhsStackItem.type == ValType::i64);
       int64_t value = rhsStackItem.value.i64;
-      int32_t result = __builtin_popcountll(value);
+      int32_t result = std::popcount(static_cast<uint64_t>(value));
       ptr->runtime.getStack()->push(
           {.type = ValType::i64,
            .value = {.i64 = static_cast<int64_t>(result)}});
