@@ -159,6 +159,107 @@
                 (i64.const 42)
             )
         )
+
+        (call $printNumberI32
+            (i32.and
+                (i32.const 2)
+                (i32.const 3)
+            )
+        )
+        (call $printNumberI64
+            (i64.and
+                (i64.const 2)
+                (i64.const 3)
+            )
+        )
+
+        (call $printNumberI32
+            (i32.or
+                (i32.const 2)
+                (i32.const 3)
+            )
+        )
+        (call $printNumberI64
+            (i64.or
+                (i64.const 2)
+                (i64.const 3)
+            )
+        )
+
+        (call $printNumberI32
+            (i32.xor
+                (i32.const 2)
+                (i32.const 3)
+            )
+        )
+        (call $printNumberI64
+            (i64.xor
+                (i64.const 2)
+                (i64.const 3)
+            )
+        )
+        (call $printNumberI32
+            (i32.shl
+                (i32.const 1)
+                (i32.const 3)
+            )
+        )
+        (call $printNumberI64
+            (i64.shl
+                (i64.const 1)
+                (i64.const 3)
+            )
+        )
+
+        (call $printNumberI32
+            (i32.shr_s
+                (i32.const -8)
+                (i32.const 2)
+            )
+        )
+        (call $printNumberI64
+            (i64.shr_s
+                (i64.const -8)
+                (i64.const 2)
+            )
+        )
+
+        (call $printNumberI32
+            (i32.shr_u
+                (i32.const -8)
+                (i32.const 2)
+            )
+        )
+        (call $printNumberI64
+            (i64.shr_u
+                (i64.const -8)
+                (i64.const 2)
+            )
+        )
+        (call $printNumberI32
+            (i32.rotl
+                (i32.const 1)
+                (i32.const 2)
+            )
+        )
+        (call $printNumberI64
+            (i64.rotl
+                (i64.const 1)
+                (i64.const 2)
+            )
+        )
+        (call $printNumberI32
+            (i32.rotr
+                (i32.const 1)
+                (i32.const 2)
+            )
+        )
+        (call $printNumberI64
+            (i64.rotr
+                (i64.const 1)
+                (i64.const 2)
+            )
+        )
     )
     (start $_start)
 )

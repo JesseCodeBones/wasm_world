@@ -1011,6 +1011,203 @@ public:
       }
       break;
     }
+    case InstructionType::I32AND: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 = static_cast<int32_t>(
+                         (static_cast<uint32_t>(lhsStackItem.value.i32) &
+                          static_cast<uint32_t>(rhsStackItem.value.i32)))}});
+      break;
+    }
+    case InstructionType::I64AND: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(
+                         (static_cast<uint64_t>(lhsStackItem.value.i64) &
+                          static_cast<uint64_t>(rhsStackItem.value.i64)))}});
+      break;
+    }
+
+    case InstructionType::I32OR: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 = static_cast<int32_t>(
+                         (static_cast<uint32_t>(lhsStackItem.value.i32) |
+                          static_cast<uint32_t>(rhsStackItem.value.i32)))}});
+      break;
+    }
+    case InstructionType::I64OR: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(
+                         (static_cast<uint64_t>(lhsStackItem.value.i64) |
+                          static_cast<uint64_t>(rhsStackItem.value.i64)))}});
+      break;
+    }
+
+    case InstructionType::I32XOR: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 = static_cast<int32_t>(
+                         (static_cast<uint32_t>(lhsStackItem.value.i32) ^
+                          static_cast<uint32_t>(rhsStackItem.value.i32)))}});
+      break;
+    }
+    case InstructionType::I64XOR: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(
+                         (static_cast<uint64_t>(lhsStackItem.value.i64) ^
+                          static_cast<uint64_t>(rhsStackItem.value.i64)))}});
+      break;
+    }
+
+    case InstructionType::I32SHL: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 = static_cast<int32_t>(
+                         (static_cast<uint32_t>(lhsStackItem.value.i32)
+                          << static_cast<uint32_t>(rhsStackItem.value.i32)))}});
+      break;
+    }
+    case InstructionType::I64SHL: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(
+                         (static_cast<uint64_t>(lhsStackItem.value.i64)
+                          << static_cast<uint64_t>(rhsStackItem.value.i64)))}});
+      break;
+    }
+
+    case InstructionType::I32SHR_S: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 = static_cast<int32_t>(
+                         (lhsStackItem.value.i32 >> rhsStackItem.value.i32))}});
+      break;
+    }
+    case InstructionType::I64SHR_S: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(
+                         (lhsStackItem.value.i64 >> rhsStackItem.value.i64))}});
+      break;
+    }
+
+    case InstructionType::I32SHR_U: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 = static_cast<int32_t>(
+                         (static_cast<uint32_t>(lhsStackItem.value.i32) >>
+                          rhsStackItem.value.i32))}});
+      break;
+    }
+    case InstructionType::I64SHR_U: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(
+                         (static_cast<uint64_t>(lhsStackItem.value.i64) >>
+                          rhsStackItem.value.i64))}});
+      break;
+    }
+
+    case InstructionType::I32ROTL: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 = static_cast<int32_t>(std::rotl(
+                         static_cast<uint32_t>(lhsStackItem.value.i32),
+                         rhsStackItem.value.i32))}});
+      break;
+    }
+    case InstructionType::I64ROTL: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(std::rotl(
+                         static_cast<uint64_t>(lhsStackItem.value.i64),
+                         rhsStackItem.value.i64))}});
+
+      break;
+    }
+    case InstructionType::I32ROTR: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 = static_cast<int32_t>(std::rotr(
+                         static_cast<uint32_t>(lhsStackItem.value.i32),
+                         rhsStackItem.value.i32))}});
+      break;
+    }
+    case InstructionType::I64ROTR: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(std::rotr(
+                         static_cast<uint64_t>(lhsStackItem.value.i64),
+                         rhsStackItem.value.i64))}});
+      break;
+    }
 
     default: {
       throw std::runtime_error("unsupported numeric operator instruction");
