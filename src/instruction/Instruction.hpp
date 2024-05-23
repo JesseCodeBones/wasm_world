@@ -130,6 +130,38 @@ enum class InstructionType : uint8_t {
   F64MAX = 0xa5,      /* f64.max */
   F64COPYSIGN = 0xa6, /* f64.copysign */
 
+  /* conversions */
+  I32WRAP_I64 = 0xa7,        /* i32.wrap/i64 */
+  I32TRUNC_S_F32 = 0xa8,     /* i32.trunc_s/f32 */
+  I32TRUNC_U_F32 = 0xa9,     /* i32.trunc_u/f32 */
+  I32TRUNC_S_F64 = 0xaa,     /* i32.trunc_s/f64 */
+  I32TRUNC_U_F64 = 0xab,     /* i32.trunc_u/f64 */
+  I64EXTEND_S_I32 = 0xac,    /* i64.extend_s/i32 */
+  I64EXTEND_U_I32 = 0xad,    /* i64.extend_u/i32 */
+  I64TRUNC_S_F32 = 0xae,     /* i64.trunc_s/f32 */
+  I64TRUNC_U_F32 = 0xaf,     /* i64.trunc_u/f32 */
+  I64TRUNC_S_F64 = 0xb0,     /* i64.trunc_s/f64 */
+  I64TRUNC_U_F64 = 0xb1,     /* i64.trunc_u/f64 */
+  F32CONVERT_S_I32 = 0xb2,   /* f32.convert_s/i32 */
+  F32CONVERT_U_I32 = 0xb3,   /* f32.convert_u/i32 */
+  F32CONVERT_S_I64 = 0xb4,   /* f32.convert_s/i64 */
+  F32CONVERT_U_I64 = 0xb5,   /* f32.convert_u/i64 */
+  F32DEMOTE_F64 = 0xb6,      /* f32.demote/f64 */
+  F64CONVERT_S_I32 = 0xb7,   /* f64.convert_s/i32 */
+  F64CONVERT_U_I32 = 0xb8,   /* f64.convert_u/i32 */
+  F64CONVERT_S_I64 = 0xb9,   /* f64.convert_s/i64 */
+  F64CONVERT_U_I64 = 0xba,   /* f64.convert_u/i64 */
+  F64PROMOTE_F32 = 0xbb,     /* f64.promote/f32 */
+  I32REINTERPRET_F32 = 0xbc, /* i32.reinterpret/f32 */
+  I64REINTERPRET_F64 = 0xbd, /* i64.reinterpret/f64 */
+  F32REINTERPRET_I32 = 0xbe, /* f32.reinterpret/i32 */
+  F64REINTERPRET_I64 = 0xbf, /* f64.reinterpret/i64 */
+  I32EXTEND8_S = 0xc0,       /* i32.extend8_s */
+  I32EXTEND16_S = 0xc1,      /* i32.extend16_s */
+  I64EXTEND8_S = 0xc2,       /* i64.extend8_s */
+  I64EXTEND16_S = 0xc3,      /* i64.extend16_s */
+  I64EXTEND32_S = 0xc4,      /* i64.extend32_s */
+
   END = 0x0B
 };
 

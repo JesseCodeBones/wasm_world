@@ -1,8 +1,10 @@
 #ifndef _wasm_numeric_instruction_
 #define _wasm_numeric_instruction_
+#include <algorithm>
 #include <bit>
 #include <bitset>
 #include <cassert>
+#include <cmath>
 #include <cstdint>
 #include <stdexcept>
 #include "../Module.hpp"
@@ -1206,6 +1208,202 @@ public:
            .value = {.i64 = static_cast<int64_t>(std::rotr(
                          static_cast<uint64_t>(lhsStackItem.value.i64),
                          rhsStackItem.value.i64))}});
+      break;
+    }
+
+    case InstructionType::F32ABS: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f32,
+           .value = {.f32 = std::fabs(rhsStackItem.value.f32)}});
+      break;
+    }
+
+    case InstructionType::F64ABS: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f64,
+           .value = {.f64 = std::fabs(rhsStackItem.value.f64)}});
+      break;
+    }
+
+    case InstructionType::F32NEG: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f32, .value = {.f32 = -rhsStackItem.value.f32}});
+      break;
+    }
+
+    case InstructionType::F64NEG: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f64, .value = {.f64 = -rhsStackItem.value.f64}});
+      break;
+    }
+
+    case InstructionType::F32CEIL: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f32,
+           .value = {.f32 = std::ceil(rhsStackItem.value.f32)}});
+      break;
+    }
+
+    case InstructionType::F64CEIL: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f64,
+           .value = {.f64 = std::ceil(rhsStackItem.value.f64)}});
+      break;
+    }
+
+    case InstructionType::F32FLOOR: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f32,
+           .value = {.f32 = std::floor(rhsStackItem.value.f32)}});
+      break;
+    }
+
+    case InstructionType::F64FLOOR: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f64,
+           .value = {.f64 = std::floor(rhsStackItem.value.f64)}});
+      break;
+    }
+
+    case InstructionType::F32TRUNC: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f32,
+           .value = {.f32 = std::trunc(rhsStackItem.value.f32)}});
+      break;
+    }
+
+    case InstructionType::F64TRUNC: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f64,
+           .value = {.f64 = std::trunc(rhsStackItem.value.f64)}});
+      break;
+    }
+
+    case InstructionType::F32NEAREST: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f32,
+           .value = {.f32 = std::round(rhsStackItem.value.f32)}});
+      break;
+    }
+
+    case InstructionType::F64NEAREST: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f64,
+           .value = {.f64 = std::round(rhsStackItem.value.f64)}});
+      break;
+    }
+
+    case InstructionType::F32SQRT: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f32,
+           .value = {.f32 = std::sqrt(rhsStackItem.value.f32)}});
+      break;
+    }
+
+    case InstructionType::F64SQRT: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f64,
+           .value = {.f64 = std::sqrt(rhsStackItem.value.f64)}});
+      break;
+    }
+
+    case InstructionType::F32MIN: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f32,
+           .value = {.f32 = std::min(lhsStackItem.value.f32,
+                                     rhsStackItem.value.f32)}});
+      break;
+    }
+
+    case InstructionType::F64MIN: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f64,
+           .value = {.f64 = std::min(lhsStackItem.value.f64,
+                                     rhsStackItem.value.f64)}});
+      break;
+    }
+
+    case InstructionType::F32MAX: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f32,
+           .value = {.f32 = std::max(lhsStackItem.value.f32,
+                                     rhsStackItem.value.f32)}});
+      break;
+    }
+
+    case InstructionType::F64MAX: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f64,
+           .value = {.f64 = std::max(lhsStackItem.value.f64,
+                                     rhsStackItem.value.f64)}});
+      break;
+    }
+
+    case InstructionType::F32COPYSIGN: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f32,
+           .value = {.f32 = std::copysign(lhsStackItem.value.f32,
+                                          rhsStackItem.value.f32)}});
+      break;
+    }
+
+    case InstructionType::F64COPYSIGN: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      StackItem lhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f64,
+           .value = {.f64 = std::copysign(lhsStackItem.value.f64,
+                                          rhsStackItem.value.f64)}});
       break;
     }
 

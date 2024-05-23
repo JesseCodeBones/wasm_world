@@ -260,6 +260,121 @@
                 (i64.const 2)
             )
         )
+
+        (call $printNumberF32
+            (f32.abs
+                (f32.const -42)
+            )
+        )
+        (call $printNumberF64
+            (f64.abs
+                (f64.const -42)
+            )
+        )
+        (call $printNumberF32
+            (f32.neg
+                (f32.const 42)
+            )
+        )
+        (call $printNumberF64
+            (f64.neg
+                (f64.const 42)
+            )
+        )
+        (call $printNumberF32
+            (f32.ceil
+                (f32.const 42.1)
+            )
+        )
+        (call $printNumberF64
+            (f64.ceil
+                (f64.const 42.1)
+            )
+        )
+
+        (call $printNumberF32
+            (f32.floor
+                (f32.const 42.1)
+            )
+        )
+        (call $printNumberF64
+            (f64.floor
+                (f64.const 42.1)
+            )
+        )
+
+        (call $printNumberF32
+            (f32.trunc
+                (f32.const 42.99999)
+            )
+        )
+        (call $printNumberF64
+            (f64.trunc
+                (f64.const 42.99999)
+            )
+        )
+
+        (call $printNumberF32
+            (f32.nearest
+                (f32.const 42.99999)
+            )
+        )
+        (call $printNumberF64
+            (f64.nearest
+                (f64.const 42.99999)
+            )
+        )
+
+        (call $printNumberF32
+            (f32.sqrt
+                (f32.const 42.1)
+            )
+        )
+        (call $printNumberF64
+            (f64.sqrt
+                (f64.const 42.1)
+            )
+        )
+
+        (call $printNumberF32
+            (f32.min
+                (f32.const 42.1)
+                (f32.const -1)
+            )
+        )
+        (call $printNumberF64
+            (f64.min
+                (f64.const 42.1)
+                (f64.const -1)
+            )
+        )
+
+        (call $printNumberF32
+            (f32.max
+                (f32.const 42.1)
+                (f32.const -1)
+            )
+        )
+        (call $printNumberF64
+            (f64.max
+                (f64.const 42.1)
+                (f64.const -1)
+            )
+        )
+
+        (call $printNumberF32
+            (f32.copysign
+                (f32.const 42.1)
+                (f32.const -1)
+            )
+        )
+        
+        (call $printNumberF64
+            (f64.copysign
+                (f64.const 42.1)
+                (f64.const -1)
+            )
+        )
     )
     (start $_start)
 )

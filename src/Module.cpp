@@ -238,7 +238,40 @@ Module::compileInstruction(InstructionType opcode,
   case InstructionType::F64DIV:
   case InstructionType::F64MIN:
   case InstructionType::F64MAX:
-  case InstructionType::F64COPYSIGN: {
+  case InstructionType::F64COPYSIGN:
+
+  case InstructionType::I32WRAP_I64:
+  case InstructionType::I32TRUNC_S_F32:
+  case InstructionType::I32TRUNC_U_F32:
+  case InstructionType::I32TRUNC_S_F64:
+  case InstructionType::I32TRUNC_U_F64:
+  case InstructionType::I64EXTEND_S_I32:
+  case InstructionType::I64EXTEND_U_I32:
+  case InstructionType::I64TRUNC_S_F32:
+  case InstructionType::I64TRUNC_U_F32:
+  case InstructionType::I64TRUNC_S_F64:
+  case InstructionType::I64TRUNC_U_F64:
+  case InstructionType::F32CONVERT_S_I32:
+  case InstructionType::F32CONVERT_U_I32:
+  case InstructionType::F32CONVERT_S_I64:
+  case InstructionType::F32CONVERT_U_I64:
+  case InstructionType::F32DEMOTE_F64:
+  case InstructionType::F64CONVERT_S_I32:
+  case InstructionType::F64CONVERT_U_I32:
+  case InstructionType::F64CONVERT_S_I64:
+  case InstructionType::F64CONVERT_U_I64:
+  case InstructionType::F64PROMOTE_F32:
+  case InstructionType::I32REINTERPRET_F32:
+  case InstructionType::I64REINTERPRET_F64:
+  case InstructionType::F32REINTERPRET_I32:
+  case InstructionType::F64REINTERPRET_I64:
+  case InstructionType::I32EXTEND8_S:
+  case InstructionType::I32EXTEND16_S:
+  case InstructionType::I64EXTEND8_S:
+  case InstructionType::I64EXTEND16_S:
+  case InstructionType::I64EXTEND32_S:
+
+  {
     return std::make_unique<NumericOperatorInstruction>(opcode);
   }
 
