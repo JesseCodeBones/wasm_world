@@ -375,6 +375,71 @@
                 (f64.const -1)
             )
         )
+
+        (call $printNumberI32
+            (i32.wrap_i64
+                (i64.const 0xffffffffffffffff)
+            )
+        )
+
+        (call $printNumberI32
+            (i32.trunc_f32_s
+                (f32.const 42.9)
+            )
+        )
+
+        (call $printNumberI32
+            (i32.trunc_f32_u
+                (f32.const 42.1)
+            )
+        )
+
+        (call $printNumberI32
+            (i32.trunc_f64_s
+                (f64.const 42.9)
+            )
+        )
+
+        (call $printNumberI32
+            (i32.trunc_f64_u
+                (f64.const 42.1)
+            )
+        )
+
+        (call $printNumberI64
+            (i64.trunc_f32_s
+                (f32.const 42.9)
+            )
+        )
+
+        (call $printNumberI64
+            (i64.trunc_f32_u
+                (f32.const 42.1)
+            )
+        )
+
+        (call $printNumberI64
+            (i64.trunc_f64_s
+                (f64.const 42.9)
+            )
+        )
+
+        (call $printNumberI64
+            (i64.trunc_f64_u
+                (f64.const 42.1)
+            )
+        )
+
+        (call $printNumberI64
+            (i64.extend_i32_s
+                (i32.const -1)
+            )
+        )
+        (call $printNumberI64
+            (i64.extend_i32_u
+                (i32.const -1)
+            )
+        )
     )
     (start $_start)
 )

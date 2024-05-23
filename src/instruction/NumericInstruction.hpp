@@ -1407,6 +1407,130 @@ public:
       break;
     }
 
+    case InstructionType::I32WRAP_I64: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 = static_cast<int32_t>(rhsStackItem.value.i64)}});
+      break;
+    }
+
+    case InstructionType::I32TRUNC_S_F32: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 = static_cast<int32_t>(rhsStackItem.value.f32)}});
+      break;
+    }
+
+    case InstructionType::I32TRUNC_U_F32: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      float f = rhsStackItem.value.f32;
+      if (std::isnan(f) || f < 0 ||
+          static_cast<int32_t>(f) > std::numeric_limits<uint32_t>::max()) {
+        throw std::runtime_error(
+            "I32TRUNC_U_F32 ERROR, the imput f32 cannot be truncated!");
+      }
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 = static_cast<int32_t>(rhsStackItem.value.f32)}});
+      break;
+    }
+
+    case InstructionType::I32TRUNC_S_F64: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 = static_cast<int32_t>(rhsStackItem.value.f64)}});
+      break;
+    }
+
+    case InstructionType::I32TRUNC_U_F64: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      float f = rhsStackItem.value.f64;
+      if (std::isnan(f) || f < 0 ||
+          static_cast<int32_t>(f) > std::numeric_limits<uint32_t>::max()) {
+        throw std::runtime_error(
+            "I32TRUNC_U_F64 ERROR, the imput f64 cannot be truncated!");
+      }
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 = static_cast<int32_t>(rhsStackItem.value.f64)}});
+      break;
+    }
+
+    case InstructionType::I64TRUNC_S_F32: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(rhsStackItem.value.f32)}});
+      break;
+    }
+
+    case InstructionType::I64TRUNC_U_F32: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      float f = rhsStackItem.value.f32;
+      if (std::isnan(f) || f < 0 ||
+          static_cast<int64_t>(f) > std::numeric_limits<uint64_t>::max()) {
+        throw std::runtime_error(
+            "I64TRUNC_U_F32 ERROR, the imput f32 cannot be truncated!");
+      }
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(rhsStackItem.value.f32)}});
+      break;
+    }
+
+    case InstructionType::I64TRUNC_S_F64: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(rhsStackItem.value.f64)}});
+      break;
+    }
+
+    case InstructionType::I64TRUNC_U_F64: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      float f = rhsStackItem.value.f64;
+      if (std::isnan(f) || f < 0 ||
+          static_cast<int64_t>(f) > std::numeric_limits<uint64_t>::max()) {
+        throw std::runtime_error(
+            "I64TRUNC_U_F64 ERROR, the imput f64 cannot be truncated!");
+      }
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(rhsStackItem.value.f64)}});
+      break;
+    }
+
+    case InstructionType::I64EXTEND_S_I32: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(rhsStackItem.value.i32)}});
+      break;
+    }
+
+    case InstructionType::I64EXTEND_U_I32: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(
+                         static_cast<uint32_t>(rhsStackItem.value.i32))}});
+      break;
+    }
+
     default: {
       throw std::runtime_error("unsupported numeric operator instruction");
     }
