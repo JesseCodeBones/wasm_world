@@ -1,6 +1,7 @@
 #include "NumericInstruction.hpp"
 #include <algorithm>
 #include <bit>
+#include <cstdint>
 #include <stdexcept>
 void NumericOperatorInstruction::fire(void *module) {
   Module *ptr = (Module *)module;
@@ -518,9 +519,9 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->pop();
     ptr->runtime.getStack()->push(
         {.type = ValType::i64,
-         .value = {.i64 = static_cast<int64_t>(
-                       std::rotl(static_cast<uint64_t>(lhsStackItem.value.i64),
-                                 rhsStackItem.value.i64))}});
+         .value = {.i64 = static_cast<int64_t>(std::rotl(
+                       static_cast<uint64_t>(lhsStackItem.value.i64),
+                       static_cast<int32_t>(rhsStackItem.value.i64)))}});
 
     break;
   }
@@ -543,9 +544,9 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->pop();
     ptr->runtime.getStack()->push(
         {.type = ValType::i64,
-         .value = {.i64 = static_cast<int64_t>(
-                       std::rotr(static_cast<uint64_t>(lhsStackItem.value.i64),
-                                 rhsStackItem.value.i64))}});
+         .value = {.i64 = static_cast<int64_t>(std::rotr(
+                       static_cast<uint64_t>(lhsStackItem.value.i64),
+                       static_cast<int32_t>(rhsStackItem.value.i64)))}});
     break;
   }
 
@@ -768,7 +769,7 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->pop();
     float f = rhsStackItem.value.f32;
     if (std::isnan(f) || f < 0 ||
-        static_cast<int32_t>(f) > std::numeric_limits<uint32_t>::max()) {
+        f > static_cast<float>(std::numeric_limits<uint32_t>::max())) {
       throw std::runtime_error(
           "I32TRUNC_U_F32 ERROR, the imput f32 cannot be truncated!");
     }
@@ -790,9 +791,9 @@ void NumericOperatorInstruction::fire(void *module) {
   case InstructionType::I32TRUNC_U_F64: {
     StackItem rhsStackItem = ptr->runtime.getStack()->top();
     ptr->runtime.getStack()->pop();
-    float f = rhsStackItem.value.f64;
+    double f = rhsStackItem.value.f64;
     if (std::isnan(f) || f < 0 ||
-        static_cast<int32_t>(f) > std::numeric_limits<uint32_t>::max()) {
+        f > static_cast<double>(std::numeric_limits<uint32_t>::max())) {
       throw std::runtime_error(
           "I32TRUNC_U_F64 ERROR, the imput f64 cannot be truncated!");
     }
@@ -816,7 +817,7 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->pop();
     float f = rhsStackItem.value.f32;
     if (std::isnan(f) || f < 0 ||
-        static_cast<int64_t>(f) > std::numeric_limits<uint64_t>::max()) {
+        f > static_cast<float>(std::numeric_limits<uint64_t>::max())) {
       throw std::runtime_error(
           "I64TRUNC_U_F32 ERROR, the imput f32 cannot be truncated!");
     }
@@ -838,9 +839,9 @@ void NumericOperatorInstruction::fire(void *module) {
   case InstructionType::I64TRUNC_U_F64: {
     StackItem rhsStackItem = ptr->runtime.getStack()->top();
     ptr->runtime.getStack()->pop();
-    float f = rhsStackItem.value.f64;
+    double f = rhsStackItem.value.f64;
     if (std::isnan(f) || f < 0 ||
-        static_cast<int64_t>(f) > std::numeric_limits<uint64_t>::max()) {
+        f > static_cast<double>(std::numeric_limits<uint64_t>::max())) {
       throw std::runtime_error(
           "I64TRUNC_U_F64 ERROR, the imput f64 cannot be truncated!");
     }
@@ -940,26 +941,26 @@ void NumericOperatorInstruction::fire(void *module) {
     case InstructionType::F64CONVERT_S_I32: {
       ptr->runtime.getStack()->push(
           {.type = ValType::f64,
-           .value = {.f64 = static_cast<float>(rhsStackItem.value.i32)}});
+           .value = {.f64 = static_cast<double>(rhsStackItem.value.i32)}});
       break;
     }
     case InstructionType::F64CONVERT_U_I32: {
       ptr->runtime.getStack()->push(
           {.type = ValType::f64,
-           .value = {.f64 = static_cast<float>(
+           .value = {.f64 = static_cast<double>(
                          static_cast<uint32_t>(rhsStackItem.value.i32))}});
       break;
     }
     case InstructionType::F64CONVERT_S_I64: {
       ptr->runtime.getStack()->push(
           {.type = ValType::f64,
-           .value = {.f64 = static_cast<float>(rhsStackItem.value.i64)}});
+           .value = {.f64 = static_cast<double>(rhsStackItem.value.i64)}});
       break;
     }
     case InstructionType::F64CONVERT_U_I64: {
       ptr->runtime.getStack()->push(
           {.type = ValType::f64,
-           .value = {.f64 = static_cast<float>(
+           .value = {.f64 = static_cast<double>(
                          static_cast<uint64_t>(rhsStackItem.value.i64))}});
       break;
     }
