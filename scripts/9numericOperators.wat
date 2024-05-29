@@ -440,6 +440,106 @@
                 (i32.const -1)
             )
         )
+
+        (call $printNumberF32
+            (f32.demote_f64
+                (f64.const 42.1)
+            )
+        )
+
+        (call $printNumberF64
+            (f64.promote_f32
+                (f32.const 42.1)
+            )
+        )
+
+        (call $printNumberF32
+            (f32.convert_i32_s
+                (i32.const -1)
+            )
+        )
+        (call $printNumberF32
+            (f32.convert_i32_u
+                (i32.const -1)
+            )
+        )
+        (call $printNumberF32
+            (f32.convert_i64_s
+                (i64.const -1)
+            )
+        )
+        (call $printNumberF32
+            (f32.convert_i64_u
+                (i64.const -1)
+            )
+        )
+        (call $printNumberF64
+            (f64.convert_i32_s
+                (i32.const -1)
+            )
+        )
+        (call $printNumberF64
+            (f64.convert_i32_u
+                (i32.const -1)
+            )
+        )
+        (call $printNumberF64
+            (f64.convert_i64_s
+                (i64.const -1)
+            )
+        )
+        (call $printNumberF64
+            (f64.convert_i64_u
+                (i64.const -1)
+            )
+        )
+        (call $printNumberI32
+            (i32.reinterpret_f32
+                (f32.const -0)
+            )
+        )
+        (call $printNumberI64
+            (i64.reinterpret_f64
+                (f64.const -0)
+            )
+        )
+        (call $printNumberF32
+            (f32.reinterpret_i32
+                (i32.const 0x3F800000)
+            )
+        )
+        (call $printNumberF64
+            (f64.reinterpret_i64
+                (i64.const 0x3FF0000000000000)
+            )
+        )
+
+        (call $printNumberI32
+            (i32.extend8_s
+                (i32.const 0xff)
+            )
+        )
+        (call $printNumberI32
+            (i32.extend16_s
+                (i32.const 0xffff)
+            )
+        )
+
+        (call $printNumberI64
+            (i64.extend8_s
+                (i64.const 0xff)
+            )
+        )
+        (call $printNumberI64
+            (i64.extend16_s
+                (i64.const 0xffff)
+            )
+        )
+        (call $printNumberI64
+            (i64.extend32_s
+                (i64.const 0xffffffff)
+            )
+        )
     )
     (start $_start)
 )

@@ -6,6 +6,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdint>
+#include <cstring>
 #include <stdexcept>
 #include "../Module.hpp"
 #include "Instruction.hpp"
@@ -1531,6 +1532,209 @@ public:
       break;
     }
 
+    case InstructionType::F32DEMOTE_F64: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f32,
+           .value = {.f32 = static_cast<float>(rhsStackItem.value.f64)}});
+      break;
+    }
+
+    case InstructionType::F64PROMOTE_F32: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f64,
+           .value = {.f64 = static_cast<double>(rhsStackItem.value.f32)}});
+      break;
+    }
+
+      // convert part
+    case InstructionType::F32CONVERT_S_I32:
+    case InstructionType::F32CONVERT_U_I32:
+    case InstructionType::F32CONVERT_S_I64:
+    case InstructionType::F32CONVERT_U_I64: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      switch (type) {
+      case InstructionType::F32CONVERT_S_I32: {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::f32,
+             .value = {.f32 = static_cast<float>(rhsStackItem.value.i32)}});
+        break;
+      }
+      case InstructionType::F32CONVERT_U_I32: {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::f32,
+             .value = {.f32 = static_cast<float>(
+                           static_cast<uint32_t>(rhsStackItem.value.i32))}});
+        break;
+      }
+      case InstructionType::F32CONVERT_S_I64: {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::f32,
+             .value = {.f32 = static_cast<float>(rhsStackItem.value.i64)}});
+        break;
+      }
+      case InstructionType::F32CONVERT_U_I64: {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::f32,
+             .value = {.f32 = static_cast<float>(
+                           static_cast<uint64_t>(rhsStackItem.value.i64))}});
+        break;
+      }
+      default: {
+        throw std::runtime_error("invalid f32 convert type");
+        break;
+      }
+      }
+
+      break;
+    }
+
+    case InstructionType::F64CONVERT_S_I32:
+    case InstructionType::F64CONVERT_U_I32:
+    case InstructionType::F64CONVERT_S_I64:
+    case InstructionType::F64CONVERT_U_I64: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      switch (type) {
+      case InstructionType::F64CONVERT_S_I32: {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::f64,
+             .value = {.f64 = static_cast<float>(rhsStackItem.value.i32)}});
+        break;
+      }
+      case InstructionType::F64CONVERT_U_I32: {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::f64,
+             .value = {.f64 = static_cast<float>(
+                           static_cast<uint32_t>(rhsStackItem.value.i32))}});
+        break;
+      }
+      case InstructionType::F64CONVERT_S_I64: {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::f64,
+             .value = {.f64 = static_cast<float>(rhsStackItem.value.i64)}});
+        break;
+      }
+      case InstructionType::F64CONVERT_U_I64: {
+        ptr->runtime.getStack()->push(
+            {.type = ValType::f64,
+             .value = {.f64 = static_cast<float>(
+                           static_cast<uint64_t>(rhsStackItem.value.i64))}});
+        break;
+      }
+      default: {
+        throw std::runtime_error("invalid F64 convert type");
+        break;
+      }
+      }
+
+      break;
+    }
+
+    case InstructionType::I32REINTERPRET_F32: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      int32_t temValue;
+      std::memcpy(&temValue, &rhsStackItem.value.f32, sizeof(int32_t));
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32, .value = {.i32 = temValue}});
+      break;
+    }
+
+    case InstructionType::I64REINTERPRET_F64: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      int64_t temValue;
+      std::memcpy(&temValue, &rhsStackItem.value.f64, sizeof(int64_t));
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64, .value = {.i64 = temValue}});
+      break;
+    }
+
+    case InstructionType::F32REINTERPRET_I32: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      float temValue;
+      std::memcpy(&temValue, &rhsStackItem.value.i32, sizeof(float));
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f32, .value = {.f32 = temValue}});
+      break;
+    }
+
+    case InstructionType::F64REINTERPRET_I64: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      double temValue;
+      std::memcpy(&temValue, &rhsStackItem.value.i64, sizeof(double));
+      ptr->runtime.getStack()->push(
+          {.type = ValType::f64, .value = {.f64 = temValue}});
+      break;
+    }
+
+    case InstructionType::I32EXTEND8_S:
+    case InstructionType::I32EXTEND16_S: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      int32_t temValue;
+      switch (type) {
+      case InstructionType::I32EXTEND8_S: {
+        temValue =
+            static_cast<int32_t>(static_cast<int8_t>(rhsStackItem.value.i32));
+        break;
+      }
+      case InstructionType::I32EXTEND16_S: {
+        temValue =
+            static_cast<int32_t>(static_cast<int16_t>(rhsStackItem.value.i32));
+        break;
+      }
+      default: {
+        throw std::runtime_error("invalid i32 extend with signal type");
+        break;
+      }
+      }
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32, .value = {.i32 = temValue}});
+      break;
+    }
+
+    case InstructionType::I64EXTEND8_S:
+    case InstructionType::I64EXTEND16_S:
+    case InstructionType::I64EXTEND32_S: {
+      StackItem rhsStackItem = ptr->runtime.getStack()->top();
+      ptr->runtime.getStack()->pop();
+      int64_t temValue;
+      switch (type) {
+      case InstructionType::I64EXTEND8_S: {
+        temValue =
+            static_cast<int64_t>(static_cast<int8_t>(rhsStackItem.value.i64));
+        break;
+      }
+      case InstructionType::I64EXTEND16_S: {
+        temValue =
+            static_cast<int64_t>(static_cast<int16_t>(rhsStackItem.value.i64));
+        break;
+      }
+      case InstructionType::I64EXTEND32_S: {
+        temValue =
+            static_cast<int64_t>(static_cast<int32_t>(rhsStackItem.value.i64));
+        break;
+      }
+      default: {
+        throw std::runtime_error("invalid i64 extend with signal type");
+        break;
+      }
+      }
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64, .value = {.i64 = temValue}});
+      break;
+    }
+
+      // **ATENTION**
+      // current compiler donot support saturating truncation instructions
     default: {
       throw std::runtime_error("unsupported numeric operator instruction");
     }

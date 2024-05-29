@@ -120,7 +120,7 @@ Module::compileInstruction(InstructionType opcode,
 
   case (InstructionType::I64CONST): {
     int64_t value =
-        static_cast<int32_t>(ModuleReader::readSignedLEB128(content, pos));
+        static_cast<int64_t>(ModuleReader::readSignedLEB128(content, pos));
     I64ConstInstruction instruction(value);
     return std::make_unique<I64ConstInstruction>(instruction);
   }
