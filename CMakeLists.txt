@@ -6,6 +6,7 @@ enable_testing()
 
 aux_source_directory(src sources)
 aux_source_directory(src/reader sources)
+aux_source_directory(src/instruction sources)
 
 add_executable(wasm-interpreter main.cpp ${sources})
 

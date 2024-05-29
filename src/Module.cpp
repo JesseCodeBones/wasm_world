@@ -120,7 +120,7 @@ Module::compileInstruction(InstructionType opcode,
 
   case (InstructionType::I64CONST): {
     int64_t value =
-        static_cast<int32_t>(ModuleReader::readSignedLEB128(content, pos));
+        static_cast<int64_t>(ModuleReader::readSignedLEB128(content, pos));
     I64ConstInstruction instruction(value);
     return std::make_unique<I64ConstInstruction>(instruction);
   }
@@ -172,7 +172,107 @@ Module::compileInstruction(InstructionType opcode,
   case InstructionType::F64GT:
   case InstructionType::F64LE:
   case InstructionType::F64GE: {
-    return std::make_unique<ComparationInstruction>(opcode);
+    return std::make_unique<ComparisonInstruction>(opcode);
+  }
+
+  case InstructionType::I32CLZ:
+  case InstructionType::I32CTZ:
+  case InstructionType::I32POPCNT:
+  case InstructionType::I32ADD:
+  case InstructionType::I32SUB:
+  case InstructionType::I32MUL:
+  case InstructionType::I32DIV_S:
+  case InstructionType::I32DIV_U:
+  case InstructionType::I32REM_S:
+  case InstructionType::I32REM_U:
+  case InstructionType::I32AND:
+  case InstructionType::I32OR:
+  case InstructionType::I32XOR:
+  case InstructionType::I32SHL:
+  case InstructionType::I32SHR_S:
+  case InstructionType::I32SHR_U:
+  case InstructionType::I32ROTL:
+  case InstructionType::I32ROTR:
+  case InstructionType::I64CLZ:
+  case InstructionType::I64CTZ:
+  case InstructionType::I64POPCNT:
+  case InstructionType::I64ADD:
+  case InstructionType::I64SUB:
+  case InstructionType::I64MUL:
+  case InstructionType::I64DIV_S:
+  case InstructionType::I64DIV_U:
+  case InstructionType::I64REM_S:
+  case InstructionType::I64REM_U:
+  case InstructionType::I64AND:
+  case InstructionType::I64OR:
+  case InstructionType::I64XOR:
+  case InstructionType::I64SHL:
+  case InstructionType::I64SHR_S:
+  case InstructionType::I64SHR_U:
+  case InstructionType::I64ROTL:
+  case InstructionType::I64ROTR:
+  case InstructionType::F32ABS:
+  case InstructionType::F32NEG:
+  case InstructionType::F32CEIL:
+  case InstructionType::F32FLOOR:
+  case InstructionType::F32TRUNC:
+  case InstructionType::F32NEAREST:
+  case InstructionType::F32SQRT:
+  case InstructionType::F32ADD:
+  case InstructionType::F32SUB:
+  case InstructionType::F32MUL:
+  case InstructionType::F32DIV:
+  case InstructionType::F32MIN:
+  case InstructionType::F32MAX:
+  case InstructionType::F32COPYSIGN:
+  case InstructionType::F64ABS:
+  case InstructionType::F64NEG:
+  case InstructionType::F64CEIL:
+  case InstructionType::F64FLOOR:
+  case InstructionType::F64TRUNC:
+  case InstructionType::F64NEAREST:
+  case InstructionType::F64SQRT:
+  case InstructionType::F64ADD:
+  case InstructionType::F64SUB:
+  case InstructionType::F64MUL:
+  case InstructionType::F64DIV:
+  case InstructionType::F64MIN:
+  case InstructionType::F64MAX:
+  case InstructionType::F64COPYSIGN:
+
+  case InstructionType::I32WRAP_I64:
+  case InstructionType::I32TRUNC_S_F32:
+  case InstructionType::I32TRUNC_U_F32:
+  case InstructionType::I32TRUNC_S_F64:
+  case InstructionType::I32TRUNC_U_F64:
+  case InstructionType::I64EXTEND_S_I32:
+  case InstructionType::I64EXTEND_U_I32:
+  case InstructionType::I64TRUNC_S_F32:
+  case InstructionType::I64TRUNC_U_F32:
+  case InstructionType::I64TRUNC_S_F64:
+  case InstructionType::I64TRUNC_U_F64:
+  case InstructionType::F32CONVERT_S_I32:
+  case InstructionType::F32CONVERT_U_I32:
+  case InstructionType::F32CONVERT_S_I64:
+  case InstructionType::F32CONVERT_U_I64:
+  case InstructionType::F32DEMOTE_F64:
+  case InstructionType::F64CONVERT_S_I32:
+  case InstructionType::F64CONVERT_U_I32:
+  case InstructionType::F64CONVERT_S_I64:
+  case InstructionType::F64CONVERT_U_I64:
+  case InstructionType::F64PROMOTE_F32:
+  case InstructionType::I32REINTERPRET_F32:
+  case InstructionType::I64REINTERPRET_F64:
+  case InstructionType::F32REINTERPRET_I32:
+  case InstructionType::F64REINTERPRET_I64:
+  case InstructionType::I32EXTEND8_S:
+  case InstructionType::I32EXTEND16_S:
+  case InstructionType::I64EXTEND8_S:
+  case InstructionType::I64EXTEND16_S:
+  case InstructionType::I64EXTEND32_S:
+
+  {
+    return std::make_unique<NumericOperatorInstruction>(opcode);
   }
 
   default: {
