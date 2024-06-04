@@ -6,7 +6,27 @@ enum class InstructionType : uint8_t {
 
   NOP = 0x01,
   // Control Instructions
-  CALL = 0x10,
+  UNREACHABLE = 0x00, /* unreachable */
+  BLOCK = 0x02,       /* block */
+  LOOP = 0x03,        /* loop */
+  IF = 0x04,          /* if */
+  ELSE = 0x05,        /* else */
+  TRY = 0x06,         /* try */
+  CATCH = 0x07,       /* catch* */
+  THROW = 0x08,       /* throw of a try catch */
+  RETHROW = 0x09,     /* rethrow of a try catch */
+  UNUSED_0x0a = 0x0a,
+  END = 0x0b,                  /* end */
+  BR = 0x0c,                   /* br */
+  BR_IF = 0x0d,                /* br if */
+  BR_TABLE = 0x0e,             /* br table */
+  RETURN = 0x0f,               /* return */
+  CALL = 0x10,                 /* call */
+  CALL_INDIRECT = 0x11,        /* call_indirect */
+  RETURN_CALL = 0x12,          /* return_call */
+  RETURN_CALL_INDIRECT = 0x13, /* return_call_indirect */
+  CALL_REF = 0x14,             /* call_ref */
+  RETURN_CALL_REF = 0x15,      /* return_call_ref */
 
   // Parametric Instructions
   DROP = 0x1a,
@@ -162,7 +182,6 @@ enum class InstructionType : uint8_t {
   I64EXTEND16_S = 0xc3,      /* i64.extend16_s */
   I64EXTEND32_S = 0xc4,      /* i64.extend32_s */
 
-  END = 0x0B
 };
 
 class Instruction {
