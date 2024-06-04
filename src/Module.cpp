@@ -12,6 +12,7 @@
 #include "ImportSec.hpp"
 #include "TypeSec.hpp"
 #include "instruction/CallInstruction.hpp"
+#include "instruction/ControlInstruction.hpp"
 #include "instruction/Instruction.hpp"
 #include "instruction/NumericInstruction.hpp"
 #include "instruction/ParametricInstruction.hpp"
@@ -275,6 +276,29 @@ Module::compileInstruction(InstructionType opcode,
     return std::make_unique<NumericOperatorInstruction>(opcode);
   }
 
+  case InstructionType::UNREACHABLE:
+  case InstructionType::BLOCK:
+  case InstructionType::LOOP:
+  case InstructionType::IF:
+  case InstructionType::ELSE:
+  case InstructionType::TRY:
+  case InstructionType::CATCH:
+  case InstructionType::THROW:
+  case InstructionType::RETHROW:
+  case InstructionType::UNUSED_0x0a:
+  case InstructionType::END:
+  case InstructionType::BR:
+  case InstructionType::BR_IF:
+  case InstructionType::BR_TABLE:
+  case InstructionType::RETURN:
+  case InstructionType::CALL_INDIRECT:
+  case InstructionType::RETURN_CALL:
+  case InstructionType::RETURN_CALL_INDIRECT:
+  case InstructionType::CALL_REF:
+  case InstructionType::RETURN_CALL_REF: {
+    return std::make_unique<ControlInstruction>(opcode);
+  }
+
   default: {
     throw std::runtime_error("not implemented");
   }
@@ -350,6 +374,9 @@ std::any Module::runFunction(uint32_t functionIndex) {
   }
   for (std::unique_ptr<Instruction> &instruction : *function.body) {
     instruction->fire(this);
+    if (instruction->type == InstructionType::RETURN) {
+      break;
+    }
   }
   cleanUpFunctionCall(functionIndex);
   return result;
@@ -362,7 +389,14 @@ void Module::prepareFunctionCall(uint32_t functionIndex) {
 
 void Module::cleanUpFunctionCall(uint32_t functionIndex) {
   assert(internCallStack.back().functionIndex == functionIndex);
-  // TODO handle return values
+  FunctionSec &function = functionSec.at(functionIndex - importSec.size());
+  if (!function.type.returns.empty()) {
+    StackItem returnStackItem = internCallStack.back().functionStack.top();
+    if (internCallStack.size() > 1) {
+      internCallStack.at(internCallStack.size() - 2)
+          .functionStack.push(returnStackItem);
+    }
+  }
   assert(internCallStack.size() > 0);
   internCallStack.pop_back();
   runtime.setCallStack(&internCallStack.back().functionStack);
