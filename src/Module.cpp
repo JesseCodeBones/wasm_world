@@ -277,6 +277,7 @@ Module::compileInstruction(InstructionType opcode,
   }
 
   case InstructionType::UNREACHABLE:
+  case InstructionType::NOP:
   case InstructionType::BLOCK:
   case InstructionType::LOOP:
   case InstructionType::IF:
@@ -329,7 +330,13 @@ Module::compileInstruction(InstructionType opcode,
       return std::move(ifInstruction);
       break;
     }
-
+    // ELSE instruction will not be handled by compile instruction function but
+    // in compile IF instruction
+    case InstructionType::ELSE: {
+      throw std::runtime_error(
+          "ELSE instruction will not be handled by compile instruction "
+          "function but in compile IF instruction");
+    }
     default: break;
     }
     return std::make_unique<ControlInstruction>(opcode);

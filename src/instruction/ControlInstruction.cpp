@@ -12,12 +12,14 @@ void ControlInstruction::fire(void *module) {
 
   switch (type) {
 
-  case InstructionType::RETURN: {
+  case InstructionType::RETURN:
+  case InstructionType::NOP: {
     // return instruction handled in Module::runFunction body
     break;
   }
-    // TODO handle other control instruction
-
+  case InstructionType::UNREACHABLE: {
+    assert(false);
+  }
   default: {
     throw std::runtime_error("invalid control instruction");
   }
