@@ -5,17 +5,17 @@
 #include "../type/ValType.hpp"
 enum class InstructionType : uint8_t {
 
-  NOP = 0x01,
   // Control Instructions
   UNREACHABLE = 0x00, /* unreachable */
-  BLOCK = 0x02,       /* block */
-  LOOP = 0x03,        /* loop */
-  IF = 0x04,          /* if */
-  ELSE = 0x05,        /* else */
-  TRY = 0x06,         /* try */
-  CATCH = 0x07,       /* catch* */
-  THROW = 0x08,       /* throw of a try catch */
-  RETHROW = 0x09,     /* rethrow of a try catch */
+  NOP = 0x01,
+  BLOCK = 0x02,   /* block */
+  LOOP = 0x03,    /* loop */
+  IF = 0x04,      /* if */
+  ELSE = 0x05,    /* else */
+  TRY = 0x06,     /* try */
+  CATCH = 0x07,   /* catch* */
+  THROW = 0x08,   /* throw of a try catch */
+  RETHROW = 0x09, /* rethrow of a try catch */
   UNUSED_0x0a = 0x0a,
   END = 0x0b,                  /* end */
   BR = 0x0c,                   /* br */
