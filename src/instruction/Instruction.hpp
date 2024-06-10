@@ -2,6 +2,7 @@
 #define _wasm_instruction_
 
 #include <cstdint>
+#include "../type/ValType.hpp"
 enum class InstructionType : uint8_t {
 
   NOP = 0x01,
@@ -198,6 +199,30 @@ public:
   }
   virtual void fire(void *module) = 0;
   virtual ~Instruction(){};
+};
+
+class BlockInstruction : public Instruction {
+
+private:
+  ValType blockType;
+  bool hasReturn = false;
+
+public:
+  BlockInstruction() = default;
+
+  bool getHasReturn() {
+    return hasReturn;
+  }
+  void setHasReturn(bool _hasReturn) {
+    hasReturn = _hasReturn;
+  }
+  ValType getBlockType() {
+    return blockType;
+  }
+  void setBlockType(ValType _blockType) {
+    blockType = _blockType;
+  }
+  virtual void fire(void *module) {};
 };
 
 #endif

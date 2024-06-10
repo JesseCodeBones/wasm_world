@@ -296,6 +296,42 @@ Module::compileInstruction(InstructionType opcode,
   case InstructionType::RETURN_CALL_INDIRECT:
   case InstructionType::CALL_REF:
   case InstructionType::RETURN_CALL_REF: {
+    switch (opcode) {
+    case InstructionType::IF: {
+      std::unique_ptr<IfInstruction> ifInstruction =
+          std::make_unique<IfInstruction>(opcode);
+      uint8_t valType = ModuleReader::readUInt8(content, pos);
+      ifInstruction->setHasReturn(valType != 0x40);
+      if (ifInstruction->getHasReturn()) {
+        ifInstruction->setBlockType(static_cast<ValType>(valType));
+      }
+      // then block
+      InstructionType opCode =
+          static_cast<InstructionType>(ModuleReader::readUInt8(content, pos));
+      while (opCode != InstructionType::END &&
+             opCode != InstructionType::ELSE) {
+        auto instruction = compileInstruction(opCode, content, pos);
+        ifInstruction->thenInstructions->push_back(std::move(instruction));
+        opCode =
+            static_cast<InstructionType>(ModuleReader::readUInt8(content, pos));
+      }
+      if (opCode == InstructionType::ELSE) {
+        opCode =
+            static_cast<InstructionType>(ModuleReader::readUInt8(content, pos));
+        while (opCode != InstructionType::END) {
+          auto instruction = compileInstruction(opCode, content, pos);
+          ifInstruction->elseInstructions->push_back(std::move(instruction));
+          opCode = static_cast<InstructionType>(
+              ModuleReader::readUInt8(content, pos));
+        }
+      }
+
+      return std::move(ifInstruction);
+      break;
+    }
+
+    default: break;
+    }
     return std::make_unique<ControlInstruction>(opcode);
   }
 
@@ -312,7 +348,8 @@ Module::compileExpression(std::vector<uint8_t> &content, uint32_t &pos) {
   InstructionType opCode =
       static_cast<InstructionType>(ModuleReader::readUInt8(content, pos));
   while (opCode != InstructionType::END) {
-    result->push_back(compileInstruction(opCode, content, pos));
+    auto instruction = compileInstruction(opCode, content, pos);
+    result->push_back(std::move(instruction));
     opCode =
         static_cast<InstructionType>(ModuleReader::readUInt8(content, pos));
   }
@@ -357,6 +394,7 @@ void Module::compileFunction(uint32_t functionIndex) {
     }
     uint32_t localIndex = localCount--;
   }
+  BlockInstruction functionBlock;
   // TODO handle locals
   function.body =
       compileExpression(function.localsAndExpression, functionReadPos);
@@ -372,6 +410,8 @@ std::any Module::runFunction(uint32_t functionIndex) {
   if (function.body == nullptr) {
     compileFunction(functionIndex);
   }
+
+  // read execute zone
   for (std::unique_ptr<Instruction> &instruction : *function.body) {
     instruction->fire(this);
     if (instruction->type == InstructionType::RETURN) {
