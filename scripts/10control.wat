@@ -24,7 +24,22 @@
                 (i32.const 42)
             )
         )
-    )
 
+
+        (call $printNumberI32
+            (if (result i32)
+                (i32.eq
+                    (i32.const 42)
+                    (i32.const 41)
+                )
+                (then
+                    (i32.const 42)
+                )
+                (else
+                    (i32.const 0)
+                )
+            )
+        )
+    )
     (start $_start)
 )
