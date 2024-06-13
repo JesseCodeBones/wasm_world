@@ -31,4 +31,14 @@ public:
   std::unique_ptr<std::vector<std::unique_ptr<Instruction>>> elseInstructions;
 };
 
+class LoopInstruction : public BlockControlInstruction {
+public:
+  LoopInstruction(InstructionType _type) : BlockControlInstruction(_type) {
+    instructions =
+        std::make_unique<std::vector<std::unique_ptr<Instruction>>>();
+  };
+  void fire(void *module);
+  std::unique_ptr<std::vector<std::unique_ptr<Instruction>>> instructions;
+};
+
 #endif

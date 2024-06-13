@@ -7,6 +7,7 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <string>
 #include <vector>
 #include "FunctionSec.hpp"
 #include "ImportSec.hpp"
@@ -419,7 +420,8 @@ std::any Module::runFunction(uint32_t functionIndex) {
   }
 
   // read execute zone
-  for (std::unique_ptr<Instruction> &instruction : *function.body) {
+  auto &bodyInstructions = *function.body;
+  for (std::unique_ptr<Instruction> &instruction : bodyInstructions) {
     instruction->fire(this);
     if (instruction->type == InstructionType::RETURN) {
       break;

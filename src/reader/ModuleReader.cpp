@@ -299,27 +299,31 @@ ModuleReader::readSingleInstructionFromExpression(std::vector<uint8_t> &binary,
   case static_cast<int>(InstructionType::I32CONST): {
     int32_t value = static_cast<int32_t>(readSignedLEB128(binary, ptr));
     I32ConstInstruction i32Const(value);
-    assert(0x0B == readUInt8(binary, ptr)); // 0x0b is the end of the expression
+    uint8_t endFlag = readUInt8(binary, ptr);
+    assert(0x0B == endFlag); // 0x0b is the end of the expression
     return std::make_unique<I32ConstInstruction>(i32Const);
   }
   case static_cast<int>(InstructionType::I64CONST): {
     int64_t value = readSignedLEB128(binary, ptr);
     I64ConstInstruction i64Const(value);
-    assert(0x0B == readUInt8(binary, ptr)); // 0x0b is the end of the expression
+    uint8_t endFlag = readUInt8(binary, ptr);
+    assert(0x0B == endFlag); // 0x0b is the end of the expression
     return std::make_unique<I64ConstInstruction>(i64Const);
   }
   case static_cast<int>(InstructionType::F32CONST): {
     float value =
         ModuleReader::bit_cast<float>(read4BytesLittleEndian(binary, ptr));
     F32ConstInstruction f32Const(value);
-    assert(0x0B == readUInt8(binary, ptr)); // 0x0b is the end of the expression
+    uint8_t endFlag = readUInt8(binary, ptr);
+    assert(0x0B == endFlag); // 0x0b is the end of the expression
     return std::make_unique<F32ConstInstruction>(f32Const);
   }
   case static_cast<int>(InstructionType::F64CONST): {
     double value =
         ModuleReader::bit_cast<double>(read8BytesLittleEndian(binary, ptr));
     F64ConstInstruction f64Const(value);
-    assert(0x0B == readUInt8(binary, ptr)); // 0x0b is the end of the expression
+    uint8_t endFlag = readUInt8(binary, ptr);
+    assert(0x0B == endFlag); // 0x0b is the end of the expression
     return std::make_unique<F64ConstInstruction>(f64Const);
   }
   default: {
@@ -392,7 +396,8 @@ void ModuleReader::handleType() {
   uint32_t typeCount =
       static_cast<uint32_t>(readUnsignedLEB128(typeSec.content, typeReadPos));
   while (typeCount > 0) {
-    assert(readUInt8(typeSec.content, typeReadPos) == 0x60);
+    uint8_t functionType = readUInt8(typeSec.content, typeReadPos);
+    assert(functionType == 0x60);
     // read parameter vector
     uint32_t parameterCount =
         static_cast<uint32_t>(readUnsignedLEB128(typeSec.content, typeReadPos));

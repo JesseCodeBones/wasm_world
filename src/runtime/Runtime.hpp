@@ -38,6 +38,10 @@ private:
   std::vector<uint8_t> memory;
   std::stack<StackItem> *stack;
   std::vector<ValItem> globals;
+  /// -1 means the code is not in any depth
+  /// label depth will be used in loop and br, br 0 means quit the first loop
+  /// br 1 means quit the second loop
+  int32_t labelDepth = -1;
 
 public:
   void registerAPI(std::string &&packageName, std::string &&identifier,
