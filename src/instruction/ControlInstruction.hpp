@@ -1,5 +1,6 @@
 #ifndef _wasm_control_instruction_
 #define _wasm_control_instruction_
+#include <cstdint>
 #include "../Module.hpp"
 #include "Instruction.hpp"
 class ControlInstruction : public Instruction {
@@ -7,6 +8,17 @@ public:
   ControlInstruction(InstructionType _type);
 
   virtual void fire(void *module);
+};
+
+class BRIFInstruction : public ControlInstruction {
+public:
+  BRIFInstruction(InstructionType _type, uint32_t _targetIndex)
+      : ControlInstruction(_type), targetIndex(_targetIndex) {
+  }
+  void fire(void *module);
+
+private:
+  uint32_t targetIndex;
 };
 
 class BlockControlInstruction : public BlockInstruction {

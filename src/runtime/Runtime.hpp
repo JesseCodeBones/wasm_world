@@ -38,12 +38,9 @@ private:
   std::vector<uint8_t> memory;
   std::stack<StackItem> *stack;
   std::vector<ValItem> globals;
-  /// -1 means the code is not in any depth
-  /// label depth will be used in loop and br, br 0 means quit the first loop
-  /// br 1 means quit the second loop
-  int32_t labelDepth = -1;
-
+  std::vector<void *> loopBlocks; ///> link to loop instruction
 public:
+  int32_t jumpToLoopBlockIndex = -1;
   void registerAPI(std::string &&packageName, std::string &&identifier,
                    TypeSec &&signature, void *funcPtr) {
     // TODO use package name, identifer signature make a key value cache
@@ -71,6 +68,14 @@ public:
 
   std::vector<ValItem> &getGlobals() {
     return globals;
+  }
+
+  void addLoopBlock(void *block) {
+    loopBlocks.push_back(block);
+  }
+
+  void removeLoopBlock() {
+    loopBlocks.pop_back();
   }
 };
 

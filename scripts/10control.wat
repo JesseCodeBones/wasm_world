@@ -51,6 +51,9 @@
             )
         )
         (nop)
+        (local.set $i
+            (i32.const 0)
+        )
         (loop $label
             (local.set $i
                 (i32.add

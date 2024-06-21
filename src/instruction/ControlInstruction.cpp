@@ -42,3 +42,31 @@ void IfInstruction::fire(void *module) {
     }
   }
 }
+
+void LoopInstruction::fire(void *module) {
+  Module *ptr = (Module *)module;
+  ptr->runtime.addLoopBlock(this);
+LOOP_LABEL:
+  for (auto &instruction : *instructions) {
+    instruction->fire(module);
+    if (ptr->runtime.jumpToLoopBlockIndex > -1) {
+      if (ptr->runtime.jumpToLoopBlockIndex == 0) {
+        ptr->runtime.jumpToLoopBlockIndex = -1;
+        goto LOOP_LABEL;
+      } else {
+        ptr->runtime.jumpToLoopBlockIndex--;
+        break;
+      }
+    }
+  }
+  ptr->runtime.removeLoopBlock();
+}
+
+void BRIFInstruction::fire(void *module) {
+  Module *ptr = (Module *)module;
+  StackItem condition = ptr->runtime.getStack()->top();
+  ptr->runtime.getStack()->pop();
+  if (condition.value.i32 != 0) {
+    ptr->runtime.jumpToLoopBlockIndex = targetIndex;
+  }
+}
