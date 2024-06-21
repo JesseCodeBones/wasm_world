@@ -7,6 +7,7 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <string>
 #include <vector>
 #include "FunctionSec.hpp"
 #include "ImportSec.hpp"
@@ -337,6 +338,24 @@ Module::compileInstruction(InstructionType opcode,
           "ELSE instruction will not be handled by compile instruction "
           "function but in compile IF instruction");
     }
+    case InstructionType::LOOP: {
+      auto type = ModuleReader::readUInt8(content, pos);
+      auto instructions = compileExpression(content, pos);
+      auto loopInstruction = std::make_unique<LoopInstruction>(opcode);
+      loopInstruction->instructions = std::move(instructions);
+      return std::move(loopInstruction);
+    }
+    case InstructionType::BR: {
+      uint32_t targetIndex =
+          static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
+      return std::make_unique<BRInstruction>(opcode, targetIndex);
+    }
+    case InstructionType::BR_IF: {
+      uint32_t targetIndex =
+          static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
+      return std::make_unique<BRIFInstruction>(opcode, targetIndex);
+    }
+
     default: break;
     }
     return std::make_unique<ControlInstruction>(opcode);
@@ -395,8 +414,27 @@ void Module::compileFunction(uint32_t functionIndex) {
     uint8_t localType =
         ModuleReader::readUInt8(function.localsAndExpression, functionReadPos);
     while (typeCount > 0) {
-      internCallStack.back().locals.push_back(
-          {.type = static_cast<ValType>(localType)});
+      ValItem localItem = {.type = static_cast<ValType>(localType)};
+      switch (localItem.type) {
+      case ValType::i64: {
+        localItem.value = StackItemValue{.i64 = 0};
+        break;
+      }
+      case ValType::f32: {
+        localItem.value = StackItemValue{.f32 = 0.0f};
+        break;
+      }
+      case ValType::f64: {
+        localItem.value = StackItemValue{.f64 = 0.0};
+        break;
+      }
+      default: {
+        localItem.value = StackItemValue{.i32 = 0};
+        // other type make as i32 type
+        break;
+      }
+      }
+      internCallStack.back().locals.push_back(std::move(localItem));
       typeCount--;
     }
     uint32_t localIndex = localCount--;
@@ -419,7 +457,8 @@ std::any Module::runFunction(uint32_t functionIndex) {
   }
 
   // read execute zone
-  for (std::unique_ptr<Instruction> &instruction : *function.body) {
+  auto &bodyInstructions = *function.body;
+  for (std::unique_ptr<Instruction> &instruction : bodyInstructions) {
     instruction->fire(this);
     if (instruction->type == InstructionType::RETURN) {
       break;

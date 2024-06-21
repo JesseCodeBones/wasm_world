@@ -15,6 +15,7 @@
     ) 
 
     (func $_start
+        (local $i i32)
         (call $printNumberI32
             (call $returnI32)
         )
@@ -50,6 +51,50 @@
             )
         )
         (nop)
+        (local.set $i
+            (i32.const 0)
+        )
+        (loop $label
+            (local.set $i
+                (i32.add
+                    (local.get $i)
+                    (i32.const 1)
+                )
+            )
+            (call $printNumberI32 
+            	(local.get $i)
+            )
+            (br_if $label
+                (i32.lt_s 
+                    (local.get $i)
+                    (i32.const 10)
+                )
+            )
+        )
+        (local.set $i
+            (i32.const 0)
+        )
+
+        (loop $anotherLabel
+            (local.set $i
+                (i32.add
+                    (local.get $i)
+                    (i32.const 1)
+                )
+            )
+            (call $printNumberI32 
+            	(local.get $i)
+            )
+            (if 
+                (i32.lt_s 
+                    (local.get $i)
+                    (i32.const 10)
+                )
+                (then
+                    (br $anotherLabel)
+                )
+            )
+        )
     )
     (start $_start)
 )

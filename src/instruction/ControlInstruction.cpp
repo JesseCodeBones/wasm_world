@@ -41,4 +41,43 @@ void IfInstruction::fire(void *module) {
       }
     }
   }
+  // all control block should reduce jumpToLoopBlockIndex by 1
+  if (ptr->runtime.jumpToLoopBlockIndex > -1) {
+    ptr->runtime.jumpToLoopBlockIndex--;
+  }
+}
+
+void LoopInstruction::fire(void *module) {
+  Module *ptr = (Module *)module;
+  ptr->runtime.addLoopBlock(this);
+LOOP_LABEL:
+  for (auto &instruction : *instructions) {
+    instruction->fire(module);
+    if (ptr->runtime.jumpToLoopBlockIndex > -1) {
+      if (ptr->runtime.jumpToLoopBlockIndex == 0) {
+        ptr->runtime.jumpToLoopBlockIndex = -1;
+        goto LOOP_LABEL;
+      } else {
+        ptr->runtime.jumpToLoopBlockIndex--;
+        break;
+      }
+    }
+  }
+  ptr->runtime.removeLoopBlock();
+}
+
+void BRIFInstruction::fire(void *module) {
+  assert(static_cast<int32_t>(targetIndex) > -1);
+  Module *ptr = (Module *)module;
+  StackItem condition = ptr->runtime.getStack()->top();
+  ptr->runtime.getStack()->pop();
+  if (condition.value.i32 != 0) {
+    ptr->runtime.jumpToLoopBlockIndex = targetIndex;
+  }
+}
+
+void BRInstruction::fire(void *module) {
+  assert(static_cast<int32_t>(targetIndex) > -1);
+  Module *ptr = (Module *)module;
+  ptr->runtime.jumpToLoopBlockIndex = targetIndex;
 }
