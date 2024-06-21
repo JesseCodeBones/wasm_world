@@ -71,6 +71,30 @@
                 )
             )
         )
+        (local.set $i
+            (i32.const 0)
+        )
+
+        (loop $anotherLabel
+            (local.set $i
+                (i32.add
+                    (local.get $i)
+                    (i32.const 1)
+                )
+            )
+            (call $printNumberI32 
+            	(local.get $i)
+            )
+            (if 
+                (i32.lt_s 
+                    (local.get $i)
+                    (i32.const 10)
+                )
+                (then
+                    (br $anotherLabel)
+                )
+            )
+        )
     )
     (start $_start)
 )

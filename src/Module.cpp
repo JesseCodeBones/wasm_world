@@ -345,6 +345,11 @@ Module::compileInstruction(InstructionType opcode,
       loopInstruction->instructions = std::move(instructions);
       return std::move(loopInstruction);
     }
+    case InstructionType::BR: {
+      uint32_t targetIndex =
+          static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
+      return std::make_unique<BRInstruction>(opcode, targetIndex);
+    }
     case InstructionType::BR_IF: {
       uint32_t targetIndex =
           static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));

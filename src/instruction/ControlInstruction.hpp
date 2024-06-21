@@ -21,6 +21,17 @@ private:
   uint32_t targetIndex;
 };
 
+class BRInstruction : public ControlInstruction {
+public:
+  BRInstruction(InstructionType _type, uint32_t _targetIndex)
+      : ControlInstruction(_type), targetIndex(_targetIndex) {
+  }
+  void fire(void *module);
+
+private:
+  uint32_t targetIndex;
+};
+
 class BlockControlInstruction : public BlockInstruction {
 public:
   BlockControlInstruction(InstructionType _type) : BlockInstruction() {
