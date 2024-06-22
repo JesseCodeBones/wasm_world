@@ -85,13 +85,15 @@
             (call $printNumberI32 
             	(local.get $i)
             )
-            (if 
-                (i32.lt_s 
-                    (local.get $i)
-                    (i32.const 10)
-                )
-                (then
-                    (br $anotherLabel)
+            (block
+                (if 
+                    (i32.lt_s 
+                        (local.get $i)
+                        (i32.const 10)
+                    )
+                    (then
+                        (br $anotherLabel)
+                    )
                 )
             )
         )

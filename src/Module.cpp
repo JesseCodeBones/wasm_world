@@ -340,9 +340,8 @@ Module::compileInstruction(InstructionType opcode,
     }
     case InstructionType::LOOP: {
       auto type = ModuleReader::readUInt8(content, pos);
-      auto instructions = compileExpression(content, pos);
       auto loopInstruction = std::make_unique<LoopInstruction>(opcode);
-      loopInstruction->instructions = std::move(instructions);
+      loopInstruction->instructions = compileExpression(content, pos);
       return std::move(loopInstruction);
     }
     case InstructionType::BR: {
@@ -354,6 +353,13 @@ Module::compileInstruction(InstructionType opcode,
       uint32_t targetIndex =
           static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
       return std::make_unique<BRIFInstruction>(opcode, targetIndex);
+    }
+
+    case InstructionType::BLOCK: {
+      auto type = ModuleReader::readUInt8(content, pos);
+      auto blockInstruction = std::make_unique<BlockInstruction>();
+      blockInstruction->instructions = compileExpression(content, pos);
+      return blockInstruction;
     }
 
     default: break;
@@ -439,7 +445,6 @@ void Module::compileFunction(uint32_t functionIndex) {
     }
     uint32_t localIndex = localCount--;
   }
-  BlockInstruction functionBlock;
   // TODO handle locals
   function.body =
       compileExpression(function.localsAndExpression, functionReadPos);

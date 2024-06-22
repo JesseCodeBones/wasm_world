@@ -10,6 +10,30 @@ public:
   virtual void fire(void *module);
 };
 
+class BlockBaseInstruction : public Instruction {
+
+private:
+  ValType blockType;
+  bool hasReturn = false;
+
+public:
+  BlockBaseInstruction() = default;
+
+  bool getHasReturn() {
+    return hasReturn;
+  }
+  void setHasReturn(bool _hasReturn) {
+    hasReturn = _hasReturn;
+  }
+  ValType getBlockType() {
+    return blockType;
+  }
+  void setBlockType(ValType _blockType) {
+    blockType = _blockType;
+  }
+  virtual void fire(void *module){};
+};
+
 class BRIFInstruction : public ControlInstruction {
 public:
   BRIFInstruction(InstructionType _type, uint32_t _targetIndex)
@@ -32,9 +56,9 @@ private:
   uint32_t targetIndex;
 };
 
-class BlockControlInstruction : public BlockInstruction {
+class BlockControlInstruction : public BlockBaseInstruction {
 public:
-  BlockControlInstruction(InstructionType _type) : BlockInstruction() {
+  BlockControlInstruction(InstructionType _type) : BlockBaseInstruction() {
     type = _type;
   }
   virtual void fire(void *module) = 0;
@@ -62,6 +86,24 @@ public:
   };
   void fire(void *module);
   std::unique_ptr<std::vector<std::unique_ptr<Instruction>>> instructions;
+};
+
+class BlockInstruction : public Instruction {
+public:
+  BlockInstruction() : Instruction() {
+    instructions =
+        std::make_unique<std::vector<std::unique_ptr<Instruction>>>();
+  }
+  std::unique_ptr<std::vector<std::unique_ptr<Instruction>>> instructions;
+  void fire(void *module) {
+    Module *ptr = (Module *)module;
+    for (auto &instruction : *instructions) {
+      instruction->fire(module);
+    }
+    if (ptr->runtime.jumpToLoopBlockIndex > -1) {
+      ptr->runtime.jumpToLoopBlockIndex--;
+    }
+  }
 };
 
 #endif

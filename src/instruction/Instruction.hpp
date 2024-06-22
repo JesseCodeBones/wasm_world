@@ -201,28 +201,4 @@ public:
   virtual ~Instruction(){};
 };
 
-class BlockInstruction : public Instruction {
-
-private:
-  ValType blockType;
-  bool hasReturn = false;
-
-public:
-  BlockInstruction() = default;
-
-  bool getHasReturn() {
-    return hasReturn;
-  }
-  void setHasReturn(bool _hasReturn) {
-    hasReturn = _hasReturn;
-  }
-  ValType getBlockType() {
-    return blockType;
-  }
-  void setBlockType(ValType _blockType) {
-    blockType = _blockType;
-  }
-  virtual void fire(void *module) {};
-};
-
 #endif
