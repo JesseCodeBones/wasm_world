@@ -55,6 +55,11 @@ public:
   void *memoryBasePtr() {
     return memory.data();
   }
+
+  void *memoryPtr(uint32_t offset) {
+    return memory.data() + offset;
+  }
+
   std::stack<StackItem> *getStack() {
     return stack;
   }

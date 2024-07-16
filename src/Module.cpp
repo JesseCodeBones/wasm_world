@@ -7,7 +7,6 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
-#include <string>
 #include <vector>
 #include "FunctionSec.hpp"
 #include "ImportSec.hpp"
@@ -15,6 +14,7 @@
 #include "instruction/CallInstruction.hpp"
 #include "instruction/ControlInstruction.hpp"
 #include "instruction/Instruction.hpp"
+#include "instruction/MemoryInstruction.hpp"
 #include "instruction/NumericInstruction.hpp"
 #include "instruction/ParametricInstruction.hpp"
 #include "instruction/VariableInstruction.hpp"
@@ -365,6 +365,46 @@ Module::compileInstruction(InstructionType opcode,
     default: break;
     }
     return std::make_unique<ControlInstruction>(opcode);
+  }
+  case InstructionType::I32_LOAD:
+  case InstructionType::I64_LOAD:
+  case InstructionType::F32_LOAD:
+  case InstructionType::F64_LOAD:
+  case InstructionType::I32_LOAD8_S:
+  case InstructionType::I32_LOAD8_U:
+  case InstructionType::I32_LOAD16_S:
+  case InstructionType::I32_LOAD16_U:
+  case InstructionType::I64_LOAD8_S:
+  case InstructionType::I64_LOAD8_U:
+  case InstructionType::I64_LOAD16_S:
+  case InstructionType::I64_LOAD16_U:
+  case InstructionType::I64_LOAD32_S:
+  case InstructionType::I64_LOAD32_U:
+  case InstructionType::I32_STORE:
+  case InstructionType::I64_STORE:
+  case InstructionType::F32_STORE:
+  case InstructionType::F64_STORE:
+  case InstructionType::I32_STORE8:
+  case InstructionType::I32_STORE16:
+  case InstructionType::I64_STORE8:
+  case InstructionType::I64_STORE16:
+  case InstructionType::I64_STORE32:
+  case InstructionType::MEMORY_SIZE:
+  case InstructionType::MEMORY_GROW: {
+    auto memoryInstruction = std::make_unique<MemoryInstruction>(opcode);
+    switch (opcode) {
+    case InstructionType::I32_STORE:
+    case InstructionType::I32_LOAD: {
+      uint32_t align = ModuleReader::readUnsignedLEB128(content, pos);
+      uint32_t offset = ModuleReader::readUnsignedLEB128(content, pos);
+      memoryInstruction->memoryAlign = align;
+      memoryInstruction->memoryOffset = offset;
+    }
+    default: {
+      break;
+    }
+    }
+    return memoryInstruction;
   }
 
   default: {
