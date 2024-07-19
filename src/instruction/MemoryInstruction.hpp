@@ -2,6 +2,9 @@
 #define _WASM_MEMORY_INSTRUCTION_
 #include <cstdint>
 #include "Instruction.hpp"
+
+/// memory.fill memory.copy data.drop memory.init instructions are not
+/// implemented yet
 class MemoryInstruction : public Instruction {
 public:
   MemoryInstruction(InstructionType _type) {
