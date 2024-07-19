@@ -416,8 +416,10 @@ Module::compileInstruction(InstructionType opcode,
     case InstructionType::I64_STORE8:
     case InstructionType::I64_STORE16:
     case InstructionType::I64_STORE32: {
-      uint32_t align = ModuleReader::readUnsignedLEB128(content, pos);
-      uint32_t offset = ModuleReader::readUnsignedLEB128(content, pos);
+      uint32_t align =
+          static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
+      uint32_t offset =
+          static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
       memoryInstruction->memoryAlign = align;
       memoryInstruction->memoryOffset = offset;
       break;

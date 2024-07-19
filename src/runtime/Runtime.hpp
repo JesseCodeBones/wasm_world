@@ -57,7 +57,7 @@ public:
   }
 
   uint32_t memorySize() {
-    return memory.size() / 65536;
+    return static_cast<uint32_t>(memory.size() / 65536);
   }
 
   void memoryGrow(uint32_t growSize) {
