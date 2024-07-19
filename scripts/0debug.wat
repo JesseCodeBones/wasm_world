@@ -1,9 +1,15 @@
 (module
-    (import "env" "printNumber" (func $printNumberF64 (param f64) ))
+    (memory 2)
+    (import "env" "printNumber" (func $printNumberI32 (param i32) ))
     (func $_start
-        (call $printNumberF64
-            (f64.reinterpret_i64
-                (i64.const 0x3FF0000000000000)
+        (block
+            (call $printNumberI32
+                (memory.grow (i32.const 5))
+            )
+        )
+        (block
+            (call $printNumberI32
+                (memory.size)
             )
         )
     )

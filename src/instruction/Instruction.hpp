@@ -41,6 +41,33 @@ enum class InstructionType : uint8_t {
   GLOBALGET = 0x23,
   GLOBALSET = 0x24,
 
+  // Memory Instructions
+  I32_LOAD = 0x28,     /* i32.load */
+  I64_LOAD = 0x29,     /* i64.load */
+  F32_LOAD = 0x2a,     /* f32.load */
+  F64_LOAD = 0x2b,     /* f64.load */
+  I32_LOAD8_S = 0x2c,  /* i32.load8_s */
+  I32_LOAD8_U = 0x2d,  /* i32.load8_u */
+  I32_LOAD16_S = 0x2e, /* i32.load16_s */
+  I32_LOAD16_U = 0x2f, /* i32.load16_u */
+  I64_LOAD8_S = 0x30,  /* i64.load8_s */
+  I64_LOAD8_U = 0x31,  /* i64.load8_u */
+  I64_LOAD16_S = 0x32, /* i64.load16_s */
+  I64_LOAD16_U = 0x33, /* i64.load16_u */
+  I64_LOAD32_S = 0x34, /* i32.load32_s */
+  I64_LOAD32_U = 0x35, /* i32.load32_u */
+  I32_STORE = 0x36,    /* i32.store */
+  I64_STORE = 0x37,    /* i64.store */
+  F32_STORE = 0x38,    /* f32.store */
+  F64_STORE = 0x39,    /* f64.store */
+  I32_STORE8 = 0x3a,   /* i32.store8 */
+  I32_STORE16 = 0x3b,  /* i32.store16 */
+  I64_STORE8 = 0x3c,   /* i64.store8 */
+  I64_STORE16 = 0x3d,  /* i64.store16 */
+  I64_STORE32 = 0x3e,  /* i64.store32 */
+  MEMORY_SIZE = 0x3f,  /* memory.size */
+  MEMORY_GROW = 0x40,  /* memory.grow */
+
   // Numeric Instructions
   I32CONST = 0x41,
   I64CONST = 0x42,
