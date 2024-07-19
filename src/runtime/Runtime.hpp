@@ -56,6 +56,14 @@ public:
     return memory.data();
   }
 
+  uint32_t memorySize() {
+    return memory.size() / 65536;
+  }
+
+  void memoryGrow(uint32_t growSize) {
+    memory.resize(memory.size() + growSize * 65536);
+  }
+
   void *memoryPtr(uint32_t offset) {
     return memory.data() + offset;
   }

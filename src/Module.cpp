@@ -420,6 +420,12 @@ Module::compileInstruction(InstructionType opcode,
       uint32_t offset = ModuleReader::readUnsignedLEB128(content, pos);
       memoryInstruction->memoryAlign = align;
       memoryInstruction->memoryOffset = offset;
+      break;
+    }
+    case InstructionType::MEMORY_SIZE:
+    case InstructionType::MEMORY_GROW: {
+      ModuleReader::readUInt8(content, pos);
+      break;
     }
     default: {
       break;

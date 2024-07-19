@@ -214,6 +214,24 @@ void MemoryInstruction::fire(void *module) {
     }
     break;
   }
+  case InstructionType::MEMORY_SIZE: {
+    uint32_t memorySize = ptr->runtime.memorySize();
+    ptr->runtime.getStack()->push(
+        {.type = ValType::i32,
+         .value = {.i32 = static_cast<int32_t>(memorySize)}});
+    break;
+  }
+  case InstructionType::MEMORY_GROW: {
+    uint32_t memorySize = ptr->runtime.memorySize();
+    StackItem growPageSize = ptr->runtime.getStack()->top();
+    ptr->runtime.getStack()->pop();
+    int32_t pageSize = growPageSize.value.i32;
+    ptr->runtime.memoryGrow(static_cast<uint32_t>(pageSize));
+    ptr->runtime.getStack()->push(
+        {.type = ValType::i32,
+         .value = {.i32 = static_cast<int32_t>(memorySize)}});
+    break;
+  }
   default: {
     throw std::runtime_error("Invalid memory instruction");
   }
