@@ -36,6 +36,7 @@ class Runtime {
 private:
   std::vector<API> APIs;
   std::vector<uint8_t> memory;
+  std::vector<uint32_t> table;
   std::stack<StackItem> *stack;
   std::vector<ValItem> globals;
   std::vector<void *> loopBlocks; ///> link to loop instruction
@@ -52,6 +53,14 @@ public:
   void linkMemory(std::vector<uint8_t> &&_memory) {
     memory = _memory;
   }
+  void linkTable(std::vector<uint32_t> &&_table) {
+    table = _table;
+  }
+
+  std::vector<uint32_t> &getTable() {
+    return table;
+  }
+
   void *memoryBasePtr() {
     return memory.data();
   }

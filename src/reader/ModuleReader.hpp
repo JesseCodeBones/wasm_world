@@ -16,6 +16,8 @@ public:
 
   void prepareModule();
 
+  void handleAfterPrepareModuleBeforeRun();
+
   static uint8_t readUInt8(std::vector<uint8_t> &binary, uint32_t &ptr);
   static uint64_t readUnsignedLEB128(std::vector<uint8_t> &binary,
                                      uint32_t &ptr);
@@ -68,5 +70,7 @@ private:
   void handleCode();
   void handleFunction();
   void handleGlobal();
+  void handleTable();
+  void handleElement();
 };
 #endif
