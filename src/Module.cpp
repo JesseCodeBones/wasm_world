@@ -370,6 +370,22 @@ Module::compileInstruction(InstructionType opcode,
       return std::make_unique<CallIndirectInstruction>(tableIndex, typeIndex);
     }
 
+    case InstructionType::BR_TABLE: {
+      uint32_t indexesCount =
+          static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
+      std::vector<uint32_t> targetIndexes;
+      while (indexesCount > 0) {
+        uint32_t targetIndex = static_cast<uint32_t>(
+            ModuleReader::readUnsignedLEB128(content, pos));
+        targetIndexes.push_back(targetIndex);
+        indexesCount--;
+      }
+      uint32_t defaultIndex =
+          static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
+      return std::make_unique<BRTableInstruction>(
+          opcode, std::move(targetIndexes), defaultIndex);
+    }
+
     default: break;
     }
     return std::make_unique<ControlInstruction>(opcode);
