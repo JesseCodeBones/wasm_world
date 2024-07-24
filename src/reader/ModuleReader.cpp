@@ -47,7 +47,10 @@ void ModuleReader::prepareModule() {
   sectionId = readUInt8(data, pos);
   while (true) {
     switch (sectionId) {
-      // fix me: 03 wasm contains many unhandled section
+    case 0x0: { // custom
+      readSection(customSection.size, customSection.content);
+      break;
+    }
     case 0x1: { // type
       readSection(typeSec.size, typeSec.content);
       handleType(); // extract import info at the beginning
@@ -109,7 +112,15 @@ void ModuleReader::prepareModule() {
       handleDataInit();
       break;
     }
-    default: break;
+    case 0xc: // data count
+    {
+      readSection(dataCountSection.size, dataCountSection.content);
+      break;
+    }
+    default: {
+      throw std::runtime_error("unsupported section" +
+                               std::to_string(sectionId));
+    }
     }
     if (pos >= data.size()) {
       break;

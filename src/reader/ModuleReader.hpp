@@ -48,8 +48,10 @@ private:
   std::vector<uint8_t> data;
   Module &module;
   uint32_t pos = 0U;
+  ModuleSection customSection;
   ModuleSection memorySection;
   ModuleSection dataSection;
+  ModuleSection dataCountSection;
   ModuleSection importSection;
   ModuleSection typeSec;
   ModuleSection importSec;

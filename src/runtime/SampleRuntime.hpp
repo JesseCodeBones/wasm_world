@@ -2,6 +2,7 @@
 #define _wasm_sample_runtime_
 
 #include <cstdint>
+#include <cstdlib>
 #include <iomanip>
 #include <iostream>
 #include <stdexcept>
@@ -48,6 +49,21 @@ private:
     }
   }
 
+  static void abort(Module *module) {
+    StackItem i321 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    StackItem i322 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    StackItem i323 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    StackItem i324 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    std::cout << "abort called with code: " << i321.value.i32 << " at "
+              << i322.value.i32 << ":" << i323.value.i32
+              << " stack size: " << i324.value.i32 << std::endl;
+    std::abort();
+  }
+
 public:
   static void registerRuntime(Module &module) {
     TypeSec vi32;
@@ -58,6 +74,11 @@ public:
     vf32.parameters.emplace_back(ValType::f32);
     TypeSec vf64;
     vf64.parameters.emplace_back(ValType::f64);
+    TypeSec VI32I32I32I32;
+    VI32I32I32I32.parameters.emplace_back(ValType::i32);
+    VI32I32I32I32.parameters.emplace_back(ValType::i32);
+    VI32I32I32I32.parameters.emplace_back(ValType::i32);
+    VI32I32I32I32.parameters.emplace_back(ValType::i32);
     module.runtime.registerAPI("env", "println", std::move(vi32),
                                (void *)&SampleRuntime::println);
     module.runtime.registerAPI("env", "printNumber", std::move(vi32),
@@ -68,6 +89,8 @@ public:
                                (void *)&SampleRuntime::printNumber);
     module.runtime.registerAPI("env", "printNumber", std::move(vf64),
                                (void *)&SampleRuntime::printNumber);
+    module.runtime.registerAPI("env", "abort", std::move(VI32I32I32I32),
+                               (void *)&SampleRuntime::abort);
   }
 };
 
