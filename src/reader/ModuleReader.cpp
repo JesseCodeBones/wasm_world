@@ -468,7 +468,8 @@ void ModuleReader::handleElement() {
   uint32_t elementCount =
       static_cast<uint32_t>(readUnsignedLEB128(elementSec.content, elementPos));
   while (elementCount > 0) {
-    uint32_t index = readUnsignedLEB128(elementSec.content, elementPos);
+    uint32_t index = static_cast<uint32_t>(
+        readUnsignedLEB128(elementSec.content, elementPos));
     assert(index == 0U);
     auto instruction =
         readSingleInstructionFromExpression(elementSec.content, elementPos);
