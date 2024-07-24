@@ -10,6 +10,29 @@ public:
   virtual void fire(void *module);
 };
 
+class BRTableInstruction : public ControlInstruction {
+public:
+  BRTableInstruction(InstructionType _type,
+                     std::vector<uint32_t> &&_targetIndexs,
+                     uint32_t _defaultIndex)
+      : ControlInstruction(_type), targetIndexs(_targetIndexs),
+        defaultIndex(_defaultIndex) {
+  }
+  void fire(void *module) override;
+
+  std::vector<uint32_t> &getTargetIndexs() {
+    return targetIndexs;
+  }
+
+  uint32_t getDefaultIndex() {
+    return defaultIndex;
+  }
+
+private:
+  std::vector<uint32_t> targetIndexs;
+  uint32_t defaultIndex;
+};
+
 class BlockBaseInstruction : public Instruction {
 
 private:
@@ -31,7 +54,7 @@ public:
   void setBlockType(ValType _blockType) {
     blockType = _blockType;
   }
-  virtual void fire(void *module){};
+  virtual void fire(void *module) {};
 };
 
 class BRIFInstruction : public ControlInstruction {
@@ -99,9 +122,13 @@ public:
     Module *ptr = (Module *)module;
     for (auto &instruction : *instructions) {
       instruction->fire(module);
-    }
-    if (ptr->runtime.jumpToLoopBlockIndex > -1) {
-      ptr->runtime.jumpToLoopBlockIndex--;
+      if (ptr->runtime.jumpToLoopBlockIndex >= 0) {
+        ptr->runtime.jumpToLoopBlockIndex--;
+        if (ptr->runtime.jumpToLoopBlockIndex >= 0) {
+          // if br target is not current block, break the block
+          break;
+        }
+      }
     }
   }
 };

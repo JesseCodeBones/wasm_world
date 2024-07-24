@@ -15,6 +15,28 @@
 #include <vector>
 #include "../instruction/NumericInstruction.hpp"
 #include "../type/ValType.hpp"
+
+void ModuleReader::handleAfterPrepareModuleBeforeRun() {
+  // 1. prepare memory
+  if (!module.memSec.empty()) {
+    module.runtime.linkMemory(std::move(module.memSec.front().memory));
+  }
+
+  // 2. prepare table
+  if (!module.tableSec.empty()) {
+    std::vector<uint32_t> table;
+    table.resize(module.tableSec.front().getLimitType().max);
+    std::fill(table.begin(), table.end(), static_cast<uint32_t>(-1));
+    module.runtime.linkTable(std::move(table));
+  }
+  // fixme 3. prepare element
+  if (!module.elemSec.empty()) {
+    for (auto &elem : module.elemSec) {
+      module.runtime.getTable()[elem.getIndex()] = elem.getValue();
+    }
+  }
+}
+
 void ModuleReader::prepareModule() {
 
   uint32_t magic = readUInt32();
@@ -25,7 +47,10 @@ void ModuleReader::prepareModule() {
   sectionId = readUInt8(data, pos);
   while (true) {
     switch (sectionId) {
-      // fix me: 03 wasm contains many unhandled section
+    case 0x0: { // custom
+      readSection(customSection.size, customSection.content);
+      break;
+    }
     case 0x1: { // type
       readSection(typeSec.size, typeSec.content);
       handleType(); // extract import info at the beginning
@@ -43,6 +68,7 @@ void ModuleReader::prepareModule() {
     }
     case 0x4: { // table
       readSection(tableSec.size, tableSec.content);
+      handleTable();
       break;
     }
     case 0x5: // memory
@@ -71,6 +97,7 @@ void ModuleReader::prepareModule() {
     case 0x9: // element
     {
       readSection(elementSec.size, elementSec.content);
+      handleElement();
       break;
     }
     case 0xa: // code
@@ -85,7 +112,15 @@ void ModuleReader::prepareModule() {
       handleDataInit();
       break;
     }
-    default: break;
+    case 0xc: // data count
+    {
+      readSection(dataCountSection.size, dataCountSection.content);
+      break;
+    }
+    default: {
+      throw std::runtime_error("unsupported section" +
+                               std::to_string(sectionId));
+    }
     }
     if (pos >= data.size()) {
       break;
@@ -95,10 +130,7 @@ void ModuleReader::prepareModule() {
   }
 
   // post init sections
-  // 1. link memory to runtime
-  if (!module.memSec.empty()) {
-    module.runtime.linkMemory(std::move(module.memSec.front().memory));
-  }
+  handleAfterPrepareModuleBeforeRun();
 }
 
 uint32_t ModuleReader::readUInt32() {
@@ -431,6 +463,34 @@ void ModuleReader::handleStart() {
       static_cast<uint32_t>(readUnsignedLEB128(startSec.content, startPos));
 }
 
+void ModuleReader::handleElement() {
+  uint32_t elementPos = 0;
+  uint32_t elementCount =
+      static_cast<uint32_t>(readUnsignedLEB128(elementSec.content, elementPos));
+  while (elementCount > 0) {
+    uint32_t index = static_cast<uint32_t>(
+        readUnsignedLEB128(elementSec.content, elementPos));
+    assert(index == 0U);
+    auto instruction =
+        readSingleInstructionFromExpression(elementSec.content, elementPos);
+    if (instruction->type != InstructionType::I32CONST) {
+      throw std::runtime_error("invalid element init expression");
+    }
+    uint32_t offset =
+        instruction->castRightRef<I32ConstInstruction>().getValue();
+    uint32_t valueCount = static_cast<uint32_t>(
+        readUnsignedLEB128(elementSec.content, elementPos));
+    while (valueCount > 0) {
+      uint32_t value = static_cast<uint32_t>(
+          readUnsignedLEB128(elementSec.content, elementPos));
+      module.elemSec.push_back({offset, value});
+      offset++;
+      valueCount--;
+    }
+    elementCount--;
+  }
+}
+
 void ModuleReader::handleCode() {
 
   uint32_t codePos = 0;
@@ -480,4 +540,27 @@ uint64_t ModuleReader::read8BytesLittleEndian(std::vector<uint8_t> &binary,
   uint64_t result = uint64_t(read4BytesLittleEndian(binary, ptr));
   result |= uint64_t(read4BytesLittleEndian(binary, ptr)) << 32;
   return result;
+}
+
+void ModuleReader::handleTable() {
+  uint32_t tablePos = 0;
+  uint32_t tableCount =
+      static_cast<uint32_t>(readUnsignedLEB128(tableSec.content, tablePos));
+  while (tableCount > 0) {
+    uint8_t elementType = readUInt8(tableSec.content, tablePos);
+    assert(elementType == 0x70 ||
+           elementType == 0x6f); // only support functionRef | externalRef
+    RefType refType = static_cast<RefType>(elementType);
+    LimitType limit;
+    uint8_t tag = readUInt8(tableSec.content, tablePos);
+    uint8_t min = readUInt8(tableSec.content, tablePos);
+    limit.tag = tag;
+    limit.min = min;
+    if (tag == 1) {
+      uint8_t max = readUInt8(tableSec.content, tablePos);
+      limit.max = max;
+    }
+    module.tableSec.emplace_back(std::move(refType), std::move(limit));
+    tableCount--;
+  }
 }

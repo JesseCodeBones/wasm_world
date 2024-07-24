@@ -6,6 +6,8 @@
 #include <string_view>
 #include "./type/ImportDType.hpp"
 #include "AbstractSec.hpp"
+// TODO currently import function donot contains type info
+// TODO call indirect check the type of imported function
 class ImportSec : public AbstractSec {
 private:
   std::string package;

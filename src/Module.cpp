@@ -362,6 +362,30 @@ Module::compileInstruction(InstructionType opcode,
       return blockInstruction;
     }
 
+    case InstructionType::CALL_INDIRECT: {
+      uint32_t tableIndex =
+          static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
+      uint32_t typeIndex =
+          static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
+      return std::make_unique<CallIndirectInstruction>(tableIndex, typeIndex);
+    }
+
+    case InstructionType::BR_TABLE: {
+      uint32_t indexesCount =
+          static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
+      std::vector<uint32_t> targetIndexes;
+      while (indexesCount > 0) {
+        uint32_t targetIndex = static_cast<uint32_t>(
+            ModuleReader::readUnsignedLEB128(content, pos));
+        targetIndexes.push_back(targetIndex);
+        indexesCount--;
+      }
+      uint32_t defaultIndex =
+          static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
+      return std::make_unique<BRTableInstruction>(
+          opcode, std::move(targetIndexes), defaultIndex);
+    }
+
     default: break;
     }
     return std::make_unique<ControlInstruction>(opcode);
@@ -467,21 +491,22 @@ void Module::compileFunction(uint32_t functionIndex) {
   uint32_t localCount = static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(
       function.localsAndExpression, functionReadPos));
   for (auto &type : function.type.parameters) {
-    internCallStack.back().locals.push_back({.type = type});
+    function.locals.push_back({.type = type});
   }
   const uint32_t paramSize =
       static_cast<uint32_t>(function.type.parameters.size());
-  if (paramSize > 0) {
-    // push parameter value
-    assert(internCallStack.size() > 1);
-    auto &prevStack = internCallStack.at(internCallStack.size() - 2);
-    for (size_t index = 0; index < paramSize; ++index) {
-      auto paramValue = prevStack.functionStack.top();
-      internCallStack.back().locals.at(paramSize - index - 1).value =
-          paramValue.value;
-      prevStack.functionStack.pop();
-    }
-  }
+  function.paramSize = paramSize;
+  // if (paramSize > 0) {
+  //   // push parameter value
+  //   assert(internCallStack.size() > 1);
+  //   auto &prevStack = internCallStack.at(internCallStack.size() - 2);
+  //   for (size_t index = 0; index < paramSize; ++index) {
+  //     auto paramValue = prevStack.functionStack.top();
+  //     internCallStack.back().locals.at(paramSize - index - 1).value =
+  //         paramValue.value;
+  //     prevStack.functionStack.pop();
+  //   }
+  // }
 
   while (localCount > 0) {
     uint32_t typeCount = static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(
@@ -509,7 +534,7 @@ void Module::compileFunction(uint32_t functionIndex) {
         break;
       }
       }
-      internCallStack.back().locals.push_back(std::move(localItem));
+      function.locals.push_back(std::move(localItem));
       typeCount--;
     }
     uint32_t localIndex = localCount--;
@@ -528,6 +553,24 @@ std::any Module::runFunction(uint32_t functionIndex) {
   FunctionSec &function = functionSec.at(functionIndex - importSec.size());
   if (function.body == nullptr) {
     compileFunction(functionIndex);
+  }
+
+  // push local slots
+  for (auto local : function.locals) {
+    internCallStack.back().locals.push_back(local);
+  }
+
+  // push parameter to locals
+  uint32_t paramSize = function.paramSize;
+  if (paramSize > 0) {
+    assert(internCallStack.size() > 1);
+    auto &prevStack = internCallStack.at(internCallStack.size() - 2);
+    for (size_t index = 0; index < paramSize; ++index) {
+      auto paramValue = prevStack.functionStack.top();
+      internCallStack.back().locals.at(paramSize - index - 1).value =
+          paramValue.value;
+      prevStack.functionStack.pop();
+    }
   }
 
   // read execute zone

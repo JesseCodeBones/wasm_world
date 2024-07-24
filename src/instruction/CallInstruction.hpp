@@ -2,6 +2,7 @@
 #define _wasm_call_instruction_
 #include <algorithm>
 #include <cstdint>
+#include <stdexcept>
 #include "../Module.hpp"
 #include "Instruction.hpp"
 
@@ -42,4 +43,36 @@ public:
 private:
   uint32_t functionIndex;
 };
+
+class CallIndirectInstruction : public Instruction {
+public:
+  CallIndirectInstruction(uint32_t tableIndex, uint32_t typeIndex)
+      : tableIndex(tableIndex), typeIndex(typeIndex) {
+    type = InstructionType::CALL_INDIRECT;
+  }
+  void fire(void *modulePtr) override {
+    Module *ptr = (Module *)modulePtr;
+    StackItem tableIndexStackItem = ptr->runtime.getStack()->top();
+    ptr->runtime.getStack()->pop();
+    uint32_t tableIndex = tableIndexStackItem.value.i32;
+    if (tableIndex >= ptr->runtime.getTable().size()) {
+      throw std::runtime_error("table index out of range");
+    }
+    auto &tableValue = ptr->runtime.getTable()[tableIndex];
+    if (tableValue == static_cast<uint32_t>(-1)) {
+      throw std::runtime_error("undefined table element");
+    }
+    if (tableValue >= ptr->importSec.size() &&
+        !(ptr->functionSec[tableValue - ptr->importSec.size()].type ==
+          ptr->typeSec[typeIndex])) {
+      throw std::runtime_error("indirect call type mismatch");
+    }
+    ptr->runFunction(tableValue);
+  }
+
+private:
+  uint32_t tableIndex;
+  uint32_t typeIndex;
+};
+
 #endif
