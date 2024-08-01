@@ -68,6 +68,9 @@ enum class InstructionType : uint8_t {
   MEMORY_SIZE = 0x3f,  /* memory.size */
   MEMORY_GROW = 0x40,  /* memory.grow */
 
+  // bulk memory instructions
+  MEMORY_BULK = 0xfc, /* memory bulk */
+
   // Numeric Instructions
   I32CONST = 0x41,
   I64CONST = 0x42,

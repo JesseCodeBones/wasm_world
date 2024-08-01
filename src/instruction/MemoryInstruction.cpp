@@ -1,5 +1,6 @@
 #include "MemoryInstruction.hpp"
 #include <cstdint>
+#include <cstring>
 #include <stdexcept>
 #include "../Module.hpp"
 #include "Instruction.hpp"
@@ -241,4 +242,45 @@ void MemoryInstruction::fire(void *module) {
 uint32_t MemoryInstruction::calculateMemoryAddressWithOffsetAndAlign(
     uint32_t offset, uint32_t align, uint32_t base) {
   return ALIGN_UP(base + offset, align);
+}
+
+void BulkMemoryInstruction::fire(void *module) {
+  Module *ptr = (Module *)module;
+  switch (secondIndex) {
+  case BulkSecondInstructionType::MEMORY_FILL: {
+    StackItem lengthStackItem = ptr->runtime.getStack()->top();
+    ptr->runtime.getStack()->pop();
+    StackItem valueStackItem = ptr->runtime.getStack()->top();
+    ptr->runtime.getStack()->pop();
+    StackItem positionStackItem = ptr->runtime.getStack()->top();
+    ptr->runtime.getStack()->pop();
+    int32_t position = positionStackItem.value.i32;
+    auto realAddress = static_cast<uint8_t *>(ptr->runtime.memoryPtr(position));
+    uint32_t length = lengthStackItem.value.i32;
+    uint8_t value = valueStackItem.value.i32 & 0xFF;
+    for (uint32_t i = 0; i < length; i++) {
+      auto memoryAddress = reinterpret_cast<uint8_t *>(realAddress + i);
+      *memoryAddress = value;
+    }
+    break;
+  }
+  case BulkSecondInstructionType::MEMORY_COPY: {
+    StackItem lengthStackItem = ptr->runtime.getStack()->top();
+    ptr->runtime.getStack()->pop();
+    StackItem sourceStackItem = ptr->runtime.getStack()->top();
+    ptr->runtime.getStack()->pop();
+    StackItem destinationStackItem = ptr->runtime.getStack()->top();
+    ptr->runtime.getStack()->pop();
+    int32_t destination = destinationStackItem.value.i32;
+    int32_t source = sourceStackItem.value.i32;
+    uint32_t length = lengthStackItem.value.i32;
+    auto destinationAddress = ptr->runtime.memoryPtr(destination);
+    auto sourceAddress = ptr->runtime.memoryPtr(source);
+    std::memcpy(destinationAddress, sourceAddress, length);
+    break;
+  }
+  default: {
+    throw std::runtime_error("Invalid bulk memory instruction");
+  }
+  }
 }
