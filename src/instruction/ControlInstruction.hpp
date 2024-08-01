@@ -122,6 +122,9 @@ public:
     Module *ptr = (Module *)module;
     for (auto &instruction : *instructions) {
       instruction->fire(module);
+      if (ptr->internCallStack.back().returnFlag) {
+        break;
+      }
       if (ptr->runtime.jumpToLoopBlockIndex >= 0) {
         ptr->runtime.jumpToLoopBlockIndex--;
         if (ptr->runtime.jumpToLoopBlockIndex >= 0) {

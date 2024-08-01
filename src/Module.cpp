@@ -604,7 +604,7 @@ std::any Module::runFunction(uint32_t functionIndex) {
   auto &bodyInstructions = *function.body;
   for (std::unique_ptr<Instruction> &instruction : bodyInstructions) {
     instruction->fire(this);
-    if (instruction->type == InstructionType::RETURN) {
+    if (internCallStack.back().returnFlag) {
       break;
     }
   }
@@ -613,7 +613,8 @@ std::any Module::runFunction(uint32_t functionIndex) {
 }
 
 void Module::prepareFunctionCall(uint32_t functionIndex) {
-  internCallStack.push_back({functionIndex});
+  internCallStack.push_back(
+      {.functionIndex = functionIndex, .returnFlag = false});
   runtime.setCallStack(&internCallStack.back().functionStack);
 }
 
