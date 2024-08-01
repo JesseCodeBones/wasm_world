@@ -12,7 +12,10 @@ void ControlInstruction::fire(void *module) {
 
   switch (type) {
 
-  case InstructionType::RETURN:
+  case InstructionType::RETURN: {
+    ptr->internCallStack.back().returnFlag = true;
+    break;
+  }
   case InstructionType::NOP: {
     // return instruction handled in Module::runFunction body
     break;
@@ -33,6 +36,9 @@ void IfInstruction::fire(void *module) {
   if (condition.value.i32 != 0) {
     for (auto &instruction : *thenInstructions) {
       instruction->fire(module);
+      if (ptr->internCallStack.back().returnFlag) {
+        break;
+      }
       if (ptr->runtime.jumpToLoopBlockIndex >= 0) {
         ptr->runtime.jumpToLoopBlockIndex--;
         if (ptr->runtime.jumpToLoopBlockIndex >= 0) {
@@ -45,6 +51,9 @@ void IfInstruction::fire(void *module) {
     if (!elseInstructions->empty()) {
       for (auto &instruction : *elseInstructions) {
         instruction->fire(module);
+        if (ptr->internCallStack.back().returnFlag) {
+          break;
+        }
         if (ptr->runtime.jumpToLoopBlockIndex >= 0) {
           ptr->runtime.jumpToLoopBlockIndex--;
           if (ptr->runtime.jumpToLoopBlockIndex >= 0) {
@@ -63,6 +72,9 @@ void LoopInstruction::fire(void *module) {
 LOOP_LABEL:
   for (auto &instruction : *instructions) {
     instruction->fire(module);
+    if (ptr->internCallStack.back().returnFlag) {
+      break;
+    }
     if (ptr->runtime.jumpToLoopBlockIndex > -1) {
       if (ptr->runtime.jumpToLoopBlockIndex == 0) {
         ptr->runtime.jumpToLoopBlockIndex = -1;

@@ -460,6 +460,34 @@ Module::compileInstruction(InstructionType opcode,
     return memoryInstruction;
   }
 
+  case InstructionType::MEMORY_BULK: {
+    BulkSecondInstructionType secondIndex =
+        static_cast<BulkSecondInstructionType>(
+            ModuleReader::readUnsignedLEB128(content, pos));
+    auto bulkIns = std::make_unique<BulkMemoryInstruction>(opcode);
+    bulkIns->secondIndex = secondIndex;
+    switch (secondIndex) {
+    case BulkSecondInstructionType::MEMORY_FILL: {
+      uint8_t flag = ModuleReader::readUInt8(content, pos);
+      assert(flag == 0x00);
+      bulkIns->u8_1 = 0x00;
+      return bulkIns;
+    }
+    case BulkSecondInstructionType::MEMORY_COPY: {
+      uint8_t flag1 = ModuleReader::readUInt8(content, pos);
+      uint8_t flag2 = ModuleReader::readUInt8(content, pos);
+      assert(flag1 == 0x00);
+      assert(flag2 == 0x00);
+      bulkIns->u8_1 = 0x00;
+      bulkIns->u8_2 = 0x00;
+      return bulkIns;
+    }
+    default: {
+      throw std::runtime_error("not implemented");
+    }
+    }
+  }
+
   default: {
     throw std::runtime_error("not implemented");
   }
@@ -545,7 +573,6 @@ void Module::compileFunction(uint32_t functionIndex) {
 }
 
 std::any Module::runFunction(uint32_t functionIndex) {
-  // TODO handle parameter
   std::any result = nullptr;
   prepareFunctionCall(functionIndex);
   assert(functionIndex >= importSec.size());
@@ -577,7 +604,7 @@ std::any Module::runFunction(uint32_t functionIndex) {
   auto &bodyInstructions = *function.body;
   for (std::unique_ptr<Instruction> &instruction : bodyInstructions) {
     instruction->fire(this);
-    if (instruction->type == InstructionType::RETURN) {
+    if (internCallStack.back().returnFlag) {
       break;
     }
   }
@@ -586,7 +613,8 @@ std::any Module::runFunction(uint32_t functionIndex) {
 }
 
 void Module::prepareFunctionCall(uint32_t functionIndex) {
-  internCallStack.push_back({functionIndex});
+  internCallStack.push_back(
+      {.functionIndex = functionIndex, .returnFlag = false});
   runtime.setCallStack(&internCallStack.back().functionStack);
 }
 
