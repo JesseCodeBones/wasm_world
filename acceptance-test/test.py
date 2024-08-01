@@ -21,9 +21,11 @@ if sys.platform.startswith('linux'):
             print(f"executing test {str(index)} / {len(wasm_files)} - {wasm_file} ... ")
             out = subprocess.check_output([runnable, os.path.join(folder_path, wasm_file)])
             output = out.decode()
+            print(f"real output: \n{output}")
             # 读取 log 文件的内容
             with open(os.path.join(folder_path, log_file), 'r') as f:
                 log_content = f.read()
+            print(f"expected output: \n{log_content}")
             # 比较标准输出和 log 文件内容
             if output.strip() != log_content.strip():
                 print(f" X Error: Output of {wasm_file} does not match {log_file}")
