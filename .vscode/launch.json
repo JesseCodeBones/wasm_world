@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/wasm-interpreter",
-            "args": ["../assemblyscript/tests/compiler/for.debug.wasm"],
+            "args": ["--debug", "./scripts/11memory.wasm"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
