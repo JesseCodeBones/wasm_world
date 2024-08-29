@@ -1,5 +1,7 @@
 #ifndef _wasm_parametric_instruction_
 #define _wasm_parametric_instruction_
+#include <cstdint>
+#include "../CompilerConstrant.hpp"
 #include "../Module.hpp"
 #include "Instruction.hpp"
 class DropInstruction : public Instruction {
@@ -9,6 +11,7 @@ public:
   }
   void fire(void *module) {
     Module *ptr = (Module *)module;
+    WASM_DEBUG("DROP\n");
     ptr->runtime.getStack()->pop(); // simple drop one stack element
   }
 };
@@ -26,6 +29,7 @@ public:
     ptr->runtime.getStack()->pop();
     StackItem param2 = ptr->runtime.getStack()->top();
     ptr->runtime.getStack()->pop();
+    WASM_DEBUG("SELECT: " << static_cast<uint32_t>(condition.type) << "\n");
     switch (condition.type) {
     case ValType::i32: {
       if (condition.value.i32 == 0) {

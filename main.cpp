@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
     }
   }
 
-  WASM_DEBUG("Running: " << argv[argc - 1] << "\n");
+  WASM_DEBUG("\b\b\b\bRunning: " << argv[argc - 1] << "\n");
   std::filesystem::path filePath = argv[argc - 1];
   std::ifstream inputStream(filePath, std::ios::binary);
   std::vector<uint8_t> fileContents(

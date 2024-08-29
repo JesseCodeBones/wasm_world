@@ -129,38 +129,38 @@ void MemoryInstruction::fire(void *module) {
       auto memoryAddress = reinterpret_cast<int32_t *>(realAddress);
       ptr->runtime.getStack()->push(
           {.type = ValType::i32, .value = {.i32 = *memoryAddress}});
-      WASM_DEBUG("I32_LOAD: value" << *memoryAddress << " at " << address
-                                   << "\n");
+      WASM_DEBUG("I32_LOAD: value " << *memoryAddress << " at " << address
+                                    << "\n");
       break;
     }
     case InstructionType::I64_LOAD: {
       auto memoryAddress = reinterpret_cast<int64_t *>(realAddress);
-      WASM_DEBUG("I64_LOAD: value" << *memoryAddress << " at " << address
-                                   << "\n");
+      WASM_DEBUG("I64_LOAD: value " << *memoryAddress << " at " << address
+                                    << "\n");
       ptr->runtime.getStack()->push(
           {.type = ValType::i64, .value = {.i64 = *memoryAddress}});
       break;
     }
     case InstructionType::F32_LOAD: {
       auto memoryAddress = reinterpret_cast<float *>(realAddress);
-      WASM_DEBUG("F32_LOAD: value" << *memoryAddress << " at " << address
-                                   << "\n");
+      WASM_DEBUG("F32_LOAD: value " << *memoryAddress << " at " << address
+                                    << "\n");
       ptr->runtime.getStack()->push(
           {.type = ValType::f32, .value = {.f32 = *memoryAddress}});
       break;
     }
     case InstructionType::F64_LOAD: {
       auto memoryAddress = reinterpret_cast<double *>(realAddress);
-      WASM_DEBUG("F64_LOAD: value" << *memoryAddress << " at " << address
-                                   << "\n");
+      WASM_DEBUG("F64_LOAD: value " << *memoryAddress << " at " << address
+                                    << "\n");
       ptr->runtime.getStack()->push(
           {.type = ValType::f64, .value = {.f64 = *memoryAddress}});
       break;
     }
     case InstructionType::I32_LOAD8_S: {
       auto memoryAddress = reinterpret_cast<int8_t *>(realAddress);
-      WASM_DEBUG("I32_LOAD8_S: value" << *memoryAddress << " at " << address
-                                      << "\n");
+      WASM_DEBUG("I32_LOAD8_S: value " << *memoryAddress << " at " << address
+                                       << "\n");
       ptr->runtime.getStack()->push(
           {.type = ValType::i32,
            .value = {.i32 = static_cast<int32_t>(*memoryAddress)}});
@@ -168,8 +168,8 @@ void MemoryInstruction::fire(void *module) {
     }
     case InstructionType::I32_LOAD8_U: {
       auto memoryAddress = reinterpret_cast<uint8_t *>(realAddress);
-      WASM_DEBUG("I32_LOAD8_U: value" << *memoryAddress << " at " << address
-                                      << "\n");
+      WASM_DEBUG("I32_LOAD8_U: value " << *memoryAddress << " at " << address
+                                       << "\n");
       ptr->runtime.getStack()->push(
           {.type = ValType::i32,
            .value = {.i32 = static_cast<int32_t>(*memoryAddress)}});
@@ -177,8 +177,8 @@ void MemoryInstruction::fire(void *module) {
     }
     case InstructionType::I64_LOAD8_S: {
       auto memoryAddress = reinterpret_cast<int8_t *>(realAddress);
-      WASM_DEBUG("I64_LOAD8_S: value" << *memoryAddress << " at " << address
-                                      << "\n");
+      WASM_DEBUG("I64_LOAD8_S: value " << *memoryAddress << " at " << address
+                                       << "\n");
       ptr->runtime.getStack()->push(
           {.type = ValType::i64,
            .value = {.i64 = static_cast<int64_t>(*memoryAddress)}});
@@ -186,8 +186,8 @@ void MemoryInstruction::fire(void *module) {
     }
     case InstructionType::I64_LOAD8_U: {
       auto memoryAddress = reinterpret_cast<uint8_t *>(realAddress);
-      WASM_DEBUG("I64_LOAD8_U: value" << *memoryAddress << " at " << address
-                                      << "\n");
+      WASM_DEBUG("I64_LOAD8_U: value " << *memoryAddress << " at " << address
+                                       << "\n");
       ptr->runtime.getStack()->push(
           {.type = ValType::i64,
            .value = {.i64 = static_cast<int64_t>(*memoryAddress)}});
@@ -195,8 +195,8 @@ void MemoryInstruction::fire(void *module) {
     }
     case InstructionType::I32_LOAD16_S: {
       auto memoryAddress = reinterpret_cast<int16_t *>(realAddress);
-      WASM_DEBUG("I32_LOAD16_S: value" << *memoryAddress << " at " << address
-                                       << "\n");
+      WASM_DEBUG("I32_LOAD16_S: value " << *memoryAddress << " at " << address
+                                        << "\n");
       ptr->runtime.getStack()->push(
           {.type = ValType::i32,
            .value = {.i32 = static_cast<int32_t>(*memoryAddress)}});
@@ -204,8 +204,8 @@ void MemoryInstruction::fire(void *module) {
     }
     case InstructionType::I32_LOAD16_U: {
       auto memoryAddress = reinterpret_cast<uint16_t *>(realAddress);
-      WASM_DEBUG("I32_LOAD16_U: value" << *memoryAddress << " at " << address
-                                       << "\n");
+      WASM_DEBUG("I32_LOAD16_U: value " << *memoryAddress << " at " << address
+                                        << "\n");
       ptr->runtime.getStack()->push(
           {.type = ValType::i32,
            .value = {.i32 = static_cast<int32_t>(*memoryAddress)}});
@@ -213,8 +213,8 @@ void MemoryInstruction::fire(void *module) {
     }
     case InstructionType::I64_LOAD16_S: {
       auto memoryAddress = reinterpret_cast<int16_t *>(realAddress);
-      WASM_DEBUG("I64_LOAD16_S: value" << *memoryAddress << " at " << address
-                                       << "\n");
+      WASM_DEBUG("I64_LOAD16_S: value " << *memoryAddress << " at " << address
+                                        << "\n");
       ptr->runtime.getStack()->push(
           {.type = ValType::i64,
            .value = {.i64 = static_cast<int64_t>(*memoryAddress)}});
@@ -222,8 +222,8 @@ void MemoryInstruction::fire(void *module) {
     }
     case InstructionType::I64_LOAD16_U: {
       auto memoryAddress = reinterpret_cast<uint16_t *>(realAddress);
-      WASM_DEBUG("I64_LOAD16_U: value" << *memoryAddress << " at " << address
-                                       << "\n");
+      WASM_DEBUG("I64_LOAD16_U: value " << *memoryAddress << " at " << address
+                                        << "\n");
       ptr->runtime.getStack()->push(
           {.type = ValType::i64,
            .value = {.i64 = static_cast<int64_t>(*memoryAddress)}});
@@ -231,8 +231,8 @@ void MemoryInstruction::fire(void *module) {
     }
     case InstructionType::I64_LOAD32_S: {
       auto memoryAddress = reinterpret_cast<int32_t *>(realAddress);
-      WASM_DEBUG("I64_LOAD32_S: value" << *memoryAddress << " at " << address
-                                       << "\n");
+      WASM_DEBUG("I64_LOAD32_S: value " << *memoryAddress << " at " << address
+                                        << "\n");
       ptr->runtime.getStack()->push(
           {.type = ValType::i64,
            .value = {.i64 = static_cast<int64_t>(*memoryAddress)}});
@@ -240,8 +240,8 @@ void MemoryInstruction::fire(void *module) {
     }
     case InstructionType::I64_LOAD32_U: {
       auto memoryAddress = reinterpret_cast<uint32_t *>(realAddress);
-      WASM_DEBUG("I64_LOAD32_U: value" << *memoryAddress << " at " << address
-                                       << "\n");
+      WASM_DEBUG("I64_LOAD32_U: value " << *memoryAddress << " at " << address
+                                        << "\n");
       ptr->runtime.getStack()->push(
           {.type = ValType::i64,
            .value = {.i64 = static_cast<int64_t>(*memoryAddress)}});
