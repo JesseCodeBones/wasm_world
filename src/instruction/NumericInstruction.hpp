@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <cstring>
 
+#include "../CompilerConstrant.hpp"
 #include "../Module.hpp"
 #include "Instruction.hpp"
 class I32ConstInstruction : public Instruction {
@@ -20,7 +21,7 @@ public:
   void fire(void *module) {
     Module *ptr = (Module *)module;
     StackItem stackItem = {ValType::i32, {(int32_t)value}};
-
+    WASM_DEBUG("I32CONST: " << (int32_t)value << "\n");
     ptr->runtime.getStack()->push(stackItem);
   }
 
@@ -40,6 +41,7 @@ public:
   void fire(void *module) {
     Module *ptr = (Module *)module;
     StackItem stackItem = {ValType::i64, {.i64 = (int64_t)value}};
+    WASM_DEBUG("I64CONST: " << (int64_t)value << "\n");
     ptr->runtime.getStack()->push(stackItem);
   }
 
@@ -59,6 +61,7 @@ public:
   void fire(void *module) {
     Module *ptr = (Module *)module;
     StackItem stackItem = {ValType::f32, {.f32 = value}};
+    WASM_DEBUG("F32CONST: " << value << "\n");
     ptr->runtime.getStack()->push(stackItem);
   }
 
@@ -78,6 +81,7 @@ public:
   void fire(void *module) {
     Module *ptr = (Module *)module;
     StackItem stackItem = {ValType::f64, {.f64 = value}};
+    WASM_DEBUG("F64CONST: " << value << "\n");
     ptr->runtime.getStack()->push(stackItem);
   }
 

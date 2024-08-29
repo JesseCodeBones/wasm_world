@@ -59,5 +59,6 @@ public:
   static std::function<void(Module *)> externalFunSignature;
   void prepareFunctionCall(uint32_t functionIndex);
   void cleanUpFunctionCall(uint32_t functionIndex);
+  InstructionOPCodePrinter opcodePrinter;
 };
 #endif
