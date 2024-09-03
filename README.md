@@ -13,6 +13,10 @@ that will make runtime API is much more easier than dynamic link to the interpre
 ### run
 `./build/wasm_interpreter  [your wasm]`
 
+### debug trace run
+This compiler also can trace the compile process and run process with `--debug` option  
+`./build/wasm_interpreter --debug [your wasm]`
+
 ## runtime DIY
 wasm_world runtime is very easy to integrate.  
 compiler provide a typical runtime in `src/runtime/SampleRuntime.hpp`.
