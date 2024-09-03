@@ -1119,6 +1119,8 @@ void ComparisonInstruction::fire(void *module) {
     StackItem stackItem2 = ptr->runtime.getStack()->top();
     ptr->runtime.getStack()->pop();
     assert(stackItem2.type == ValType::i32);
+    WASM_DEBUG("I32EQ: " << stackItem1.value.i32 << " : "
+                         << stackItem2.value.i32 << std::endl);
     if (stackItem1.value.i32 == stackItem2.value.i32) {
       ptr->runtime.getStack()->push(
           {.type = ValType::i32, .value = {.i32 = 1}});

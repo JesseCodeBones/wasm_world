@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <sstream>
 #include <stdexcept>
+#include "../CompilerConstrant.hpp"
 #include "../Module.hpp"
 #include "Instruction.hpp"
 class LocalGetInstruction : public Instruction {
@@ -22,18 +23,21 @@ public:
     case ValType::i64: {
       int64_t value = std::any_cast<StackItemValue>(local.value).i64;
       StackItem stackItem = {ValType::i64, {.i64 = value}};
+      WASM_DEBUG("LOCALGET: " << value << "\n");
       ptr->runtime.getStack()->push(std::move(stackItem));
       break;
     }
     case ValType::f32: {
       float value = std::any_cast<StackItemValue>(local.value).f32;
       StackItem stackItem = {ValType::f32, {.f32 = value}};
+      WASM_DEBUG("LOCALGET: " << value << "\n");
       ptr->runtime.getStack()->push(std::move(stackItem));
       break;
     }
     case ValType::f64: {
       double value = std::any_cast<StackItemValue>(local.value).f64;
       StackItem stackItem = {ValType::f64, {.f64 = value}};
+      WASM_DEBUG("LOCALGET: " << value << "\n");
       ptr->runtime.getStack()->push(std::move(stackItem));
       break;
     }
@@ -41,6 +45,7 @@ public:
       // other type make as i32 type
       int32_t value = std::any_cast<StackItemValue>(local.value).i32;
       StackItem stackItem = {ValType::i32, {.i32 = value}};
+      WASM_DEBUG("LOCALGET: " << value << "\n");
       ptr->runtime.getStack()->push(std::move(stackItem));
       break;
     }
@@ -61,6 +66,7 @@ public:
     auto stackItem = ptr->runtime.getStack()->top();
     ptr->runtime.getStack()->pop();
     ptr->internCallStack.back().locals.at(index).value = stackItem.value;
+    WASM_DEBUG("LocalSet: " << std::hex << stackItem.value.i64 << "\n");
   }
 
 private:

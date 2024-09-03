@@ -68,6 +68,7 @@ private:
   void handleDataInit();
   void handleImport();
   void handleType();
+  void handleExport();
   void handleStart();
   void handleCode();
   void handleFunction();

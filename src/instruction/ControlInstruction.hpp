@@ -1,6 +1,7 @@
 #ifndef _wasm_control_instruction_
 #define _wasm_control_instruction_
 #include <cstdint>
+#include "../CompilerConstrant.hpp"
 #include "../Module.hpp"
 #include "Instruction.hpp"
 class ControlInstruction : public Instruction {
@@ -120,6 +121,7 @@ public:
   std::unique_ptr<std::vector<std::unique_ptr<Instruction>>> instructions;
   void fire(void *module) {
     Module *ptr = (Module *)module;
+    WASM_DEBUG("block instruction\n");
     for (auto &instruction : *instructions) {
       instruction->fire(module);
       if (ptr->internCallStack.back().returnFlag) {
@@ -127,7 +129,7 @@ public:
       }
       if (ptr->runtime.jumpToLoopBlockIndex >= 0) {
         ptr->runtime.jumpToLoopBlockIndex--;
-        if (ptr->runtime.jumpToLoopBlockIndex >= 0) {
+        if (ptr->runtime.jumpToLoopBlockIndex >= -1) {
           // if br target is not current block, break the block
           break;
         }

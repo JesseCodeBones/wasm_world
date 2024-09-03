@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <stdexcept>
+#include "../CompilerConstrant.hpp"
 #include "../Module.hpp"
 #include "Instruction.hpp"
 
@@ -18,6 +19,7 @@ public:
     Module *module = (Module *)modulePtr;
     if (functionIndex < module->importSec.size()) {
       // call external
+      WASM_DEBUG("call external function: " << functionIndex << "\n");
       auto &externalFunc = module->importSec.at(functionIndex);
       // TODO optimize target function search logic
       auto foundFun = std::find_if(
@@ -35,6 +37,7 @@ public:
       // call internal
       uint32_t internFunctionIndex =
           functionIndex - static_cast<uint32_t>(module->importSec.size());
+      WASM_DEBUG("call internal function: " << functionIndex << "\n");
       FunctionSec &function = module->functionSec.at(internFunctionIndex);
       module->runFunction(functionIndex);
     }
@@ -67,6 +70,8 @@ public:
           ptr->typeSec[typeIndex])) {
       throw std::runtime_error("indirect call type mismatch");
     }
+    WASM_DEBUG("call indirect function: " << tableValue << ", table index: "
+                                          << tableIndex << "\n");
     ptr->runFunction(tableValue);
   }
 

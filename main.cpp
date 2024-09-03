@@ -3,15 +3,28 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <string_view>
 #include "./src/Module.hpp"
+#include "src/CompilerConstrant.hpp"
 #include "src/reader/ModuleReader.hpp"
 #include "src/runtime/SampleRuntime.hpp"
+
+extern bool CONFIG::WASM_DEBUG_OPTION;
 
 int main(int argc, char **argv) {
 
   // std::filesystem::path filePath =
   //     "/home/jesse/workspace/wasm_world/scripts/7global.wasm";
-  std::filesystem::path filePath = argv[1];
+  CONFIG::WASM_DEBUG_OPTION = false;
+  // loop args
+  for (int i = 0; i < argc; i++) {
+    if (std::string_view(argv[i]) == "--debug") {
+      CONFIG::WASM_DEBUG_OPTION = true;
+    }
+  }
+
+  WASM_DEBUG("\b\b\b\bRunning: " << argv[argc - 1] << "\n");
+  std::filesystem::path filePath = argv[argc - 1];
   std::ifstream inputStream(filePath, std::ios::binary);
   std::vector<uint8_t> fileContents(
       (std::istreambuf_iterator<char>(inputStream)),

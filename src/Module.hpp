@@ -46,6 +46,7 @@ public:
   std::vector<Data> dataSec;
   std::vector<CallStack> internCallStack;
   Runtime runtime;
+  uint32_t _startFunctionIndex = static_cast<uint32_t>(-1);
   void dumpInfo();
   void checkImport();
   void execute();
@@ -59,5 +60,6 @@ public:
   static std::function<void(Module *)> externalFunSignature;
   void prepareFunctionCall(uint32_t functionIndex);
   void cleanUpFunctionCall(uint32_t functionIndex);
+  InstructionOPCodePrinter opcodePrinter;
 };
 #endif

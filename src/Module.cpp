@@ -8,6 +8,7 @@
 #include <memory>
 #include <stdexcept>
 #include <vector>
+#include "CompilerConstrant.hpp"
 #include "FunctionSec.hpp"
 #include "ImportSec.hpp"
 #include "TypeSec.hpp"
@@ -40,7 +41,10 @@ void Module::checkImport() {
                                 api.identifier == importItem.getIdentifier() &&
                                 api.signature == typeSec.at(functionIndex);
                        });
-      assert(ifFound != runtime.getAPIs().end());
+      if (ifFound == runtime.getAPIs().end()) {
+        throw std::runtime_error(
+            "import function not found in current runtime");
+      }
       break;
     }
     default: {
@@ -52,16 +56,24 @@ void Module::checkImport() {
 
 void Module::execute() {
   if (static_cast<uint32_t>(-1) == startIndex) {
-    throw std::runtime_error("Module does not have start function");
+    if (static_cast<uint32_t>(-1) == _startFunctionIndex) {
+      throw std::runtime_error("Module does not have start function");
+    } else {
+      runFunction(_startFunctionIndex);
+    }
+  } else {
+    runFunction(startIndex);
   }
-  runFunction(startIndex);
 }
 
 std::unique_ptr<Instruction>
 Module::compileInstruction(InstructionType opcode,
                            std::vector<uint8_t> &content, uint32_t &pos) {
+  WASM_DEBUG("[compile] compile opcode: "
+             << opcodePrinter.getOPCodeName(static_cast<uint8_t>(opcode))
+             << std::endl);
   switch (opcode) {
-  // 0x10
+    // 0x10
   case (InstructionType::CALL): {
     uint32_t functionIndex =
         static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
@@ -116,29 +128,25 @@ Module::compileInstruction(InstructionType opcode,
   case (InstructionType::I32CONST): {
     int32_t value =
         static_cast<int32_t>(ModuleReader::readSignedLEB128(content, pos));
-    I32ConstInstruction instruction(value);
-    return std::make_unique<I32ConstInstruction>(instruction);
+    return std::make_unique<I32ConstInstruction>(value);
   }
 
   case (InstructionType::I64CONST): {
     int64_t value =
         static_cast<int64_t>(ModuleReader::readSignedLEB128(content, pos));
-    I64ConstInstruction instruction(value);
-    return std::make_unique<I64ConstInstruction>(instruction);
+    return std::make_unique<I64ConstInstruction>(value);
   }
 
   case (InstructionType::F32CONST): {
     float value = ModuleReader::bit_cast<float>(
         ModuleReader::read4BytesLittleEndian(content, pos));
-    F32ConstInstruction instruction(value);
-    return std::make_unique<F32ConstInstruction>(instruction);
+    return std::make_unique<F32ConstInstruction>(value);
   }
 
   case (InstructionType::F64CONST): {
     double value = ModuleReader::bit_cast<double>(
         ModuleReader::read8BytesLittleEndian(content, pos));
-    F64ConstInstruction instruction(value);
-    return std::make_unique<F64ConstInstruction>(instruction);
+    return std::make_unique<F64ConstInstruction>(value);
   }
   case InstructionType::I32EQZ:
   case InstructionType::I32EQ:
@@ -573,6 +581,7 @@ void Module::compileFunction(uint32_t functionIndex) {
 }
 
 std::any Module::runFunction(uint32_t functionIndex) {
+  WASM_DEBUG("\b\b\b\brun function: " << functionIndex << "\n");
   std::any result = nullptr;
   prepareFunctionCall(functionIndex);
   assert(functionIndex >= importSec.size());
@@ -608,6 +617,7 @@ std::any Module::runFunction(uint32_t functionIndex) {
       break;
     }
   }
+  WASM_DEBUG("\b\b\b\brun function end: " << functionIndex << "\n");
   cleanUpFunctionCall(functionIndex);
   return result;
 }

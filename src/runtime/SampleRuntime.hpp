@@ -64,6 +64,26 @@ private:
     std::abort();
   }
 
+  static void trace(Module *module) {
+    StackItem i321 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    StackItem i322 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    StackItem f641 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    StackItem f642 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    StackItem f643 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    StackItem f644 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    StackItem f645 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    std::cout << "abort called with code: " << i321.value.i32 << " at "
+              << i322.value.i32 << std::endl;
+    std::abort();
+  }
+
 public:
   static void registerRuntime(Module &module) {
     TypeSec vi32;
@@ -79,6 +99,16 @@ public:
     VI32I32I32I32.parameters.emplace_back(ValType::i32);
     VI32I32I32I32.parameters.emplace_back(ValType::i32);
     VI32I32I32I32.parameters.emplace_back(ValType::i32);
+
+    TypeSec VI32I32F32F32F32F32F32;
+    VI32I32F32F32F32F32F32.parameters.emplace_back(ValType::i32);
+    VI32I32F32F32F32F32F32.parameters.emplace_back(ValType::i32);
+    VI32I32F32F32F32F32F32.parameters.emplace_back(ValType::f64);
+    VI32I32F32F32F32F32F32.parameters.emplace_back(ValType::f64);
+    VI32I32F32F32F32F32F32.parameters.emplace_back(ValType::f64);
+    VI32I32F32F32F32F32F32.parameters.emplace_back(ValType::f64);
+    VI32I32F32F32F32F32F32.parameters.emplace_back(ValType::f64);
+
     module.runtime.registerAPI("env", "println", std::move(vi32),
                                (void *)&SampleRuntime::println);
     module.runtime.registerAPI("env", "printNumber", std::move(vi32),
@@ -91,6 +121,9 @@ public:
                                (void *)&SampleRuntime::printNumber);
     module.runtime.registerAPI("env", "abort", std::move(VI32I32I32I32),
                                (void *)&SampleRuntime::abort);
+    module.runtime.registerAPI("env", "trace",
+                               std::move(VI32I32F32F32F32F32F32),
+                               (void *)&SampleRuntime::trace);
   }
 };
 

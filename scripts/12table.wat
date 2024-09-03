@@ -35,13 +35,14 @@
         )
         (local.set $0 (i32.const 1))
         (block $block1
+            (call $printNumberI32 (i32.const 24))
             (block $block2
                 (block $block3
+                    (call $printNumberI32 (i32.const 42))
                     (br_table $block1 $block2 $block3 (local.get $0))
                 )
-                (call $printNumberI32 (i32.const 42))
+                
             )
-            (call $printNumberI32 (i32.const 24))
         )
     )
     (start $_start)

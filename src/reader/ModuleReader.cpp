@@ -86,6 +86,7 @@ void ModuleReader::prepareModule() {
     case 0x7: // export
     {
       readSection(exportSec.size, exportSec.content);
+      handleExport();
       break;
     }
     case 0x8: // start
@@ -454,6 +455,52 @@ void ModuleReader::handleType() {
     }
     module.typeSec.push_back({std::move(parameters), std::move(results)});
     typeCount--;
+  }
+}
+
+void ModuleReader::handleExport() {
+  uint32_t exportPos = 0;
+  uint32_t exportCount =
+      static_cast<uint32_t>(readUnsignedLEB128(exportSec.content, exportPos));
+  while (exportCount > 0) {
+    uint32_t nameCount =
+        static_cast<uint32_t>(readUnsignedLEB128(exportSec.content, exportPos));
+    std::string name;
+    std::copy(exportSec.content.cbegin() + exportPos,
+              exportSec.content.cbegin() + exportPos + nameCount,
+              std::back_inserter(name));
+    exportPos += nameCount;
+    uint8_t desc = readUInt8(exportSec.content, exportPos);
+    switch (desc) {
+      // only handle _start function index
+    case 0x0: { // function
+      uint32_t index = static_cast<uint32_t>(
+          readUnsignedLEB128(exportSec.content, exportPos));
+      if (name == "_start") {
+        module._startFunctionIndex = index;
+      }
+      break;
+    }
+    case 0x1: { // table
+      uint32_t index = static_cast<uint32_t>(
+          readUnsignedLEB128(exportSec.content, exportPos));
+      break;
+    }
+    case 0x2: { // mem
+      uint32_t index = static_cast<uint32_t>(
+          readUnsignedLEB128(exportSec.content, exportPos));
+      break;
+    }
+    case 0x3: { // global
+      uint32_t index = static_cast<uint32_t>(
+          readUnsignedLEB128(exportSec.content, exportPos));
+      break;
+    }
+    default: {
+      throw std::runtime_error("invalid export desc");
+    }
+    }
+    exportCount--;
   }
 }
 

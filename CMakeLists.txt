@@ -21,3 +21,7 @@ add_executable(wasm-interpreter main.cpp ${sources})
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
+
+if(BUILD_WITH_UNIT_TEST)
+    add_subdirectory(test)
+endif()
