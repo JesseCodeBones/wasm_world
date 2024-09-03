@@ -1,3 +1,5 @@
+[![](https://upload.wikimedia.org/wikipedia/commons/1/1f/WebAssembly_Logo.svg)](https://github.com/JesseCodeBones/wasm_world)
+
 # wasm world
 
 ## Motivation
