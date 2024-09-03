@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <iomanip>
+#include <ios>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -58,8 +59,8 @@ private:
     module->runtime.getStack()->pop();
     StackItem i324 = module->runtime.getStack()->top();
     module->runtime.getStack()->pop();
-    std::cout << "abort called with code: " << i321.value.i32 << " at "
-              << i322.value.i32 << ":" << i323.value.i32
+    std::cout << "abort called with code: " << std::dec << i321.value.i32
+              << " at " << i322.value.i32 << ":" << i323.value.i32
               << " stack size: " << i324.value.i32 << std::endl;
     std::abort();
   }
@@ -79,9 +80,8 @@ private:
     module->runtime.getStack()->pop();
     StackItem f645 = module->runtime.getStack()->top();
     module->runtime.getStack()->pop();
-    std::cout << "abort called with code: " << i321.value.i32 << " at "
+    std::cout << "trace called with code: " << i321.value.i32 << " at "
               << i322.value.i32 << std::endl;
-    std::abort();
   }
 
 public:

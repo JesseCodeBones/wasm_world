@@ -1,6 +1,6 @@
 #include "CompilerConstrant.hpp"
 #include <gtest/gtest.h>
+#define ALIGN_UP(x, align) (((x) + (align - 1)) & ~(align - 1))
 TEST(StorageTank, empty_with_temperature) {
-  CONFIG::WASM_DEBUG_OPTION = true;
-  WASM_DEBUG("Hello, World!\n");
+  std::cout << ALIGN_UP(161 + 0, 0);
 }
