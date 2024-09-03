@@ -281,6 +281,9 @@ void MemoryInstruction::fire(void *module) {
 
 uint32_t MemoryInstruction::calculateMemoryAddressWithOffsetAndAlign(
     uint32_t offset, uint32_t align, uint32_t base) {
+  if (align == 0) {
+    return base + offset;
+  }
   return ALIGN_UP(base + offset, align);
 }
 

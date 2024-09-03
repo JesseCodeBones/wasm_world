@@ -371,9 +371,9 @@ Module::compileInstruction(InstructionType opcode,
     }
 
     case InstructionType::CALL_INDIRECT: {
-      uint32_t tableIndex =
-          static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
       uint32_t typeIndex =
+          static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
+      uint32_t tableIndex =
           static_cast<uint32_t>(ModuleReader::readUnsignedLEB128(content, pos));
       return std::make_unique<CallIndirectInstruction>(tableIndex, typeIndex);
     }
