@@ -43,7 +43,7 @@ void IfInstruction::fire(void *module) {
       }
       if (ptr->runtime.jumpToLoopBlockIndex >= 0) {
         ptr->runtime.jumpToLoopBlockIndex--;
-        if (ptr->runtime.jumpToLoopBlockIndex >= 0) {
+        if (ptr->runtime.jumpToLoopBlockIndex >= -1) {
           // if br target is not current block, break the block
           break;
         }
@@ -59,7 +59,7 @@ void IfInstruction::fire(void *module) {
         }
         if (ptr->runtime.jumpToLoopBlockIndex >= 0) {
           ptr->runtime.jumpToLoopBlockIndex--;
-          if (ptr->runtime.jumpToLoopBlockIndex >= 0) {
+          if (ptr->runtime.jumpToLoopBlockIndex >= -1) {
             // if br target is not current block, break the block
             break;
           }

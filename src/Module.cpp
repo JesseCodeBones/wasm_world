@@ -41,7 +41,10 @@ void Module::checkImport() {
                                 api.identifier == importItem.getIdentifier() &&
                                 api.signature == typeSec.at(functionIndex);
                        });
-      assert(ifFound != runtime.getAPIs().end());
+      if (ifFound == runtime.getAPIs().end()) {
+        throw std::runtime_error(
+            "import function not found in current runtime");
+      }
       break;
     }
     default: {
@@ -53,9 +56,14 @@ void Module::checkImport() {
 
 void Module::execute() {
   if (static_cast<uint32_t>(-1) == startIndex) {
-    throw std::runtime_error("Module does not have start function");
+    if (static_cast<uint32_t>(-1) == _startFunctionIndex) {
+      throw std::runtime_error("Module does not have start function");
+    } else {
+      runFunction(_startFunctionIndex);
+    }
+  } else {
+    runFunction(startIndex);
   }
-  runFunction(startIndex);
 }
 
 std::unique_ptr<Instruction>
