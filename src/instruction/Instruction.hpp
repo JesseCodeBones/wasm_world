@@ -72,7 +72,7 @@ enum class InstructionType : uint8_t {
   MEMORY_GROW = 0x40,  /* memory.grow */
 
   // bulk memory instructions
-  MEMORY_BULK = 0xfc, /* memory bulk */
+  TWO_BYTE_INS_FLAG = 0xfc, /* memory bulk */
 
   // Numeric Instructions
   I32CONST = 0x41,
@@ -276,7 +276,7 @@ private:
       {0x3e, /* i64.store32 */ "I64_STORE32"},
       {0x3f, /* memory.size */ "MEMORY_SIZE"},
       {0x40, /* memory.grow */ "MEMORY_GROW"},
-      {0xfc, /* memory bulk */ "MEMORY_BULK"},
+      {0xfc, /* memory bulk */ "TWO_BYTE_INS_FLAG"},
       {0x41, "I32CONST"},
       {0x42, "I64CONST"},
       {0x43, "F32CONST"},

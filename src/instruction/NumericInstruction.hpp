@@ -89,6 +89,29 @@ private:
   double value;
 };
 
+enum TruncSatNumberInstructionOpcode : uint8_t {
+  I32_TRUNC_SAT_F32_S = 0x0,
+  I32_TRUNC_SAT_F32_U = 0x1,
+  I32_TRUNC_SAT_F64_S = 0x2,
+  I32_TRUNC_SAT_F64_U = 0x3,
+  I64_TRUNC_SAT_F32_S = 0x4,
+  I64_TRUNC_SAT_F32_U = 0x5,
+  I64_TRUNC_SAT_F64_S = 0x6,
+  I64_TRUNC_SAT_F64_U = 0x7,
+};
+
+class TruncSatNumberInstruction : public Instruction {
+public:
+  TruncSatNumberInstruction(TruncSatNumberInstructionOpcode _opcode)
+      : satOpcode(_opcode) {
+    type = InstructionType::NOP;
+  }
+  void fire(void *module);
+
+private:
+  TruncSatNumberInstructionOpcode satOpcode;
+};
+
 class ComparisonInstruction : public Instruction {
 public:
   ComparisonInstruction(InstructionType opcode) {
