@@ -468,20 +468,39 @@ Module::compileInstruction(InstructionType opcode,
     return memoryInstruction;
   }
 
-  case InstructionType::MEMORY_BULK: {
-    BulkSecondInstructionType secondIndex =
-        static_cast<BulkSecondInstructionType>(
-            ModuleReader::readUnsignedLEB128(content, pos));
-    auto bulkIns = std::make_unique<BulkMemoryInstruction>(opcode);
-    bulkIns->secondIndex = secondIndex;
+  case InstructionType::TWO_BYTE_INS_FLAG: {
+    uint32_t secondIndex =
+
+        ModuleReader::readUnsignedLEB128(content, pos);
+
     switch (secondIndex) {
-    case BulkSecondInstructionType::MEMORY_FILL: {
+
+    case TruncSatNumberInstructionOpcode::I32_TRUNC_SAT_F32_S:
+    case TruncSatNumberInstructionOpcode::I32_TRUNC_SAT_F32_U:
+    case TruncSatNumberInstructionOpcode::I32_TRUNC_SAT_F64_S:
+    case TruncSatNumberInstructionOpcode::I32_TRUNC_SAT_F64_U:
+    case TruncSatNumberInstructionOpcode::I64_TRUNC_SAT_F32_S:
+    case TruncSatNumberInstructionOpcode::I64_TRUNC_SAT_F32_U:
+    case TruncSatNumberInstructionOpcode::I64_TRUNC_SAT_F64_S:
+    case TruncSatNumberInstructionOpcode::I64_TRUNC_SAT_F64_U: {
+      auto truncSatIns = std::make_unique<TruncSatNumberInstruction>(
+          static_cast<TruncSatNumberInstructionOpcode>(secondIndex));
+      return truncSatIns;
+    }
+
+    case 11: { // memory fill
+      auto bulkIns = std::make_unique<BulkMemoryInstruction>(opcode);
+      bulkIns->secondIndex =
+          static_cast<BulkSecondInstructionType>(secondIndex);
       uint8_t flag = ModuleReader::readUInt8(content, pos);
       assert(flag == 0x00);
       bulkIns->u8_1 = 0x00;
       return bulkIns;
     }
-    case BulkSecondInstructionType::MEMORY_COPY: {
+    case 10: { // memory copy
+      auto bulkIns = std::make_unique<BulkMemoryInstruction>(opcode);
+      bulkIns->secondIndex =
+          static_cast<BulkSecondInstructionType>(secondIndex);
       uint8_t flag1 = ModuleReader::readUInt8(content, pos);
       uint8_t flag2 = ModuleReader::readUInt8(content, pos);
       assert(flag1 == 0x00);

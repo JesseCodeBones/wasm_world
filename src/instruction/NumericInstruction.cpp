@@ -1642,3 +1642,142 @@ void ComparisonInstruction::fire(void *module) {
   }
   }
 }
+
+void TruncSatNumberInstruction::fire(void *module) {
+  Module *ptr = (Module *)module;
+  StackItem stackItem = ptr->runtime.getStack()->top();
+  ptr->runtime.getStack()->pop();
+  switch (satOpcode) {
+  case TruncSatNumberInstructionOpcode::I32_TRUNC_SAT_F32_S: {
+    auto value = stackItem.value.f32;
+    if (value > INT32_MAX) {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32, .value = {.i32 = INT32_MAX}});
+    } else if (value < INT32_MIN) {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32, .value = {.i32 = INT32_MIN}});
+    } else {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 = static_cast<int32_t>(value)}});
+    }
+    break;
+  }
+  case TruncSatNumberInstructionOpcode::I32_TRUNC_SAT_F32_U: {
+    auto value = stackItem.value.f32;
+    if (value > UINT32_MAX) {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 = static_cast<int32_t>(UINT32_MAX)}});
+    } else if (value < 0) {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32, .value = {.i32 = 0}});
+    } else {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 =
+                         static_cast<int32_t>(static_cast<uint32_t>(value))}});
+    }
+    break;
+  }
+  case TruncSatNumberInstructionOpcode::I32_TRUNC_SAT_F64_S: {
+    auto value = stackItem.value.f64;
+    if (value > INT32_MAX) {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32, .value = {.i32 = INT32_MAX}});
+    } else if (value < INT32_MIN) {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32, .value = {.i32 = INT32_MIN}});
+    } else {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 = static_cast<int32_t>(value)}});
+    }
+    break;
+  }
+  case TruncSatNumberInstructionOpcode::I32_TRUNC_SAT_F64_U: {
+    auto value = stackItem.value.f64;
+    if (value > UINT32_MAX) {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 = static_cast<int32_t>(UINT32_MAX)}});
+    } else if (value < 0) {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32, .value = {.i32 = 0}});
+    } else {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i32,
+           .value = {.i32 =
+                         static_cast<int32_t>(static_cast<uint32_t>(value))}});
+    }
+    break;
+  }
+  case TruncSatNumberInstructionOpcode::I64_TRUNC_SAT_F32_S: {
+    auto value = stackItem.value.f32;
+    if (value > INT64_MAX) {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64, .value = {.i64 = INT64_MAX}});
+    } else if (value < INT64_MIN) {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64, .value = {.i64 = INT64_MIN}});
+    } else {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(value)}});
+    }
+    break;
+  }
+  case TruncSatNumberInstructionOpcode::I64_TRUNC_SAT_F32_U: {
+    auto value = stackItem.value.f32;
+    if (value > UINT64_MAX) {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(UINT64_MAX)}});
+    } else if (value < 0) {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64, .value = {.i64 = 0}});
+    } else {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 =
+                         static_cast<int64_t>(static_cast<uint64_t>(value))}});
+    }
+    break;
+  }
+  case TruncSatNumberInstructionOpcode::I64_TRUNC_SAT_F64_S: {
+    auto value = stackItem.value.f64;
+    if (value > INT64_MAX) {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64, .value = {.i64 = INT64_MAX}});
+    } else if (value < INT64_MIN) {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64, .value = {.i64 = INT64_MIN}});
+    } else {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(value)}});
+    }
+    break;
+  }
+  case TruncSatNumberInstructionOpcode::I64_TRUNC_SAT_F64_U: {
+    auto value = stackItem.value.f64;
+    if (value > UINT64_MAX) {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 = static_cast<int64_t>(UINT64_MAX)}});
+    } else if (value < 0) {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64, .value = {.i64 = 0}});
+    } else {
+      ptr->runtime.getStack()->push(
+          {.type = ValType::i64,
+           .value = {.i64 =
+                         static_cast<int64_t>(static_cast<uint64_t>(value))}});
+    }
+    break;
+  }
+  default: {
+    throw std::runtime_error("unsupported trunc sat number instruction");
+  }
+  }
+}
