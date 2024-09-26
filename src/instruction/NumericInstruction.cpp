@@ -14,6 +14,7 @@ void NumericOperatorInstruction::fire(void *module) {
     assert(rhsStackItem.type == ValType::i32);
     int32_t value = rhsStackItem.value.i32;
     int32_t result = std::countl_zero(static_cast<uint32_t>(value));
+    WASM_DEBUG("I32CLZ: " << result << "\n");
     ptr->runtime.getStack()->push(
         {.type = ValType::i32, .value = {.i32 = result}});
     break;
@@ -24,6 +25,7 @@ void NumericOperatorInstruction::fire(void *module) {
     assert(rhsStackItem.type == ValType::i64);
     int64_t value = rhsStackItem.value.i64;
     int32_t result = std::countl_zero(static_cast<uint64_t>(value));
+    WASM_DEBUG("I64CLZ: " << result << "\n");
     ptr->runtime.getStack()->push(
         {.type = ValType::i64, .value = {.i64 = static_cast<int64_t>(result)}});
     break;
@@ -34,6 +36,7 @@ void NumericOperatorInstruction::fire(void *module) {
     assert(rhsStackItem.type == ValType::i32);
     int32_t value = rhsStackItem.value.i32;
     int32_t result = std::countr_zero(static_cast<uint32_t>(value));
+    WASM_DEBUG("I32CTZ: " << result << "\n");
     ptr->runtime.getStack()->push(
         {.type = ValType::i32, .value = {.i32 = result}});
     break;
@@ -44,6 +47,7 @@ void NumericOperatorInstruction::fire(void *module) {
     assert(rhsStackItem.type == ValType::i64);
     int64_t value = rhsStackItem.value.i64;
     int32_t result = std::countr_zero(static_cast<uint64_t>(value));
+    WASM_DEBUG("I64CTZ: " << result << "\n");
     ptr->runtime.getStack()->push(
         {.type = ValType::i64, .value = {.i64 = static_cast<int64_t>(result)}});
     break;
@@ -54,6 +58,7 @@ void NumericOperatorInstruction::fire(void *module) {
     assert(rhsStackItem.type == ValType::i32);
     int32_t value = rhsStackItem.value.i32;
     int32_t result = std::popcount(static_cast<uint32_t>(value));
+    WASM_DEBUG("I32POPCNT: " << result << "\n");
     ptr->runtime.getStack()->push(
         {.type = ValType::i32, .value = {.i32 = result}});
     break;
@@ -64,6 +69,7 @@ void NumericOperatorInstruction::fire(void *module) {
     assert(rhsStackItem.type == ValType::i64);
     int64_t value = rhsStackItem.value.i64;
     int32_t result = std::popcount(static_cast<uint64_t>(value));
+    WASM_DEBUG("I64POPCNT: " << result << "\n");
     ptr->runtime.getStack()->push(
         {.type = ValType::i64, .value = {.i64 = static_cast<int64_t>(result)}});
     break;
@@ -85,6 +91,10 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::i32,
            .value = {.i32 =
                          (lhsStackItem.value.i32 + rhsStackItem.value.i32)}});
+      WASM_DEBUG("I32ADD: " << lhsStackItem.value.i32 << " + "
+                            << rhsStackItem.value.i32 << " = "
+                            << (lhsStackItem.value.i32 + rhsStackItem.value.i32)
+                            << "\n");
       break;
     }
     case InstructionType::I64ADD: {
@@ -94,6 +104,10 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::i64,
            .value = {.i64 =
                          (lhsStackItem.value.i64 + rhsStackItem.value.i64)}});
+      WASM_DEBUG("I64ADD: " << lhsStackItem.value.i64 << " + "
+                            << rhsStackItem.value.i64 << " = "
+                            << (lhsStackItem.value.i64 + rhsStackItem.value.i64)
+                            << "\n");
       break;
     }
     case InstructionType::F32ADD: {
@@ -103,6 +117,10 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::f32,
            .value = {.f32 =
                          (lhsStackItem.value.f32 + rhsStackItem.value.f32)}});
+      WASM_DEBUG("F32ADD: " << lhsStackItem.value.f32 << " + "
+                            << rhsStackItem.value.f32 << " = "
+                            << (lhsStackItem.value.f32 + rhsStackItem.value.f32)
+                            << "\n");
       break;
     }
     case InstructionType::F64ADD: {
@@ -112,6 +130,10 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::f64,
            .value = {.f64 =
                          (lhsStackItem.value.f64 + rhsStackItem.value.f64)}});
+      WASM_DEBUG("F64ADD: " << lhsStackItem.value.f64 << " + "
+                            << rhsStackItem.value.f64 << " = "
+                            << (lhsStackItem.value.f64 + rhsStackItem.value.f64)
+                            << "\n");
       break;
     }
     default: {
@@ -137,6 +159,10 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::i32,
            .value = {.i32 =
                          (lhsStackItem.value.i32 - rhsStackItem.value.i32)}});
+      WASM_DEBUG("I32SUB: " << lhsStackItem.value.i32 << " - "
+                            << rhsStackItem.value.i32 << " = "
+                            << (lhsStackItem.value.i32 - rhsStackItem.value.i32)
+                            << "\n");
       break;
     }
     case InstructionType::I64SUB: {
@@ -146,6 +172,10 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::i64,
            .value = {.i64 =
                          (lhsStackItem.value.i64 - rhsStackItem.value.i64)}});
+      WASM_DEBUG("I64SUB: " << lhsStackItem.value.i64 << " - "
+                            << rhsStackItem.value.i64 << " = "
+                            << (lhsStackItem.value.i64 - rhsStackItem.value.i64)
+                            << "\n");
       break;
     }
     case InstructionType::F32SUB: {
@@ -155,6 +185,10 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::f32,
            .value = {.f32 =
                          (lhsStackItem.value.f32 - rhsStackItem.value.f32)}});
+      WASM_DEBUG("F32SUB: " << lhsStackItem.value.f32 << " - "
+                            << rhsStackItem.value.f32 << " = "
+                            << (lhsStackItem.value.f32 - rhsStackItem.value.f32)
+                            << "\n");
       break;
     }
     case InstructionType::F64SUB: {
@@ -164,6 +198,10 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::f64,
            .value = {.f64 =
                          (lhsStackItem.value.f64 - rhsStackItem.value.f64)}});
+      WASM_DEBUG("F64SUB: " << lhsStackItem.value.f64 << " - "
+                            << rhsStackItem.value.f64 << " = "
+                            << (lhsStackItem.value.f64 - rhsStackItem.value.f64)
+                            << "\n");
       break;
     }
     default: {
@@ -189,6 +227,10 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::i32,
            .value = {.i32 =
                          (lhsStackItem.value.i32 * rhsStackItem.value.i32)}});
+      WASM_DEBUG("I32MUL: " << lhsStackItem.value.i32 << " * "
+                            << rhsStackItem.value.i32 << " = "
+                            << (lhsStackItem.value.i32 * rhsStackItem.value.i32)
+                            << "\n");
       break;
     }
     case InstructionType::I64MUL: {
@@ -198,6 +240,10 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::i64,
            .value = {.i64 =
                          (lhsStackItem.value.i64 * rhsStackItem.value.i64)}});
+      WASM_DEBUG("I64MUL: " << lhsStackItem.value.i64 << " * "
+                            << rhsStackItem.value.i64 << " = "
+                            << (lhsStackItem.value.i64 * rhsStackItem.value.i64)
+                            << "\n");
       break;
     }
     case InstructionType::F32MUL: {
@@ -207,6 +253,10 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::f32,
            .value = {.f32 =
                          (lhsStackItem.value.f32 * rhsStackItem.value.f32)}});
+      WASM_DEBUG("F32MUL: " << lhsStackItem.value.f32 << " * "
+                            << rhsStackItem.value.f32 << " = "
+                            << (lhsStackItem.value.f32 * rhsStackItem.value.f32)
+                            << "\n");
       break;
     }
     case InstructionType::F64MUL: {
@@ -216,6 +266,10 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::f64,
            .value = {.f64 =
                          (lhsStackItem.value.f64 * rhsStackItem.value.f64)}});
+      WASM_DEBUG("F64MUL: " << lhsStackItem.value.f64 << " * "
+                            << rhsStackItem.value.f64 << " = "
+                            << (lhsStackItem.value.f64 * rhsStackItem.value.f64)
+                            << "\n");
       break;
     }
     default: {
@@ -243,6 +297,10 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::i32,
            .value = {.i32 = (static_cast<int32_t>(lhsStackItem.value.i32 /
                                                   rhsStackItem.value.i32))}});
+      WASM_DEBUG("I32DIV_S: "
+                 << lhsStackItem.value.i32 << " / " << rhsStackItem.value.i32
+                 << " = " << (lhsStackItem.value.i32 / rhsStackItem.value.i32)
+                 << "\n");
       break;
     }
     case InstructionType::I32DIV_U: {
@@ -253,6 +311,12 @@ void NumericOperatorInstruction::fire(void *module) {
            .value = {.i32 = static_cast<int32_t>(
                          (static_cast<uint32_t>(lhsStackItem.value.i32) /
                           static_cast<uint32_t>(rhsStackItem.value.i32)))}});
+      WASM_DEBUG("I32DIV_U: "
+                 << lhsStackItem.value.i32 << " / " << rhsStackItem.value.i32
+                 << " = "
+                 << (static_cast<uint32_t>(lhsStackItem.value.i32) /
+                     static_cast<uint32_t>(rhsStackItem.value.i32))
+                 << "\n");
       break;
     }
     case InstructionType::I64DIV_S: {
@@ -262,6 +326,12 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::i64,
            .value = {.i64 = static_cast<int64_t>(lhsStackItem.value.i64 /
                                                  rhsStackItem.value.i64)}});
+      WASM_DEBUG("I64DIV_S: "
+                 << lhsStackItem.value.i64 << " / " << rhsStackItem.value.i64
+                 << " = "
+                 << (static_cast<uint64_t>(lhsStackItem.value.i64) /
+                     static_cast<uint64_t>(rhsStackItem.value.i64))
+                 << "\n");
       break;
     }
     case InstructionType::I64DIV_U: {
@@ -272,6 +342,12 @@ void NumericOperatorInstruction::fire(void *module) {
            .value = {.i64 = static_cast<int64_t>(
                          static_cast<uint64_t>(lhsStackItem.value.i64) /
                          static_cast<uint64_t>(rhsStackItem.value.i64))}});
+      WASM_DEBUG("I64DIV_U: "
+                 << lhsStackItem.value.i64 << " / " << rhsStackItem.value.i64
+                 << " = "
+                 << (static_cast<uint64_t>(lhsStackItem.value.i64) /
+                     static_cast<uint64_t>(rhsStackItem.value.i64))
+                 << "\n");
       break;
     }
     case InstructionType::F32DIV: {
@@ -281,6 +357,10 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::f32,
            .value = {.f32 =
                          (lhsStackItem.value.f32 / rhsStackItem.value.f32)}});
+      WASM_DEBUG("F32DIV: " << lhsStackItem.value.f32 << " / "
+                            << rhsStackItem.value.f32 << " = "
+                            << (lhsStackItem.value.f32 / rhsStackItem.value.f32)
+                            << "\n");
       break;
     }
     case InstructionType::F64DIV: {
@@ -290,6 +370,10 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::f64,
            .value = {.f64 =
                          (lhsStackItem.value.f64 / rhsStackItem.value.f64)}});
+      WASM_DEBUG("F64DIV: " << lhsStackItem.value.f64 << " / "
+                            << rhsStackItem.value.f64 << " = "
+                            << (lhsStackItem.value.f64 / rhsStackItem.value.f64)
+                            << "\n");
       break;
     }
     default: {
@@ -315,6 +399,10 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::i32,
            .value = {.i32 = (static_cast<int32_t>(lhsStackItem.value.i32 %
                                                   rhsStackItem.value.i32))}});
+      WASM_DEBUG("I32REM_S: "
+                 << lhsStackItem.value.i32 << " % " << rhsStackItem.value.i32
+                 << " = " << (lhsStackItem.value.i32 % rhsStackItem.value.i32)
+                 << "\n");
       break;
     }
     case InstructionType::I32REM_U: {
@@ -325,6 +413,12 @@ void NumericOperatorInstruction::fire(void *module) {
            .value = {.i32 = static_cast<int32_t>(
                          (static_cast<uint32_t>(lhsStackItem.value.i32) %
                           static_cast<uint32_t>(rhsStackItem.value.i32)))}});
+      WASM_DEBUG("I32REM_U: "
+                 << lhsStackItem.value.i32 << " % " << rhsStackItem.value.i32
+                 << " = "
+                 << (static_cast<uint32_t>(lhsStackItem.value.i32) %
+                     static_cast<uint32_t>(rhsStackItem.value.i32))
+                 << "\n");
       break;
     }
     case InstructionType::I64REM_S: {
@@ -334,6 +428,10 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::i64,
            .value = {.i64 = static_cast<int64_t>(lhsStackItem.value.i64 %
                                                  rhsStackItem.value.i64)}});
+      WASM_DEBUG("I64REM_S: "
+                 << lhsStackItem.value.i64 << " % " << rhsStackItem.value.i64
+                 << " = " << (lhsStackItem.value.i64 % rhsStackItem.value.i64)
+                 << "\n");
       break;
     }
     case InstructionType::I64REM_U: {
@@ -344,10 +442,16 @@ void NumericOperatorInstruction::fire(void *module) {
            .value = {.i64 = static_cast<int64_t>(
                          static_cast<uint64_t>(lhsStackItem.value.i64) %
                          static_cast<uint64_t>(rhsStackItem.value.i64))}});
+      WASM_DEBUG("I64REM_U: "
+                 << lhsStackItem.value.i64 << " % " << rhsStackItem.value.i64
+                 << " = "
+                 << (static_cast<uint64_t>(lhsStackItem.value.i64) %
+                     static_cast<uint64_t>(rhsStackItem.value.i64))
+                 << "\n");
       break;
     }
     default: {
-      assert(false); // directly exit
+      throw std::runtime_error("Invalid instruction type");
     }
     }
     break;
@@ -362,6 +466,10 @@ void NumericOperatorInstruction::fire(void *module) {
          .value = {.i32 = static_cast<int32_t>(
                        (static_cast<uint32_t>(lhsStackItem.value.i32) &
                         static_cast<uint32_t>(rhsStackItem.value.i32)))}});
+    WASM_DEBUG("I32AND: " << lhsStackItem.value.i32 << " & "
+                          << rhsStackItem.value.i32 << " = "
+                          << (lhsStackItem.value.i32 & rhsStackItem.value.i32)
+                          << "\n");
     break;
   }
   case InstructionType::I64AND: {
@@ -374,6 +482,10 @@ void NumericOperatorInstruction::fire(void *module) {
          .value = {.i64 = static_cast<int64_t>(
                        (static_cast<uint64_t>(lhsStackItem.value.i64) &
                         static_cast<uint64_t>(rhsStackItem.value.i64)))}});
+    WASM_DEBUG("I64AND: " << lhsStackItem.value.i64 << " & "
+                          << rhsStackItem.value.i64 << " = "
+                          << (lhsStackItem.value.i64 & rhsStackItem.value.i64)
+                          << "\n");
     break;
   }
 
@@ -387,6 +499,10 @@ void NumericOperatorInstruction::fire(void *module) {
          .value = {.i32 = static_cast<int32_t>(
                        (static_cast<uint32_t>(lhsStackItem.value.i32) |
                         static_cast<uint32_t>(rhsStackItem.value.i32)))}});
+    WASM_DEBUG("I32OR: " << lhsStackItem.value.i32 << " | "
+                         << rhsStackItem.value.i32 << " = "
+                         << (lhsStackItem.value.i32 | rhsStackItem.value.i32)
+                         << "\n");
     break;
   }
   case InstructionType::I64OR: {
@@ -399,6 +515,10 @@ void NumericOperatorInstruction::fire(void *module) {
          .value = {.i64 = static_cast<int64_t>(
                        (static_cast<uint64_t>(lhsStackItem.value.i64) |
                         static_cast<uint64_t>(rhsStackItem.value.i64)))}});
+    WASM_DEBUG("I64OR: " << lhsStackItem.value.i64 << " | "
+                         << rhsStackItem.value.i64 << " = "
+                         << (lhsStackItem.value.i64 | rhsStackItem.value.i64)
+                         << "\n");
     break;
   }
 
@@ -412,6 +532,10 @@ void NumericOperatorInstruction::fire(void *module) {
          .value = {.i32 = static_cast<int32_t>(
                        (static_cast<uint32_t>(lhsStackItem.value.i32) ^
                         static_cast<uint32_t>(rhsStackItem.value.i32)))}});
+    WASM_DEBUG("I32XOR: " << lhsStackItem.value.i32 << " ^ "
+                          << rhsStackItem.value.i32 << " = "
+                          << (lhsStackItem.value.i32 ^ rhsStackItem.value.i32)
+                          << "\n");
     break;
   }
   case InstructionType::I64XOR: {
@@ -424,6 +548,10 @@ void NumericOperatorInstruction::fire(void *module) {
          .value = {.i64 = static_cast<int64_t>(
                        (static_cast<uint64_t>(lhsStackItem.value.i64) ^
                         static_cast<uint64_t>(rhsStackItem.value.i64)))}});
+    WASM_DEBUG("I64XOR: " << lhsStackItem.value.i64 << " ^ "
+                          << rhsStackItem.value.i64 << " = "
+                          << (lhsStackItem.value.i64 ^ rhsStackItem.value.i64)
+                          << "\n");
     break;
   }
 
@@ -437,6 +565,10 @@ void NumericOperatorInstruction::fire(void *module) {
          .value = {.i32 = static_cast<int32_t>(
                        (static_cast<uint32_t>(lhsStackItem.value.i32)
                         << static_cast<uint32_t>(rhsStackItem.value.i32)))}});
+    WASM_DEBUG("I32SHL: " << lhsStackItem.value.i32 << " << "
+                          << rhsStackItem.value.i32 << " = "
+                          << (lhsStackItem.value.i32 << rhsStackItem.value.i32)
+                          << "\n");
     break;
   }
   case InstructionType::I64SHL: {
@@ -449,6 +581,10 @@ void NumericOperatorInstruction::fire(void *module) {
          .value = {.i64 = static_cast<int64_t>(
                        (static_cast<uint64_t>(lhsStackItem.value.i64)
                         << static_cast<uint64_t>(rhsStackItem.value.i64)))}});
+    WASM_DEBUG("I64SHL: " << lhsStackItem.value.i64 << " << "
+                          << rhsStackItem.value.i64 << " = "
+                          << (lhsStackItem.value.i64 << rhsStackItem.value.i64)
+                          << "\n");
     break;
   }
 
@@ -461,6 +597,10 @@ void NumericOperatorInstruction::fire(void *module) {
         {.type = ValType::i32,
          .value = {.i32 = static_cast<int32_t>(
                        (lhsStackItem.value.i32 >> rhsStackItem.value.i32))}});
+    WASM_DEBUG("I32SHR_S: "
+               << lhsStackItem.value.i32 << " >> " << rhsStackItem.value.i32
+               << " = " << (lhsStackItem.value.i32 >> rhsStackItem.value.i32)
+               << "\n");
     break;
   }
   case InstructionType::I64SHR_S: {
@@ -472,6 +612,10 @@ void NumericOperatorInstruction::fire(void *module) {
         {.type = ValType::i64,
          .value = {.i64 = static_cast<int64_t>(
                        (lhsStackItem.value.i64 >> rhsStackItem.value.i64))}});
+    WASM_DEBUG("I64SHR_S: "
+               << lhsStackItem.value.i64 << " >> " << rhsStackItem.value.i64
+               << " = " << (lhsStackItem.value.i64 >> rhsStackItem.value.i64)
+               << "\n");
     break;
   }
 
@@ -485,6 +629,11 @@ void NumericOperatorInstruction::fire(void *module) {
          .value = {.i32 = static_cast<int32_t>(
                        (static_cast<uint32_t>(lhsStackItem.value.i32) >>
                         rhsStackItem.value.i32))}});
+    WASM_DEBUG("I32SHR_U: " << lhsStackItem.value.i32 << " >> "
+                            << rhsStackItem.value.i32 << " = "
+                            << (static_cast<uint32_t>(lhsStackItem.value.i32) >>
+                                rhsStackItem.value.i32)
+                            << "\n");
     break;
   }
   case InstructionType::I64SHR_U: {
@@ -497,6 +646,11 @@ void NumericOperatorInstruction::fire(void *module) {
          .value = {.i64 = static_cast<int64_t>(
                        (static_cast<uint64_t>(lhsStackItem.value.i64) >>
                         rhsStackItem.value.i64))}});
+    WASM_DEBUG("I64SHR_U: " << lhsStackItem.value.i64 << " >> "
+                            << rhsStackItem.value.i64 << " = "
+                            << (static_cast<uint64_t>(lhsStackItem.value.i64) >>
+                                rhsStackItem.value.i64)
+                            << "\n");
     break;
   }
 
@@ -510,6 +664,12 @@ void NumericOperatorInstruction::fire(void *module) {
          .value = {.i32 = static_cast<int32_t>(
                        std::rotl(static_cast<uint32_t>(lhsStackItem.value.i32),
                                  rhsStackItem.value.i32))}});
+    WASM_DEBUG(
+        "I32ROTL: " << lhsStackItem.value.i32 << " << "
+                    << rhsStackItem.value.i32 << " = "
+                    << (std::rotl(static_cast<uint32_t>(lhsStackItem.value.i32),
+                                  rhsStackItem.value.i32))
+                    << "\n");
     break;
   }
   case InstructionType::I64ROTL: {
@@ -522,7 +682,12 @@ void NumericOperatorInstruction::fire(void *module) {
          .value = {.i64 = static_cast<int64_t>(std::rotl(
                        static_cast<uint64_t>(lhsStackItem.value.i64),
                        static_cast<int32_t>(rhsStackItem.value.i64)))}});
-
+    WASM_DEBUG(
+        "I64ROTL: " << lhsStackItem.value.i64 << " << "
+                    << rhsStackItem.value.i64 << " = "
+                    << std::rotl(static_cast<uint64_t>(lhsStackItem.value.i64),
+                                 static_cast<int32_t>(rhsStackItem.value.i64))
+                    << "\n");
     break;
   }
   case InstructionType::I32ROTR: {
@@ -535,6 +700,12 @@ void NumericOperatorInstruction::fire(void *module) {
          .value = {.i32 = static_cast<int32_t>(
                        std::rotr(static_cast<uint32_t>(lhsStackItem.value.i32),
                                  rhsStackItem.value.i32))}});
+    WASM_DEBUG(
+        "I32ROTR: " << lhsStackItem.value.i32 << " >> "
+                    << rhsStackItem.value.i32 << " = "
+                    << (std::rotr(static_cast<uint32_t>(lhsStackItem.value.i32),
+                                  rhsStackItem.value.i32))
+                    << "\n");
     break;
   }
   case InstructionType::I64ROTR: {
@@ -547,6 +718,12 @@ void NumericOperatorInstruction::fire(void *module) {
          .value = {.i64 = static_cast<int64_t>(std::rotr(
                        static_cast<uint64_t>(lhsStackItem.value.i64),
                        static_cast<int32_t>(rhsStackItem.value.i64)))}});
+    WASM_DEBUG(
+        "I64ROTR: " << lhsStackItem.value.i64 << " >> "
+                    << rhsStackItem.value.i64 << " = "
+                    << std::rotr(static_cast<uint64_t>(lhsStackItem.value.i64),
+                                 static_cast<int32_t>(rhsStackItem.value.i64))
+                    << "\n");
     break;
   }
 
@@ -556,6 +733,8 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::f32,
          .value = {.f32 = std::fabs(rhsStackItem.value.f32)}});
+    WASM_DEBUG("F32ABS: " << rhsStackItem.value.f32 << " = "
+                          << std::fabs(rhsStackItem.value.f32) << "\n");
     break;
   }
 
@@ -565,6 +744,8 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::f64,
          .value = {.f64 = std::fabs(rhsStackItem.value.f64)}});
+    WASM_DEBUG("F64ABS: " << rhsStackItem.value.f64 << " = "
+                          << std::fabs(rhsStackItem.value.f64) << "\n");
     break;
   }
 
@@ -573,6 +754,8 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->pop();
     ptr->runtime.getStack()->push(
         {.type = ValType::f32, .value = {.f32 = -rhsStackItem.value.f32}});
+    WASM_DEBUG("F32NEG: " << rhsStackItem.value.f32 << " = "
+                          << -rhsStackItem.value.f32 << "\n");
     break;
   }
 
@@ -581,6 +764,8 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->pop();
     ptr->runtime.getStack()->push(
         {.type = ValType::f64, .value = {.f64 = -rhsStackItem.value.f64}});
+    WASM_DEBUG("F64NEG: " << rhsStackItem.value.f64 << " = "
+                          << -rhsStackItem.value.f64 << "\n");
     break;
   }
 
@@ -590,6 +775,8 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::f32,
          .value = {.f32 = std::ceil(rhsStackItem.value.f32)}});
+    WASM_DEBUG("F32CEIL: " << rhsStackItem.value.f32 << " = "
+                           << std::ceil(rhsStackItem.value.f32) << "\n");
     break;
   }
 
@@ -599,6 +786,8 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::f64,
          .value = {.f64 = std::ceil(rhsStackItem.value.f64)}});
+    WASM_DEBUG("F64CEIL: " << rhsStackItem.value.f64 << " = "
+                           << std::ceil(rhsStackItem.value.f64) << "\n");
     break;
   }
 
@@ -608,6 +797,8 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::f32,
          .value = {.f32 = std::floor(rhsStackItem.value.f32)}});
+    WASM_DEBUG("F32FLOOR: " << rhsStackItem.value.f32 << " = "
+                            << std::floor(rhsStackItem.value.f32) << "\n");
     break;
   }
 
@@ -617,6 +808,8 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::f64,
          .value = {.f64 = std::floor(rhsStackItem.value.f64)}});
+    WASM_DEBUG("F64FLOOR: " << rhsStackItem.value.f64 << " = "
+                            << std::floor(rhsStackItem.value.f64) << "\n");
     break;
   }
 
@@ -626,6 +819,8 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::f32,
          .value = {.f32 = std::trunc(rhsStackItem.value.f32)}});
+    WASM_DEBUG("F32TRUNC: " << rhsStackItem.value.f32 << " = "
+                            << std::trunc(rhsStackItem.value.f32) << "\n");
     break;
   }
 
@@ -635,6 +830,8 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::f64,
          .value = {.f64 = std::trunc(rhsStackItem.value.f64)}});
+    WASM_DEBUG("F64TRUNC: " << rhsStackItem.value.f64 << " = "
+                            << std::trunc(rhsStackItem.value.f64) << "\n");
     break;
   }
 
@@ -644,6 +841,8 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::f32,
          .value = {.f32 = std::round(rhsStackItem.value.f32)}});
+    WASM_DEBUG("F32NEAREST: " << rhsStackItem.value.f32 << " = "
+                              << std::round(rhsStackItem.value.f32) << "\n");
     break;
   }
 
@@ -653,6 +852,8 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::f64,
          .value = {.f64 = std::round(rhsStackItem.value.f64)}});
+    WASM_DEBUG("F64NEAREST: " << rhsStackItem.value.f64 << " = "
+                              << std::round(rhsStackItem.value.f64) << "\n");
     break;
   }
 
@@ -662,6 +863,8 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::f32,
          .value = {.f32 = std::sqrt(rhsStackItem.value.f32)}});
+    WASM_DEBUG("F32SQRT: " << rhsStackItem.value.f32 << " = "
+                           << std::sqrt(rhsStackItem.value.f32) << "\n");
     break;
   }
 
@@ -671,6 +874,8 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::f64,
          .value = {.f64 = std::sqrt(rhsStackItem.value.f64)}});
+    WASM_DEBUG("F64SQRT: " << rhsStackItem.value.f64 << " = "
+                           << std::sqrt(rhsStackItem.value.f64) << "\n");
     break;
   }
 
@@ -683,6 +888,11 @@ void NumericOperatorInstruction::fire(void *module) {
         {.type = ValType::f32,
          .value = {
              .f32 = std::min(lhsStackItem.value.f32, rhsStackItem.value.f32)}});
+    WASM_DEBUG(
+        "F32MIN: " << lhsStackItem.value.f32 << " / " << rhsStackItem.value.f32
+                   << " = "
+                   << std::min(lhsStackItem.value.f32, rhsStackItem.value.f32)
+                   << "\n");
     break;
   }
 
@@ -695,6 +905,11 @@ void NumericOperatorInstruction::fire(void *module) {
         {.type = ValType::f64,
          .value = {
              .f64 = std::min(lhsStackItem.value.f64, rhsStackItem.value.f64)}});
+    WASM_DEBUG(
+        "F64MIN: " << lhsStackItem.value.f64 << " / " << rhsStackItem.value.f64
+                   << " = "
+                   << std::min(lhsStackItem.value.f64, rhsStackItem.value.f64)
+                   << "\n");
     break;
   }
 
@@ -707,6 +922,11 @@ void NumericOperatorInstruction::fire(void *module) {
         {.type = ValType::f32,
          .value = {
              .f32 = std::max(lhsStackItem.value.f32, rhsStackItem.value.f32)}});
+    WASM_DEBUG(
+        "F32MAX: " << lhsStackItem.value.f32 << " / " << rhsStackItem.value.f32
+                   << " = "
+                   << std::max(lhsStackItem.value.f32, rhsStackItem.value.f32)
+                   << "\n");
     break;
   }
 
@@ -719,6 +939,11 @@ void NumericOperatorInstruction::fire(void *module) {
         {.type = ValType::f64,
          .value = {
              .f64 = std::max(lhsStackItem.value.f64, rhsStackItem.value.f64)}});
+    WASM_DEBUG(
+        "F64MAX: " << lhsStackItem.value.f64 << " / " << rhsStackItem.value.f64
+                   << " = "
+                   << std::max(lhsStackItem.value.f64, rhsStackItem.value.f64)
+                   << "\n");
     break;
   }
 
@@ -731,6 +956,11 @@ void NumericOperatorInstruction::fire(void *module) {
         {.type = ValType::f32,
          .value = {.f32 = std::copysign(lhsStackItem.value.f32,
                                         rhsStackItem.value.f32)}});
+    WASM_DEBUG("F32COPYSIGN: "
+               << lhsStackItem.value.f32 << " / " << rhsStackItem.value.f32
+               << " = "
+               << std::copysign(lhsStackItem.value.f32, rhsStackItem.value.f32)
+               << "\n");
     break;
   }
 
@@ -743,6 +973,11 @@ void NumericOperatorInstruction::fire(void *module) {
         {.type = ValType::f64,
          .value = {.f64 = std::copysign(lhsStackItem.value.f64,
                                         rhsStackItem.value.f64)}});
+    WASM_DEBUG("F64COPYSIGN: "
+               << lhsStackItem.value.f64 << " / " << rhsStackItem.value.f64
+               << " = "
+               << std::copysign(lhsStackItem.value.f64, rhsStackItem.value.f64)
+               << "\n");
     break;
   }
 
@@ -752,6 +987,9 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::i32,
          .value = {.i32 = static_cast<int32_t>(rhsStackItem.value.i64)}});
+    WASM_DEBUG("I32WRAP_I64: " << rhsStackItem.value.i64 << " = "
+                               << static_cast<int32_t>(rhsStackItem.value.i64)
+                               << "\n");
     break;
   }
 
@@ -761,6 +999,9 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::i32,
          .value = {.i32 = static_cast<int32_t>(rhsStackItem.value.f32)}});
+    WASM_DEBUG("I32TRUNC_S_F32: "
+               << rhsStackItem.value.f32 << " = "
+               << static_cast<int32_t>(rhsStackItem.value.f32) << "\n");
     break;
   }
 
@@ -776,6 +1017,9 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::i32,
          .value = {.i32 = static_cast<int32_t>(rhsStackItem.value.f32)}});
+    WASM_DEBUG("I32TRUNC_U_F32: "
+               << rhsStackItem.value.f32 << " = "
+               << static_cast<int32_t>(rhsStackItem.value.f32) << "\n");
     break;
   }
 
@@ -785,6 +1029,9 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::i32,
          .value = {.i32 = static_cast<int32_t>(rhsStackItem.value.f64)}});
+    WASM_DEBUG("I32TRUNC_S_F64: "
+               << rhsStackItem.value.f64 << " = "
+               << static_cast<int32_t>(rhsStackItem.value.f64) << "\n");
     break;
   }
 
@@ -800,6 +1047,9 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::i32,
          .value = {.i32 = static_cast<int32_t>(rhsStackItem.value.f64)}});
+    WASM_DEBUG("I32TRUNC_U_F64: "
+               << rhsStackItem.value.f64 << " = "
+               << static_cast<int32_t>(rhsStackItem.value.f64) << "\n");
     break;
   }
 
@@ -809,6 +1059,9 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::i64,
          .value = {.i64 = static_cast<int64_t>(rhsStackItem.value.f32)}});
+    WASM_DEBUG("I64TRUNC_S_F32: "
+               << rhsStackItem.value.f32 << " = "
+               << static_cast<int64_t>(rhsStackItem.value.f32) << "\n");
     break;
   }
 
@@ -824,6 +1077,9 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::i64,
          .value = {.i64 = static_cast<int64_t>(rhsStackItem.value.f32)}});
+    WASM_DEBUG("I64TRUNC_U_F32: "
+               << rhsStackItem.value.f32 << " = "
+               << static_cast<int64_t>(rhsStackItem.value.f32) << "\n");
     break;
   }
 
@@ -833,6 +1089,9 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::i64,
          .value = {.i64 = static_cast<int64_t>(rhsStackItem.value.f64)}});
+    WASM_DEBUG("I64TRUNC_S_F64: "
+               << rhsStackItem.value.f64 << " = "
+               << static_cast<int64_t>(rhsStackItem.value.f64) << "\n");
     break;
   }
 
@@ -848,6 +1107,9 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::i64,
          .value = {.i64 = static_cast<int64_t>(rhsStackItem.value.f64)}});
+    WASM_DEBUG("I64TRUNC_U_F64: "
+               << rhsStackItem.value.f64 << " = "
+               << static_cast<int64_t>(rhsStackItem.value.f64) << "\n");
     break;
   }
 
@@ -857,6 +1119,9 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::i64,
          .value = {.i64 = static_cast<int64_t>(rhsStackItem.value.i32)}});
+    WASM_DEBUG("I64EXTEND_S_I32: "
+               << rhsStackItem.value.i32 << " = "
+               << static_cast<int64_t>(rhsStackItem.value.i32) << "\n");
     break;
   }
 
@@ -867,6 +1132,11 @@ void NumericOperatorInstruction::fire(void *module) {
         {.type = ValType::i64,
          .value = {.i64 = static_cast<int64_t>(
                        static_cast<uint32_t>(rhsStackItem.value.i32))}});
+    WASM_DEBUG(
+        "I64EXTEND_U_I32: "
+        << rhsStackItem.value.i32 << " = "
+        << static_cast<int64_t>(static_cast<uint32_t>(rhsStackItem.value.i32))
+        << "\n");
     break;
   }
 
@@ -876,6 +1146,9 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::f32,
          .value = {.f32 = static_cast<float>(rhsStackItem.value.f64)}});
+    WASM_DEBUG("F32DEMOTE_F64: " << rhsStackItem.value.f64 << " = "
+                                 << static_cast<float>(rhsStackItem.value.f64)
+                                 << "\n");
     break;
   }
 
@@ -885,6 +1158,9 @@ void NumericOperatorInstruction::fire(void *module) {
     ptr->runtime.getStack()->push(
         {.type = ValType::f64,
          .value = {.f64 = static_cast<double>(rhsStackItem.value.f32)}});
+    WASM_DEBUG("F64PROMOTE_F32: " << rhsStackItem.value.f32 << " = "
+                                  << static_cast<double>(rhsStackItem.value.f32)
+                                  << "\n");
     break;
   }
 
@@ -900,6 +1176,9 @@ void NumericOperatorInstruction::fire(void *module) {
       ptr->runtime.getStack()->push(
           {.type = ValType::f32,
            .value = {.f32 = static_cast<float>(rhsStackItem.value.i32)}});
+      WASM_DEBUG("F32CONVERT_S_I32: "
+                 << rhsStackItem.value.i32 << " = "
+                 << static_cast<float>(rhsStackItem.value.i32) << "\n");
       break;
     }
     case InstructionType::F32CONVERT_U_I32: {
@@ -907,12 +1186,18 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::f32,
            .value = {.f32 = static_cast<float>(
                          static_cast<uint32_t>(rhsStackItem.value.i32))}});
+      WASM_DEBUG("F32CONVERT_U_I32: "
+                 << rhsStackItem.value.i32 << " = "
+                 << static_cast<uint32_t>(rhsStackItem.value.i32) << "\n");
       break;
     }
     case InstructionType::F32CONVERT_S_I64: {
       ptr->runtime.getStack()->push(
           {.type = ValType::f32,
            .value = {.f32 = static_cast<float>(rhsStackItem.value.i64)}});
+      WASM_DEBUG("F32CONVERT_S_I64: "
+                 << rhsStackItem.value.i64 << " = "
+                 << static_cast<float>(rhsStackItem.value.i64) << "\n");
       break;
     }
     case InstructionType::F32CONVERT_U_I64: {
@@ -920,6 +1205,9 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::f32,
            .value = {.f32 = static_cast<float>(
                          static_cast<uint64_t>(rhsStackItem.value.i64))}});
+      WASM_DEBUG("F32CONVERT_U_I64: "
+                 << rhsStackItem.value.i64 << " = "
+                 << static_cast<uint64_t>(rhsStackItem.value.i64) << "\n");
       break;
     }
     default: {
@@ -942,6 +1230,9 @@ void NumericOperatorInstruction::fire(void *module) {
       ptr->runtime.getStack()->push(
           {.type = ValType::f64,
            .value = {.f64 = static_cast<double>(rhsStackItem.value.i32)}});
+      WASM_DEBUG("F64CONVERT_S_I32: "
+                 << rhsStackItem.value.i32 << " = "
+                 << static_cast<double>(rhsStackItem.value.i32) << "\n");
       break;
     }
     case InstructionType::F64CONVERT_U_I32: {
@@ -949,12 +1240,18 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::f64,
            .value = {.f64 = static_cast<double>(
                          static_cast<uint32_t>(rhsStackItem.value.i32))}});
+      WASM_DEBUG("F64CONVERT_U_I32: "
+                 << rhsStackItem.value.i32 << " = "
+                 << static_cast<uint32_t>(rhsStackItem.value.i32) << "\n");
       break;
     }
     case InstructionType::F64CONVERT_S_I64: {
       ptr->runtime.getStack()->push(
           {.type = ValType::f64,
            .value = {.f64 = static_cast<double>(rhsStackItem.value.i64)}});
+      WASM_DEBUG("F64CONVERT_S_I64: "
+                 << rhsStackItem.value.i64 << " = "
+                 << static_cast<double>(rhsStackItem.value.i64) << "\n");
       break;
     }
     case InstructionType::F64CONVERT_U_I64: {
@@ -962,6 +1259,9 @@ void NumericOperatorInstruction::fire(void *module) {
           {.type = ValType::f64,
            .value = {.f64 = static_cast<double>(
                          static_cast<uint64_t>(rhsStackItem.value.i64))}});
+      WASM_DEBUG("F64CONVERT_U_I64: "
+                 << rhsStackItem.value.i64 << " = "
+                 << static_cast<uint64_t>(rhsStackItem.value.i64) << "\n");
       break;
     }
     default: {
@@ -980,6 +1280,8 @@ void NumericOperatorInstruction::fire(void *module) {
     std::memcpy(&temValue, &rhsStackItem.value.f32, sizeof(int32_t));
     ptr->runtime.getStack()->push(
         {.type = ValType::i32, .value = {.i32 = temValue}});
+    WASM_DEBUG("I32REINTERPRET_F32: " << rhsStackItem.value.f32 << " = "
+                                      << temValue << "\n");
     break;
   }
 
@@ -990,6 +1292,8 @@ void NumericOperatorInstruction::fire(void *module) {
     std::memcpy(&temValue, &rhsStackItem.value.f64, sizeof(int64_t));
     ptr->runtime.getStack()->push(
         {.type = ValType::i64, .value = {.i64 = temValue}});
+    WASM_DEBUG("I64REINTERPRET_F64: " << rhsStackItem.value.f64 << " = "
+                                      << temValue << "\n");
     break;
   }
 
@@ -1000,6 +1304,8 @@ void NumericOperatorInstruction::fire(void *module) {
     std::memcpy(&temValue, &rhsStackItem.value.i32, sizeof(float));
     ptr->runtime.getStack()->push(
         {.type = ValType::f32, .value = {.f32 = temValue}});
+    WASM_DEBUG("F32REINTERPRET_I32: " << rhsStackItem.value.i32 << " = "
+                                      << temValue << "\n");
     break;
   }
 
@@ -1010,6 +1316,8 @@ void NumericOperatorInstruction::fire(void *module) {
     std::memcpy(&temValue, &rhsStackItem.value.i64, sizeof(double));
     ptr->runtime.getStack()->push(
         {.type = ValType::f64, .value = {.f64 = temValue}});
+    WASM_DEBUG("F64REINTERPRET_I64: " << rhsStackItem.value.i64 << " = "
+                                      << temValue << "\n");
     break;
   }
 
@@ -1036,6 +1344,8 @@ void NumericOperatorInstruction::fire(void *module) {
     }
     ptr->runtime.getStack()->push(
         {.type = ValType::i32, .value = {.i32 = temValue}});
+    WASM_DEBUG("I32EXTEND: " << rhsStackItem.value.i32 << "=" << temValue
+                             << "\n");
     break;
   }
 
@@ -1066,6 +1376,8 @@ void NumericOperatorInstruction::fire(void *module) {
       break;
     }
     }
+    WASM_DEBUG("I64EXTEND: " << rhsStackItem.value.i64 << "=" << temValue
+                             << "\n");
     ptr->runtime.getStack()->push(
         {.type = ValType::i64, .value = {.i64 = temValue}});
     break;
@@ -1089,6 +1401,7 @@ void ComparisonInstruction::fire(void *module) {
     ptr->runtime.getStack()->pop();
     assert(stackItem.type == ValType::i32);
     int32_t value = stackItem.value.i32;
+    WASM_DEBUG("I32EQZ: " << value << "\n");
     if (value == 0) {
       ptr->runtime.getStack()->push(
           {.type = ValType::i32, .value = {.i32 = 1}});
@@ -1103,6 +1416,7 @@ void ComparisonInstruction::fire(void *module) {
     ptr->runtime.getStack()->pop();
     assert(stackItem.type == ValType::i64);
     int64_t value = stackItem.value.i64;
+    WASM_DEBUG("I64EQZ: " << value << "\n");
     if (value == 0) {
       ptr->runtime.getStack()->push(
           {.type = ValType::i32, .value = {.i32 = 1}});
@@ -1137,6 +1451,8 @@ void ComparisonInstruction::fire(void *module) {
     StackItem stackItem2 = ptr->runtime.getStack()->top();
     ptr->runtime.getStack()->pop();
     assert(stackItem2.type == ValType::i64);
+    WASM_DEBUG("I64EQ: " << stackItem1.value.i64 << " : "
+                         << stackItem2.value.i64 << std::endl);
     if (stackItem1.value.i64 == stackItem2.value.i64) {
       ptr->runtime.getStack()->push(
           {.type = ValType::i32, .value = {.i32 = 1}});
@@ -1153,6 +1469,8 @@ void ComparisonInstruction::fire(void *module) {
     StackItem stackItem2 = ptr->runtime.getStack()->top();
     ptr->runtime.getStack()->pop();
     assert(stackItem2.type == ValType::f32);
+    WASM_DEBUG("F32EQ: " << stackItem1.value.f32 << " : "
+                         << stackItem2.value.f32 << std::endl);
     if (stackItem1.value.f32 == stackItem2.value.f32) {
       ptr->runtime.getStack()->push(
           {.type = ValType::i32, .value = {.i32 = 1}});
@@ -1169,6 +1487,8 @@ void ComparisonInstruction::fire(void *module) {
     StackItem stackItem2 = ptr->runtime.getStack()->top();
     ptr->runtime.getStack()->pop();
     assert(stackItem2.type == ValType::f64);
+    WASM_DEBUG("F64EQ: " << stackItem1.value.f64 << " : "
+                         << stackItem2.value.f64 << std::endl);
     if (stackItem1.value.f64 == stackItem2.value.f64) {
       ptr->runtime.getStack()->push(
           {.type = ValType::i32, .value = {.i32 = 1}});
@@ -1185,6 +1505,8 @@ void ComparisonInstruction::fire(void *module) {
     StackItem stackItem2 = ptr->runtime.getStack()->top();
     ptr->runtime.getStack()->pop();
     assert(stackItem2.type == ValType::i32);
+    WASM_DEBUG("I32NE: " << stackItem1.value.i32 << " : "
+                         << stackItem2.value.i32 << std::endl);
     if (stackItem1.value.i32 != stackItem2.value.i32) {
       ptr->runtime.getStack()->push(
           {.type = ValType::i32, .value = {.i32 = 1}});
@@ -1208,6 +1530,8 @@ void ComparisonInstruction::fire(void *module) {
       ptr->runtime.getStack()->push(
           {.type = ValType::i32, .value = {.i32 = 0}});
     }
+    WASM_DEBUG("I64NE: " << stackItem1.value.i64 << " : "
+                         << stackItem2.value.i64 << std::endl);
     break;
   }
   case InstructionType::F32NE: {
@@ -1217,6 +1541,8 @@ void ComparisonInstruction::fire(void *module) {
     StackItem stackItem2 = ptr->runtime.getStack()->top();
     ptr->runtime.getStack()->pop();
     assert(stackItem2.type == ValType::f32);
+    WASM_DEBUG("F32NE: " << stackItem1.value.f32 << " : "
+                         << stackItem2.value.f32 << std::endl);
     if (stackItem1.value.f32 != stackItem2.value.f32) {
       ptr->runtime.getStack()->push(
           {.type = ValType::i32, .value = {.i32 = 1}});
@@ -1233,6 +1559,8 @@ void ComparisonInstruction::fire(void *module) {
     StackItem stackItem2 = ptr->runtime.getStack()->top();
     ptr->runtime.getStack()->pop();
     assert(stackItem2.type == ValType::f64);
+    WASM_DEBUG("F64NE: " << stackItem1.value.f64 << " : "
+                         << stackItem2.value.f64 << std::endl);
     if (stackItem1.value.f64 != stackItem2.value.f64) {
       ptr->runtime.getStack()->push(
           {.type = ValType::i32, .value = {.i32 = 1}});
