@@ -4,6 +4,10 @@ set(CMAKE_CXX_STANDARD 20)
 include(CTest)
 enable_testing()
 
+if (WIN32)
+    add_definitions(-DNOMINMAX)
+endif()
+
 aux_source_directory(src sources)
 aux_source_directory(src/reader sources)
 aux_source_directory(src/instruction sources)

@@ -1,12 +1,12 @@
 #ifndef _wasm_numeric_instruction_
 #define _wasm_numeric_instruction_
 
-#ifdef __WIN32__
-#define NOMINMAX
-#include <algorithm>
-#include <gdiplus.h>
-#include <windows.h>
-#endif
+// #ifdef __WIN32__
+// #define NOMINMAX
+// #include <algorithm>
+// #include <gdiplus.h>
+// #include <windows.h>
+// #endif
 
 #include <cassert>
 #include <cmath>
