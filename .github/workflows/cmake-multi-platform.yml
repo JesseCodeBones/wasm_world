@@ -68,7 +68,6 @@ jobs:
     
     - name: Git Submodule Update
       run: |
-        git pull --recurse-submodules
         git submodule update --remote --recursive
 
     - name: Configure CMake
