@@ -25,3 +25,10 @@ include(CPack)
 if(BUILD_WITH_UNIT_TEST)
     add_subdirectory(test)
 endif()
+
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+add_subdirectory(thirdparty/uvwasi)
+target_link_libraries(wasm-interpreter PRIVATE uvwasi_a)
+
+target_include_directories(wasm-interpreter PRIVATE ${PROJECT_SOURCE_DIR}/thirdparty/uvwasi/include)
+target_include_directories(wasm-interpreter PRIVATE ${PROJECT_SOURCE_DIR}/build/_deps/libuv-src/include)

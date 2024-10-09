@@ -1,0 +1,3 @@
+[submodule "thirdparty/uvwasi"]
+	path = thirdparty/uvwasi
+	url = https://github.com/nodejs/uvwasi.git
