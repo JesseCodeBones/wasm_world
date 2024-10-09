@@ -10,6 +10,7 @@
 #include <string>
 #include "../Module.hpp"
 #include "Runtime.hpp"
+#include "uvwasi.h"
 
 class SampleRuntime {
 
@@ -84,8 +85,23 @@ private:
               << i322.value.i32 << std::endl;
   }
 
+  static void argsGet(Module *module) {
+    StackItem i322 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    StackItem i321 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    uint8_t *ptr = (uint8_t *)module->runtime.memoryBasePtr();
+    uint8_t *argv = ptr + i321.value.i32;
+    uint8_t *argBuffer = ptr + i322.value.i32;
+    uvwasi_args_get(module->uvwasi, (char **)argv, (char *)argBuffer);
+  }
+
 public:
   static void registerRuntime(Module &module) {
+
+    TypeSec vi32i32;
+    vi32i32.parameters.emplace_back(ValType::i32);
+    vi32i32.parameters.emplace_back(ValType::i32);
     TypeSec vi32;
     vi32.parameters.emplace_back(ValType::i32);
     TypeSec vi64;
@@ -124,6 +140,9 @@ public:
     module.runtime.registerAPI("env", "trace",
                                std::move(VI32I32F32F32F32F32F32),
                                (void *)&SampleRuntime::trace);
+    module.runtime.registerAPI("wasi_snapshot_preview1", "args_get",
+                               std::move(vi32i32),
+                               (void *)&SampleRuntime::argsGet);
   }
 };
 

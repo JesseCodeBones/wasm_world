@@ -4,6 +4,10 @@ set(CMAKE_CXX_STANDARD 20)
 include(CTest)
 enable_testing()
 
+if (WIN32)
+    add_definitions(-DNOMINMAX)
+endif()
+
 aux_source_directory(src sources)
 aux_source_directory(src/reader sources)
 aux_source_directory(src/instruction sources)
@@ -25,3 +29,10 @@ include(CPack)
 if(BUILD_WITH_UNIT_TEST)
     add_subdirectory(test)
 endif()
+
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+add_subdirectory(thirdparty/uvwasi)
+target_link_libraries(wasm-interpreter PRIVATE uvwasi_a)
+
+target_include_directories(wasm-interpreter PRIVATE ${PROJECT_SOURCE_DIR}/thirdparty/uvwasi/include)
+target_include_directories(wasm-interpreter PRIVATE ${PROJECT_SOURCE_DIR}/build/_deps/libuv-src/include)

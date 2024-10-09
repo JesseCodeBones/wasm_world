@@ -1,5 +1,5 @@
 {"cmake.configureSettings": {
-    "CMAKE_BUILD_TYPE": "Release"
+    "CMAKE_BUILD_TYPE": "Debug"
 },
 "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
 "editor.formatOnSave": true,

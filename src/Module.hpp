@@ -20,7 +20,7 @@
 #include "instruction/Instruction.hpp"
 #include "runtime/Runtime.hpp"
 #include "type/ValType.hpp"
-
+#include "uvwasi.h"
 typedef struct {
   uint32_t functionIndex;
   std::stack<StackItem> functionStack;
@@ -61,5 +61,6 @@ public:
   void prepareFunctionCall(uint32_t functionIndex);
   void cleanUpFunctionCall(uint32_t functionIndex);
   InstructionOPCodePrinter opcodePrinter;
+  uvwasi_t *uvwasi;
 };
 #endif
