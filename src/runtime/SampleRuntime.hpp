@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include <fstream>
 #include <iomanip>
 #include <ios>
 #include <iostream>
@@ -96,6 +97,41 @@ private:
     uvwasi_args_get(module->uvwasi, (char **)argv, (char *)argBuffer);
   }
 
+  static void argsSizesGet(Module *module) {
+    StackItem i322 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    StackItem i321 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    uint8_t *ptr = (uint8_t *)module->runtime.memoryBasePtr();
+    uint8_t *argc = ptr + i321.value.i32;
+    uint8_t *argvBufSize = ptr + i322.value.i32;
+    uvwasi_args_sizes_get(module->uvwasi, (uvwasi_size_t *)argc,
+                          (uvwasi_size_t *)argvBufSize);
+  }
+
+  static void readFileContent(Module *module) {
+    StackItem i323 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    StackItem i322 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    StackItem i321 = module->runtime.getStack()->top();
+    module->runtime.getStack()->pop();
+    char *fileName = (char *)module->runtime.memoryPtr(i321.value.i32);
+    std::ifstream input(fileName);
+    if (!input) {
+      throw std::runtime_error("cannot open file\n");
+    }
+    input.seekg(0, std::ios::end);
+    uint32_t size{static_cast<uint32_t>(input.tellg()) + 1U};
+    input.seekg(0, std::ios::beg);
+    // std::unique_ptr<char[]> content(new char[size]{});
+    char *contentPtr = (char *)module->runtime.memoryPtr(i323.value.i32);
+    input.read(contentPtr, size);
+    input.close();
+    uint32_t *sizePtr = (uint32_t *)module->runtime.memoryPtr(i322.value.i32);
+    *sizePtr = size;
+  }
+
 public:
   static void registerRuntime(Module &module) {
 
@@ -125,6 +161,15 @@ public:
     VI32I32F32F32F32F32F32.parameters.emplace_back(ValType::f64);
     VI32I32F32F32F32F32F32.parameters.emplace_back(ValType::f64);
 
+    TypeSec VI32I32I32;
+    VI32I32I32.parameters.emplace_back(
+        ValType::i32); // param 1: file name from wasm memory
+    VI32I32I32.parameters.emplace_back(
+        ValType::i32); // param 2: size of file content to be written to wasm
+                       // memory
+    VI32I32I32.parameters.emplace_back(
+        ValType::i32); // param 3: offset in wasm memory to write file content
+
     module.runtime.registerAPI("env", "println", std::move(vi32),
                                (void *)&SampleRuntime::println);
     module.runtime.registerAPI("env", "printNumber", std::move(vi32),
@@ -143,6 +188,11 @@ public:
     module.runtime.registerAPI("wasi_snapshot_preview1", "args_get",
                                std::move(vi32i32),
                                (void *)&SampleRuntime::argsGet);
+    module.runtime.registerAPI("wasi_snapshot_preview1", "args_sizes_get",
+                               std::move(vi32i32),
+                               (void *)&SampleRuntime::argsSizesGet);
+    module.runtime.registerAPI("env", "readFileContent", std::move(VI32I32I32),
+                               (void *)&SampleRuntime::readFileContent);
   }
 };
 
